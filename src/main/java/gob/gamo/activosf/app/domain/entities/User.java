@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Slf4j
-@Entity
+@Entity 
 @Getter
 @Builder
 @Table(name = "sec_usuario")
