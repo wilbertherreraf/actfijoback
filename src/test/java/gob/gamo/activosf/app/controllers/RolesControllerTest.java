@@ -75,7 +75,7 @@ public class RolesControllerTest {
         recursoRepository.save(java);
 
         Roles effectiveJava = Roles.builder()
-                .codrol("RolT0")
+                .codrol("RolT0") 
                 .descripcion("description")
                 .build();
 

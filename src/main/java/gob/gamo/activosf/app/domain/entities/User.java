@@ -33,7 +33,7 @@ public class User {
     private String codEmpleado; 
 
     @Column(name = "usr_nombres")
-    private String nombres;
+    private String nombres; 
 
     @Column(name = "usr_email")
     private String email;
