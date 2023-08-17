@@ -1,0 +1,31 @@
+package gob.gamo.activosf.app.domain.entities;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Getter
+@Builder
+@Table(name = "gen_desctabla")
+@EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class GenDesctabla {
+
+	@EmbeddedId
+	private GenDesctablaId id;
+
+	@Column(name = "des_codeiso")
+	private String desCodeiso;
+
+	@Column(name = "des_descrip")
+	private String desDescrip;
+    
+}
