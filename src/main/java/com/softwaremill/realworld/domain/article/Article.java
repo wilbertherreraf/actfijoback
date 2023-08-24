@@ -1,7 +1,5 @@
 package com.softwaremill.realworld.domain.article;
 
-import com.softwaremill.realworld.domain.user.User;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -9,11 +7,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.softwaremill.realworld.domain.user.User;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -74,7 +73,7 @@ public class Article {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void updateTitle( String title) {
+    public void updateTitle(String title) {
         if (title.isBlank()) {
             log.info("Title is blank.");
             return;
@@ -84,7 +83,7 @@ public class Article {
         this.slug = createSlugBy(title);
     }
 
-    public void updateDescription( String description) {
+    public void updateDescription(String description) {
         if (description.isBlank()) {
             log.info("Description is blank.");
             return;
@@ -93,7 +92,7 @@ public class Article {
         this.description = description;
     }
 
-    public void updateContent( String content) {
+    public void updateContent(String content) {
         if (content.isBlank()) {
             log.info("Content is blank.");
             return;
@@ -102,7 +101,7 @@ public class Article {
         this.content = content;
     }
 
-    public boolean isNotWritten( User user) {
+    public boolean isNotWritten(User user) {
         return !this.author.equals(user);
     }
 
@@ -110,7 +109,7 @@ public class Article {
         return this.favoriteUsers.size();
     }
 
-    public void addTag( Tag tag) {
+    public void addTag(Tag tag) {
         ArticleTag articleTag = new ArticleTag(this, tag);
 
         if (this.includeTags.stream().anyMatch(articleTag::equals)) {
@@ -128,11 +127,11 @@ public class Article {
         return this.getTags().stream().map(Tag::getName).sorted().toArray(String[]::new);
     }
 
-    public boolean equalsArticle( ArticleFavorite articleFavorite) {
+    public boolean equalsArticle(ArticleFavorite articleFavorite) {
         return Objects.equals(this, articleFavorite.getArticle());
     }
 
-    private String createSlugBy( String title) {
+    private String createSlugBy(String title) {
         return title.toLowerCase().replaceAll("\\s+", "-");
     }
 

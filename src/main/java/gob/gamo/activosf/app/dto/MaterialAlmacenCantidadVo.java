@@ -6,59 +6,54 @@ import java.util.List;
 import gob.gamo.activosf.app.domain.AfMaterial;
 import gob.gamo.activosf.app.domain.AfSolicitudMaterial;
 
-public class MaterialAlmacenCantidadVo implements java.io.Serializable{
-	
-	
-	
-	private AfMaterial afMaterial;
-	private AfSolicitudMaterial afSolicitudMaterial;
-	private Integer cantidadSolicitada;
+public class MaterialAlmacenCantidadVo implements java.io.Serializable {
 
-	private List<AlmacenCantidadVo> almacenCantidadVoList;
-	
-	
-	public MaterialAlmacenCantidadVo(AfMaterial afMaterial) {
-		super();
-		this.afMaterial = afMaterial;
-		almacenCantidadVoList = new ArrayList<AlmacenCantidadVo>();
-	}
+    private AfMaterial afMaterial;
+    private AfSolicitudMaterial afSolicitudMaterial;
+    private Integer cantidadSolicitada;
 
-	public MaterialAlmacenCantidadVo() {
-		super();
-		almacenCantidadVoList = new ArrayList<AlmacenCantidadVo>();
-	}
-	
-	public AfMaterial getAfMaterial() {
-		return afMaterial;
-	}
-	
-	public void setAfMaterial(AfMaterial afMaterial) {
-		this.afMaterial = afMaterial;
-	}
-	
-	public List<AlmacenCantidadVo> getAlmacenCantidadVoList() {
-		return almacenCantidadVoList;
-	}
-	
-	public void setAlmacenCantidadVoList(
-			List<AlmacenCantidadVo> almacenCantidadVoList) {
-		this.almacenCantidadVoList = almacenCantidadVoList;
-	}
+    private List<AlmacenCantidadVo> almacenCantidadVoList;
 
-	public Integer getCantidadSolicitada() {
-		return cantidadSolicitada;
-	}
+    public MaterialAlmacenCantidadVo(AfMaterial afMaterial) {
+        super();
+        this.afMaterial = afMaterial;
+        almacenCantidadVoList = new ArrayList<AlmacenCantidadVo>();
+    }
 
-	public void setCantidadSolicitada(int cantidadSolicitada) {
-		this.cantidadSolicitada = cantidadSolicitada;
-	}
+    public MaterialAlmacenCantidadVo() {
+        super();
+        almacenCantidadVoList = new ArrayList<AlmacenCantidadVo>();
+    }
 
-	public AfSolicitudMaterial getAfSolicitudMaterial() {
-		return afSolicitudMaterial;
-	}
+    public AfMaterial getAfMaterial() {
+        return afMaterial;
+    }
 
-	public void setAfSolicitudMaterial(AfSolicitudMaterial afSolicitudMaterial) {
-		this.afSolicitudMaterial = afSolicitudMaterial;
-	}	
-	
+    public void setAfMaterial(AfMaterial afMaterial) {
+        this.afMaterial = afMaterial;
+    }
+
+    public List<AlmacenCantidadVo> getAlmacenCantidadVoList() {
+        return almacenCantidadVoList;
+    }
+
+    public void setAlmacenCantidadVoList(List<AlmacenCantidadVo> almacenCantidadVoList) {
+        this.almacenCantidadVoList = almacenCantidadVoList;
+    }
+
+    public Integer getCantidadSolicitada() {
+        return cantidadSolicitada;
+    }
+
+    public void setCantidadSolicitada(int cantidadSolicitada) {
+        this.cantidadSolicitada = cantidadSolicitada;
+    }
+
+    public AfSolicitudMaterial getAfSolicitudMaterial() {
+        return afSolicitudMaterial;
+    }
+
+    public void setAfSolicitudMaterial(AfSolicitudMaterial afSolicitudMaterial) {
+        this.afSolicitudMaterial = afSolicitudMaterial;
+    }
 }

@@ -17,7 +17,6 @@ import gob.gamo.activosf.app.domain.TxUsuario;
  *
  * @author wherrera
  */
-
 public interface AfSolicitudRepository extends JpaRepository<AfSolicitud, Integer> {
 
     @Query("SELECT a "
@@ -28,8 +27,8 @@ public interface AfSolicitudRepository extends JpaRepository<AfSolicitud, Intege
             + " AND  ( a.idUsuarioAutorizacion = :idUsuario "
             + "	OR a.idUsuarioSolicitud = :idUsuario) "
             + " ORDER BY a.fechaSolicitud desc")
-    public List<AfSolicitud> findAllActivesByGestionAndCatTipoSolicitudYUsuario(Integer gestion,
-            String catTipoSolicitud, TxUsuario idUsuario);
+    public List<AfSolicitud> findAllActivesByGestionAndCatTipoSolicitudYUsuario(
+            Integer gestion, String catTipoSolicitud, TxUsuario idUsuario);
 
     @Query("SELECT a "
             + " FROM AfSolicitud a "

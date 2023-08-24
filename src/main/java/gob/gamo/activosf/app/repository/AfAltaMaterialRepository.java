@@ -17,8 +17,7 @@ import gob.gamo.activosf.app.domain.AfAltaMaterial;
  *
  * @author wherrera
  */
-
-public interface AfAltaMaterialRepository extends JpaRepository<AfAltaMaterial, Integer>{
+public interface AfAltaMaterialRepository extends JpaRepository<AfAltaMaterial, Integer> {
     @Query(value = "SELECT a FROM AfAltaMaterial a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.fechaAlta")
-	public List<AfAltaMaterial> findAllActivesPorGestion(@Param("gestion")  Integer gestion) ;
+    public List<AfAltaMaterial> findAllActivesPorGestion(@Param("gestion") Integer gestion);
 }

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,7 +37,7 @@ public class Tag {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void tagging( Article article) {
+    public void tagging(Article article) {
         article.addTag(this);
     }
 

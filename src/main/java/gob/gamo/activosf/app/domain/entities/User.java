@@ -1,17 +1,18 @@
 package gob.gamo.activosf.app.domain.entities;
 
+import jakarta.persistence.*;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Entity 
+@Entity
 @Getter
 @Builder
 @Table(name = "sec_usuario")
@@ -28,12 +29,12 @@ public class User {
     @Column(name = "usr_login")
     private String username;
 
-     //@Column(name = "usr_codemp")
-     @Transient
-    private String codEmpleado; 
+    // @Column(name = "usr_codemp")
+    @Transient
+    private String codEmpleado;
 
     @Column(name = "usr_nombres")
-    private String nombres; 
+    private String nombres;
 
     @Column(name = "usr_email")
     private String email;
@@ -45,14 +46,16 @@ public class User {
     private Integer idUnidEmpl;
 
     @JoinColumns({
-            @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
-            @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo") })
+        @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
+        @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo")
+    })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla tipoUsuario;
 
     @JoinColumns({
-            @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
-            @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo") })
+        @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
+        @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo")
+    })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
@@ -61,15 +64,14 @@ public class User {
 
     @Transient
     @Builder.Default
-    private boolean anonymous = false;    
+    private boolean anonymous = false;
 
     public static User anonymous() {
         return User.builder().id(null).anonymous(true).build();
-    }    
+    }
 
     public User possessToken(String token) {
         this.token = token;
         return this;
     }
-
 }

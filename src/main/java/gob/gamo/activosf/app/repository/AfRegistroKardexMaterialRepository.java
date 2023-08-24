@@ -17,10 +17,10 @@ import gob.gamo.activosf.app.domain.AfRegistroKardexMaterial;
  *
  * @author wherrera
  */
-
 public interface AfRegistroKardexMaterialRepository extends JpaRepository<AfRegistroKardexMaterial, Integer> {
 
-    @Query("SELECT a FROM AfRegistroKardexMaterial a WHERE a.estado = 'A' AND a.idKardexMaterial = :afKardexMaterial ORDER BY  a.fechaRegistro")
+    @Query(
+            "SELECT a FROM AfRegistroKardexMaterial a WHERE a.estado = 'A' AND a.idKardexMaterial = :afKardexMaterial ORDER BY  a.fechaRegistro")
     public List<AfRegistroKardexMaterial> findAllActivesByAfKardexMaterial(AfKardexMaterial afKardexMaterial);
 
     @Query(" SELECT a FROM AfRegistroKardexMaterial a "

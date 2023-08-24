@@ -1,13 +1,13 @@
 package gob.gamo.activosf.app.treeorg;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import gob.gamo.activosf.app.domain.OrgUnidad;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.domain.OrgUnidad;
 
 @Slf4j
 public class Tester {
@@ -83,8 +83,11 @@ public class Tester {
         List<String> strl = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             LinkedList<Node<OrgUnidad>> e1 = org.getbylevel(nn, i);
-            String sn2 = e1.stream().map(nodo -> nodo.getKey() + " [" +
-                    nodo.childArray.stream().map(no -> no.getKey() + "").collect(Collectors.joining(";")) + "]")
+            String sn2 = e1.stream()
+                    .map(nodo -> nodo.getKey() + " ["
+                            + nodo.childArray.stream()
+                                    .map(no -> no.getKey() + "")
+                                    .collect(Collectors.joining(";")) + "]")
                     .collect(Collectors.joining("   "));
             strl.add(sn2);
         }
@@ -203,6 +206,5 @@ public class Tester {
         } catch (IllegalIDException e) {
             log.info("Employee does not exist");
         }
-
     }
 }

@@ -5,57 +5,48 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
  * @author wherrera
  */
-//@Entity
-//@Table(name = "cnf_roles")
+// @Entity
+// @Table(name = "cnf_roles")
 
 public class CnfRoles {
     @Id
-    
-    
     @Column(name = "id_rol")
     private Integer idRol;
-    
+
     @Column(name = "descripcion")
     private String descripcion;
+
     @Column(name = "tx_id")
     private Integer txId;
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
+
     @Column(name = "usuario")
     private String usuario;
-    
+
     @Column(name = "estado")
     private String estado;
+
     @OneToMany(mappedBy = "idRol", fetch = FetchType.LAZY)
     private List<CnfRolOpcion> cnfRolOpcionList;
 
-    public CnfRoles() {
-    }
+    public CnfRoles() {}
 
     public CnfRoles(Integer idRol) {
         this.idRol = idRol;
@@ -109,7 +100,6 @@ public class CnfRoles {
         this.estado = estado;
     }
 
-    
     public List<CnfRolOpcion> getCnfRolOpcionList() {
         return cnfRolOpcionList;
     }
@@ -118,7 +108,6 @@ public class CnfRoles {
         this.cnfRolOpcionList = cnfRolOpcionList;
     }
 
-    
     @Override
     public int hashCode() {
         Integer hash = 0;
@@ -143,5 +132,4 @@ public class CnfRoles {
     public String toString() {
         return "gob.gamo.activosf.app.domain.CnfRoles[ idRol=" + idRol + " ]";
     }
-    
 }

@@ -5,27 +5,19 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -33,66 +25,63 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_gestion")
-
 public class AfGestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_gestion")
     private Integer idGestion;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
+
     @Column(name = "vigente")
     private boolean vigente;
-    
-    
-    
+
     @Column(name = "cat_estado_gestion")
     private String catEstadoGestion;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
 
-    public AfGestion() {
-    }
+    public AfGestion() {}
 
     public AfGestion(Integer idGestion) {
         this.idGestion = idGestion;
     }
 
-    public AfGestion(Integer idGestion, Integer gestion, boolean vigente, String catEstadoGestion, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfGestion(
+            Integer idGestion,
+            Integer gestion,
+            boolean vigente,
+            String catEstadoGestion,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idGestion = idGestion;
         this.gestion = gestion;
         this.vigente = vigente;
@@ -104,16 +93,19 @@ public class AfGestion {
         this.txHostIni = txHostIni;
     }
 
-    @Transient 
+    @Transient
     public Date getInicioGestion() {
-    	return Date.from(LocalDate.of(gestion, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return Date.from(
+                LocalDate.of(gestion, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
-    
-    @Transient 
+
+    @Transient
     public Date getFinGestion() {
-    	return Date.from(LocalDate.of(gestion, 12, 31).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return Date.from(LocalDate.of(gestion, 12, 31)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant());
     }
-    
+
     public Integer getIdGestion() {
         return idGestion;
     }
@@ -224,7 +216,8 @@ public class AfGestion {
             return false;
         }
         AfGestion other = (AfGestion) object;
-        if ((this.idGestion == null && other.idGestion != null) || (this.idGestion != null && !this.idGestion.equals(other.idGestion))) {
+        if ((this.idGestion == null && other.idGestion != null)
+                || (this.idGestion != null && !this.idGestion.equals(other.idGestion))) {
             return false;
         }
         return true;
@@ -234,5 +227,4 @@ public class AfGestion {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfGestion[ idGestion=" + idGestion + " ]";
     }
-    
 }

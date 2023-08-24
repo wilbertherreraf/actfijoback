@@ -11,8 +11,7 @@ public class Queue<T> {
             this.data = o;
         }
 
-        private QueueNode() {
-        }
+        private QueueNode() {}
 
         // Accessor methods
         private Node<T> getElement() {
@@ -57,9 +56,9 @@ public class Queue<T> {
         return count;
     }
 
-    public void enqueue(Node<T> new_data){
+    public void enqueue(Node<T> new_data) {
         QueueNode<T> new_node = new QueueNode<T>(new_data);
-        if (this.head==null) {
+        if (this.head == null) {
             this.head = new_node;
             this.tail = new_node;
         } else {

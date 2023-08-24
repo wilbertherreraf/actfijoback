@@ -3,6 +3,7 @@ package gob.gamo.activosf.app.domain.entities;
 import java.io.Serializable;
 
 import jakarta.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,4 @@ public class GenDesctablaId implements Serializable {
 
     @Column(name = "des_codigo")
     private Integer desCodigo;
-
-
 }

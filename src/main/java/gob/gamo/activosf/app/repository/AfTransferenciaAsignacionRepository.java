@@ -5,10 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfTransferenciaAsignacion;
@@ -17,8 +13,4 @@ import gob.gamo.activosf.app.domain.AfTransferenciaAsignacion;
  *
  * @author wherrera
  */
-
-public interface AfTransferenciaAsignacionRepository extends JpaRepository<AfTransferenciaAsignacion, Integer>{
-
-    
-}
+public interface AfTransferenciaAsignacionRepository extends JpaRepository<AfTransferenciaAsignacion, Integer> {}

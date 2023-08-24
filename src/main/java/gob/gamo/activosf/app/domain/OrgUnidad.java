@@ -1,7 +1,5 @@
 package gob.gamo.activosf.app.domain;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -9,6 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,21 +27,27 @@ public class OrgUnidad {
 
     @Id
     @Column(name = "id_unidad")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)    
-    private Integer id_unidad;
-    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idUnidad;
+
     @Column(name = "nombre")
     private String nombre;
+
     @Column(name = "domicilio")
     private String domicilio;
+
     @Column(name = "sigla")
     private String sigla;
+
     @Column(name = "telefono")
     private String telefono;
+
     @Column(name = "tipo_unidad")
-    private String tipo_unidad;
+    private String tipoUnidad;
+
     @Column(name = "id_unidad_padre")
-    private Integer id_unidad_padre;
+    private Integer idUnidadPadre;
+
     @Column(name = "estado")
     private String estado;
 }

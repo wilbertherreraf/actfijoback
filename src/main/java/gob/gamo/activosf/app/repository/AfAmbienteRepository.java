@@ -5,10 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfAmbiente;
@@ -17,8 +13,4 @@ import gob.gamo.activosf.app.domain.AfAmbiente;
  *
  * @author wherrera
  */
-
-public interface AfAmbienteRepository extends JpaRepository<AfAmbiente, Integer>{
-
-    
-}
+public interface AfAmbienteRepository extends JpaRepository<AfAmbiente, Integer> {}

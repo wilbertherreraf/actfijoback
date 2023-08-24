@@ -17,7 +17,6 @@ import gob.gamo.activosf.app.domain.AfTipoCambio;
  *
  * @author wherrera
  */
-
 public interface AfTipoCambioRepository extends JpaRepository<AfTipoCambio, Integer> {
 
     @Query("SELECT a FROM AfTipoCambio a WHERE a.fecha = :fecha AND a.catMoneda = :catMoneda AND a.estado = 'A'")
@@ -25,5 +24,4 @@ public interface AfTipoCambioRepository extends JpaRepository<AfTipoCambio, Inte
 
     @Query("SELECT a FROM AfTipoCambio a WHERE a.catMoneda = :catMoneda AND a.estado = 'A' ORDER BY a.fecha desc")
     public Optional<AfTipoCambio> getAfTipoCambioUltimo(String catMoneda);
-
 }

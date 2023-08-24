@@ -5,10 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.TxTransaccion;
@@ -17,7 +13,4 @@ import gob.gamo.activosf.app.domain.TxTransaccion;
  *
  * @author wherrera
  */
-
-public interface TxTransaccionRepository extends JpaRepository<TxTransaccion, Integer> {
-    
-}
+public interface TxTransaccionRepository extends JpaRepository<TxTransaccion, Integer> {}

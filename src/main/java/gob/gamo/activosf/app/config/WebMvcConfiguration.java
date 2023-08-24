@@ -10,9 +10,10 @@ import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import gob.gamo.activosf.app.repository.sec.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.repository.sec.UserRepository;
 
 @Slf4j
 @Configuration
@@ -40,5 +41,5 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         resolver.setPageParameterName("offset");
         resolver.setSizeParameterName("limit");
         return resolver;
-    }    
+    }
 }

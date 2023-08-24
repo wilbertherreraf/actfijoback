@@ -11,13 +11,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import gob.gamo.activosf.app.repository.AfAlmacenRepository;
-import gob.gamo.activosf.app.repository.AfGestionRepository;
-import gob.gamo.activosf.app.repository.AfKardexMaterialRepository;
-import gob.gamo.activosf.app.repository.AfMaterialRepository;
-import gob.gamo.activosf.app.utils.UtilsDate;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAlmacen;
 import gob.gamo.activosf.app.domain.AfGestion;
@@ -26,12 +19,16 @@ import gob.gamo.activosf.app.domain.AfMaterial;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfAlmacenRepository;
+import gob.gamo.activosf.app.repository.AfGestionRepository;
+import gob.gamo.activosf.app.repository.AfKardexMaterialRepository;
+import gob.gamo.activosf.app.repository.AfMaterialRepository;
+import gob.gamo.activosf.app.utils.UtilsDate;
 
 /**
  *
  * @author wherrera
  */
-
 public class AfGestionBl {
 
     AfGestionRepository afGestionRepository;
@@ -54,7 +51,8 @@ public class AfGestionBl {
         for (AfActivoFijo afActivoFijo : afActivoFijoList) {
             afActivoFijo.setCostoActual(afActivoFijo.getCalculoContableVo().getValorActual());
             afActivoFijo.setDepAcumuladaHistorico(afActivoFijo.getDepAcumuladaActual());
-            afActivoFijo.setDepAcumuladaActual(afActivoFijo.getCalculoContableVo().getDepreciacionAcumulada());
+            afActivoFijo.setDepAcumuladaActual(
+                    afActivoFijo.getCalculoContableVo().getDepreciacionAcumulada());
 
             afActivoFijo.setFechaActual(inicioGestion);
             afActivoFijo.setGestion((afGestion.getGestion() + 1));
@@ -63,7 +61,7 @@ public class AfGestionBl {
 
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
 
-        List<AfAlmacen> almacenes = afAlmacenRepository.findAll();// .findAllActives();
+        List<AfAlmacen> almacenes = afAlmacenRepository.findAll(); // .findAllActives();
         List<AfMaterial> materiales = afMaterialRepository.findAllActives();
 
         for (AfAlmacen afAlmacen : almacenes) {
@@ -86,8 +84,8 @@ public class AfGestionBl {
             }
         }
 
-        List<AfKardexMaterial> afKardexMaterialList = afKardexMaterialRepository
-                .findAllActivesByGestion(afGestion.getGestion());
+        List<AfKardexMaterial> afKardexMaterialList =
+                afKardexMaterialRepository.findAllActivesByGestion(afGestion.getGestion());
         for (AfKardexMaterial afKardexMaterial : afKardexMaterialList) {
             afKardexMaterialRepository.save(afKardexMaterial.getNuevaGestionConSaldoInicial(txTransaccion));
         }
@@ -108,12 +106,16 @@ public class AfGestionBl {
     }
 
     public AfGestion getMaxAfGestion() {
-        return afGestionRepository.getMaxAfGestion().orElseThrow(()-> new DataException("no existe ninguna gestion anterior"));
-    };
+        return afGestionRepository
+                .getMaxAfGestion()
+                .orElseThrow(() -> new DataException("no existe ninguna gestion anterior"));
+    }
+    ;
 
     public AfGestion getByGestion(Integer gestion) {
         return afGestionRepository.getByGestion(gestion);
-    };
+    }
+    ;
 
     public void mergeAfGestion(AfGestion afGestion, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
@@ -126,7 +128,9 @@ public class AfGestionBl {
     }
 
     public AfGestion getGestionVigente() {
-        return afGestionRepository.getAfGestionVigente(true).orElseThrow(()-> new DataException("no existe gestion vigente"));
+        return afGestionRepository
+                .getAfGestionVigente(true)
+                .orElseThrow(() -> new DataException("no existe gestion vigente"));
     }
 
     public void deleteAfGestion(AfGestion afGestion, UserRequestVo userRequestVo) {
@@ -135,10 +139,10 @@ public class AfGestionBl {
     }
 
     public List<AfGestion> findAllActivesAfGestion() {
-        return afGestionRepository.findAll();//.findAllActives();
+        return afGestionRepository.findAll(); // .findAllActives();
     }
 
     public AfGestion findByPkAfGestion(Integer pk) {
-        return afGestionRepository.findById(pk).orElseThrow(()-> new DataException("id inexistente gestion"));
+        return afGestionRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente gestion"));
     }
 }

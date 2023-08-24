@@ -5,10 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,16 +15,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -33,83 +26,83 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_proveedor")
-
 public class AfProveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_proveedor")
     private Integer idProveedor;
-    
-    
-    
+
     @Column(name = "nombre")
     private String nombre;
-    
-    
-    
+
     @Column(name = "nit")
     private String nit;
-    
+
     @Column(name = "telefono")
     private String telefono;
-    
+
     @Column(name = "correo_electronico")
     private String correoElectronico;
-    
+
     @Column(name = "persona_contacto")
     private String personaContacto;
-    
+
     @Column(name = "cargo_contacto")
     private String cargoContacto;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(mappedBy = "idProveedor", fetch = FetchType.LAZY)
     private List<AfMaterialProveedor> afMaterialProveedorList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProveedor", fetch = FetchType.EAGER, orphanRemoval=true)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProveedor", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AfProveedorActEco> afProveedorActEcoList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProveedor", fetch = FetchType.LAZY)
     private List<AfActivoFijo> afActivoFijoList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProveedor", fetch = FetchType.LAZY)
     private List<AfAltaMaterial> afAltaMaterialList;
 
-    public AfProveedor() {
-    }
+    public AfProveedor() {}
 
     public AfProveedor(Integer idProveedor) {
         this.idProveedor = idProveedor;
     }
 
-    public AfProveedor(Integer idProveedor, String nombre, String nit, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfProveedor(
+            Integer idProveedor,
+            String nombre,
+            String nit,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idProveedor = idProveedor;
         this.nombre = nombre;
         this.nit = nit;
@@ -240,7 +233,6 @@ public class AfProveedor {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfMaterialProveedor> getAfMaterialProveedorList() {
         return afMaterialProveedorList;
     }
@@ -249,7 +241,6 @@ public class AfProveedor {
         this.afMaterialProveedorList = afMaterialProveedorList;
     }
 
-    
     public List<AfProveedorActEco> getAfProveedorActEcoList() {
         return afProveedorActEcoList;
     }
@@ -258,7 +249,6 @@ public class AfProveedor {
         this.afProveedorActEcoList = afProveedorActEcoList;
     }
 
-    
     public List<AfActivoFijo> getAfActivoFijoList() {
         return afActivoFijoList;
     }
@@ -268,14 +258,14 @@ public class AfProveedor {
     }
 
     public List<AfAltaMaterial> getAfAltaMaterialList() {
-		return afAltaMaterialList;
-	}
+        return afAltaMaterialList;
+    }
 
-	public void setAfAltaMaterialList(List<AfAltaMaterial> afAltaMaterialList) {
-		this.afAltaMaterialList = afAltaMaterialList;
-	}
+    public void setAfAltaMaterialList(List<AfAltaMaterial> afAltaMaterialList) {
+        this.afAltaMaterialList = afAltaMaterialList;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         Integer hash = 0;
         hash += (idProveedor != null ? idProveedor.hashCode() : 0);
@@ -289,7 +279,8 @@ public class AfProveedor {
             return false;
         }
         AfProveedor other = (AfProveedor) object;
-        if ((this.idProveedor == null && other.idProveedor != null) || (this.idProveedor != null && !this.idProveedor.equals(other.idProveedor))) {
+        if ((this.idProveedor == null && other.idProveedor != null)
+                || (this.idProveedor != null && !this.idProveedor.equals(other.idProveedor))) {
             return false;
         }
         return true;
@@ -299,5 +290,4 @@ public class AfProveedor {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfProveedor[ idProveedor=" + idProveedor + " ]";
     }
-    
 }

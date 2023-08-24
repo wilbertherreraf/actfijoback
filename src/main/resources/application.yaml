@@ -1,3 +1,6 @@
+server:
+  port: 3000
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -27,3 +30,17 @@ decorator:
     p6spy:
       enable-logging: true
 
+# swagger
+
+springdoc:
+  swagger-ui:
+    path: /activosf-documentation
+    tryItOutEnabled: true
+    ui.filter: true
+  api-docs:
+    path: /activosf-api-docs
+
+activosf:
+  openapi:
+    dev-url: http://localhost:3000
+    prod-url: https://gob.gamo.org

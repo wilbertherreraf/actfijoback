@@ -5,12 +5,8 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -20,19 +16,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 
 /**
  *
@@ -48,64 +42,67 @@ import lombok.NoArgsConstructor;
 public class AfAtributoSubFamilia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_atributo_sub_familia")
     private Integer idAtributoSubFamilia;
-    
-    
-    
+
     @Column(name = "cat_tipo_atributo")
     private String catTipoAtributo;
-	@Column(name = "tab_tipo_atributo")
-	private Integer tabTipoAtributo;
-	@Column(name = "tipo_atributo")
-	private Integer tipoAtributo;      
-    
+
+    @Column(name = "tab_tipo_atributo")
+    private Integer tabTipoAtributo;
+
+    @Column(name = "tipo_atributo")
+    private Integer tipoAtributo;
+
     @Column(name = "prioridad")
     private Integer prioridad;
-    
-    
+
     @Column(name = "imprimible")
     private boolean imprimible;
-    
+
     @Column(name = "id_origen")
     private Integer idOrigen;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_sub_familia", referencedColumnName = "id_sub_familia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfSubFamiliaActivo idSubFamilia;
 
-    public AfAtributoSubFamilia(Integer idAtributoSubFamilia, String catTipoAtributo, Integer prioridad, boolean imprimible, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfAtributoSubFamilia(
+            Integer idAtributoSubFamilia,
+            String catTipoAtributo,
+            Integer prioridad,
+            boolean imprimible,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idAtributoSubFamilia = idAtributoSubFamilia;
         this.catTipoAtributo = catTipoAtributo;
         this.prioridad = prioridad;
@@ -158,14 +155,14 @@ public class AfAtributoSubFamilia {
     }
 
     public Integer getIdOrigen() {
-		return idOrigen;
-	}
+        return idOrigen;
+    }
 
-	public void setIdOrigen(Integer idOrigen) {
-		this.idOrigen = idOrigen;
-	}
+    public void setIdOrigen(Integer idOrigen) {
+        this.idOrigen = idOrigen;
+    }
 
-	public Integer getIdTransaccion() {
+    public Integer getIdTransaccion() {
         return idTransaccion;
     }
 
@@ -243,7 +240,9 @@ public class AfAtributoSubFamilia {
             return false;
         }
         AfAtributoSubFamilia other = (AfAtributoSubFamilia) object;
-        if ((this.idAtributoSubFamilia == null && other.idAtributoSubFamilia != null) || (this.idAtributoSubFamilia != null && !this.idAtributoSubFamilia.equals(other.idAtributoSubFamilia))) {
+        if ((this.idAtributoSubFamilia == null && other.idAtributoSubFamilia != null)
+                || (this.idAtributoSubFamilia != null
+                        && !this.idAtributoSubFamilia.equals(other.idAtributoSubFamilia))) {
             return false;
         }
         return true;
@@ -253,5 +252,4 @@ public class AfAtributoSubFamilia {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfAtributoSubFamilia[ idAtributoSubFamilia=" + idAtributoSubFamilia + " ]";
     }
-    
 }

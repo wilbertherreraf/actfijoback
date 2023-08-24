@@ -16,9 +16,8 @@ import gob.gamo.activosf.app.domain.AfBajaMaterial;
  *
  * @author wherrera
  */
-
 public interface AfBajaMaterialRepository extends JpaRepository<AfBajaMaterial, Integer> {
-    @Query("SELECT a FROM AfBajaMaterial a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.idBajaMaterial DESC")
+    @Query(
+            "SELECT a FROM AfBajaMaterial a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.idBajaMaterial DESC")
     public List<AfBajaMaterial> findAllActivesPorGestion(Integer gestion);
-
 }

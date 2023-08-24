@@ -1,17 +1,16 @@
 package gob.gamo.activosf.app.domain.entities;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-import org.springframework.data.annotation.CreatedDate;
+import jakarta.persistence.*;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -34,12 +33,12 @@ public class Profile {
     @JoinColumn(name = "prr_rolid")
     @ManyToOne(fetch = FetchType.LAZY)
     private Roles rol;
-/*
-    @CreatedDate
-    @Builder.Default
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-*/
+    /*
+        @CreatedDate
+        @Builder.Default
+        @Column(nullable = false, updatable = false)
+        private LocalDateTime createdAt = LocalDateTime.now();
+    */
     public Profile(Roles rol, Recurso resource) {
         this.id = new ProfileId(rol.getId(), resource.getId());
         this.rol = rol;
@@ -57,5 +56,5 @@ public class Profile {
     @Override
     public int hashCode() {
         return Objects.hash(this.id, this.recurso, this.rol);
-    }    
+    }
 }

@@ -5,12 +5,10 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,17 +17,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -37,78 +29,70 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_registro_kardex_material")
+public class AfRegistroKardexMaterial {
 
-public class AfRegistroKardexMaterial  {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_registro_kardex_material")
     private Integer idRegistroKardexMaterial;
-    
-    
+
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
-    
-    
+
     @Column(name = "detalle")
     private String detalle;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to
+    // enforce field validation
+
     @Column(name = "importe_unitario")
     private BigDecimal importeUnitario;
-    
-    
+
     @Column(name = "cantidad")
     private Integer cantidad;
-    
+
     @Column(name = "saldo")
     private Integer saldo;
-    
-    
-    
+
     @Column(name = "cat_tipo_registro_kardex")
     private String catTipoRegistroKardex;
+
     @JoinColumn(name = "id_usuario_registro", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private TxUsuario idUsuarioRegistro;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(mappedBy = "idRegistroKardexMaterial", fetch = FetchType.LAZY)
     private List<AfBajaMaterial> afBajaMaterialList;
+
     @OneToMany(mappedBy = "idRegistroKardexMaterial", fetch = FetchType.LAZY)
     private List<AfAltaMaterialDetalle> afAltaMaterialDetalleList;
-    
+
     @JoinColumn(name = "id_kardex_material", referencedColumnName = "id_kardex_material")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private AfKardexMaterial idKardexMaterial;
@@ -117,22 +101,31 @@ public class AfRegistroKardexMaterial  {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private AfSolicitudMaterial idSolicitudMaterial;
 
-    
     @Transient
     private Integer cantidadSaldo;
-    
+
     @Transient
     private BigDecimal importeSaldo;
-    
 
-    public AfRegistroKardexMaterial() {
-    }
+    public AfRegistroKardexMaterial() {}
 
     public AfRegistroKardexMaterial(Integer idRegistroKardexMaterial) {
         this.idRegistroKardexMaterial = idRegistroKardexMaterial;
     }
 
-    public AfRegistroKardexMaterial(Integer idRegistroKardexMaterial, Date fechaRegistro, String detalle, BigDecimal importeUnitario, Integer cantidad, String catTipoRegistroKardex, TxUsuario idUsuarioRegistro, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfRegistroKardexMaterial(
+            Integer idRegistroKardexMaterial,
+            Date fechaRegistro,
+            String detalle,
+            BigDecimal importeUnitario,
+            Integer cantidad,
+            String catTipoRegistroKardex,
+            TxUsuario idUsuarioRegistro,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idRegistroKardexMaterial = idRegistroKardexMaterial;
         this.fechaRegistro = fechaRegistro;
         this.detalle = detalle;
@@ -149,25 +142,25 @@ public class AfRegistroKardexMaterial  {
 
     @Transient
     public Integer getCantidadSaldo() {
-		return cantidadSaldo;
-	}
+        return cantidadSaldo;
+    }
 
     @Transient
-	public BigDecimal getImporteSaldo() {
-		return importeSaldo;
-	}
+    public BigDecimal getImporteSaldo() {
+        return importeSaldo;
+    }
 
     @Transient
-	public void setCantidadSaldo(int cantidadSaldo) {
-		this.cantidadSaldo = cantidadSaldo;
-	}
+    public void setCantidadSaldo(int cantidadSaldo) {
+        this.cantidadSaldo = cantidadSaldo;
+    }
 
     @Transient
-	public void setImporteSaldo(BigDecimal importeSaldo) {
-		this.importeSaldo = importeSaldo;
-	}
+    public void setImporteSaldo(BigDecimal importeSaldo) {
+        this.importeSaldo = importeSaldo;
+    }
 
-	public Integer getIdRegistroKardexMaterial() {
+    public Integer getIdRegistroKardexMaterial() {
         return idRegistroKardexMaterial;
     }
 
@@ -208,14 +201,14 @@ public class AfRegistroKardexMaterial  {
     }
 
     public Integer getSaldo() {
-		return saldo;
-	}
+        return saldo;
+    }
 
-	public void setSaldo(Integer saldo) {
-		this.saldo = saldo;
-	}
+    public void setSaldo(Integer saldo) {
+        this.saldo = saldo;
+    }
 
-	public String getCatTipoRegistroKardex() {
+    public String getCatTipoRegistroKardex() {
         return catTipoRegistroKardex;
     }
 
@@ -296,14 +289,13 @@ public class AfRegistroKardexMaterial  {
     }
 
     public List<AfBajaMaterial> getAfBajaMaterialList() {
-		return afBajaMaterialList;
-	}
+        return afBajaMaterialList;
+    }
 
-	public void setAfBajaMaterialList(List<AfBajaMaterial> afBajaMaterialList) {
-		this.afBajaMaterialList = afBajaMaterialList;
-	}
+    public void setAfBajaMaterialList(List<AfBajaMaterial> afBajaMaterialList) {
+        this.afBajaMaterialList = afBajaMaterialList;
+    }
 
-	
     public List<AfAltaMaterialDetalle> getAfAltaMaterialList() {
         return afAltaMaterialDetalleList;
     }
@@ -321,14 +313,14 @@ public class AfRegistroKardexMaterial  {
     }
 
     public AfSolicitudMaterial getIdSolicitudMaterial() {
-		return idSolicitudMaterial;
-	}
+        return idSolicitudMaterial;
+    }
 
-	public void setIdSolicitudMaterial(AfSolicitudMaterial idSolicitudMaterial) {
-		this.idSolicitudMaterial = idSolicitudMaterial;
-	}
+    public void setIdSolicitudMaterial(AfSolicitudMaterial idSolicitudMaterial) {
+        this.idSolicitudMaterial = idSolicitudMaterial;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         Integer hash = 0;
         hash += (idRegistroKardexMaterial != null ? idRegistroKardexMaterial.hashCode() : 0);
@@ -342,7 +334,9 @@ public class AfRegistroKardexMaterial  {
             return false;
         }
         AfRegistroKardexMaterial other = (AfRegistroKardexMaterial) object;
-        if ((this.idRegistroKardexMaterial == null && other.idRegistroKardexMaterial != null) || (this.idRegistroKardexMaterial != null && !this.idRegistroKardexMaterial.equals(other.idRegistroKardexMaterial))) {
+        if ((this.idRegistroKardexMaterial == null && other.idRegistroKardexMaterial != null)
+                || (this.idRegistroKardexMaterial != null
+                        && !this.idRegistroKardexMaterial.equals(other.idRegistroKardexMaterial))) {
             return false;
         }
         return true;
@@ -350,12 +344,13 @@ public class AfRegistroKardexMaterial  {
 
     @Override
     public String toString() {
-        return "gob.gamo.activosf.app.domain.AfRegistroKardexMaterial[ idRegistroKardexMaterial=" + idRegistroKardexMaterial + " ]";
+        return "gob.gamo.activosf.app.domain.AfRegistroKardexMaterial[ idRegistroKardexMaterial="
+                + idRegistroKardexMaterial + " ]";
     }
 
-/* 	@Override
-	public int compareTo(AfRegistroKardexMaterial o) {
-		return this.fechaRegistro.compareTo(o.fechaRegistro);
-	} */
-    
+    /* 	@Override
+    public int compareTo(AfRegistroKardexMaterial o) {
+        return this.fechaRegistro.compareTo(o.fechaRegistro);
+    } */
+
 }

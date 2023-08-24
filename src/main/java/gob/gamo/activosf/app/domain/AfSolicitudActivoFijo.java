@@ -5,9 +5,8 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +15,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -31,60 +25,59 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_solicitud_activo_fijo")
-
-
 public class AfSolicitudActivoFijo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_solicitud_activo_fijo")
     private Integer idSolicitudActivoFijo;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_solicitud", referencedColumnName = "id_solicitud")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfSolicitud idSolicitud;
+
     @JoinColumn(name = "id_activo_fijo", referencedColumnName = "id_activo_fijo")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfActivoFijo idActivoFijo;
 
-    public AfSolicitudActivoFijo() {
-    }
+    public AfSolicitudActivoFijo() {}
 
     public AfSolicitudActivoFijo(Integer idSolicitudActivoFijo) {
         this.idSolicitudActivoFijo = idSolicitudActivoFijo;
     }
 
-    public AfSolicitudActivoFijo(Integer idSolicitudActivoFijo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfSolicitudActivoFijo(
+            Integer idSolicitudActivoFijo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idSolicitudActivoFijo = idSolicitudActivoFijo;
         this.estado = estado;
         this.idTransaccion = idTransaccion;
@@ -195,7 +188,9 @@ public class AfSolicitudActivoFijo {
             return false;
         }
         AfSolicitudActivoFijo other = (AfSolicitudActivoFijo) object;
-        if ((this.idSolicitudActivoFijo == null && other.idSolicitudActivoFijo != null) || (this.idSolicitudActivoFijo != null && !this.idSolicitudActivoFijo.equals(other.idSolicitudActivoFijo))) {
+        if ((this.idSolicitudActivoFijo == null && other.idSolicitudActivoFijo != null)
+                || (this.idSolicitudActivoFijo != null
+                        && !this.idSolicitudActivoFijo.equals(other.idSolicitudActivoFijo))) {
             return false;
         }
         return true;
@@ -203,7 +198,7 @@ public class AfSolicitudActivoFijo {
 
     @Override
     public String toString() {
-        return "gob.gamo.activosf.app.domain.AfSolicitudActivoFijo[ idSolicitudActivoFijo=" + idSolicitudActivoFijo + " ]";
+        return "gob.gamo.activosf.app.domain.AfSolicitudActivoFijo[ idSolicitudActivoFijo=" + idSolicitudActivoFijo
+                + " ]";
     }
-    
 }

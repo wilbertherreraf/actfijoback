@@ -46,10 +46,24 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .cors(SecurityConfigurerAdapter::and)
+                .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**")
+                        .permitAll())
+                .build();
+    }
+
+    public SecurityFilterChain securityFilterChain00(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
+            throws Exception {
+        return http.httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .cors(SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(
                         requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/auth/roles").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/auth/roles", "/api/v1/**")
+                                .permitAll()
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/api/articles/{slug}/comments",

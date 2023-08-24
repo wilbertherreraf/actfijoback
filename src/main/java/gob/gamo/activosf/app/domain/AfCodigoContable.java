@@ -8,7 +8,7 @@ package gob.gamo.activosf.app.domain;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,16 +16,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -33,73 +27,70 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_codigo_contable")
-
 public class AfCodigoContable implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_codigo_contable")
     private Integer idCodigoContable;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
-    
+
     @Column(name = "codigo")
     private String codigo;
-    
-    
-    
+
     @Column(name = "descripcion")
     private String descripcion;
-    
+
     @Column(name = "id_origen")
     private Integer idOrigen;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCodigoContable", fetch = FetchType.LAZY)
     private List<AfFamiliaActivo> afFamiliaActivoList;
 
-    public AfCodigoContable() {
-    }
+    public AfCodigoContable() {}
 
     public AfCodigoContable(Integer idCodigoContable) {
         this.idCodigoContable = idCodigoContable;
     }
 
-    public AfCodigoContable(Integer idCodigoContable, Integer gestion, String codigo, String descripcion, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfCodigoContable(
+            Integer idCodigoContable,
+            Integer gestion,
+            String codigo,
+            String descripcion,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idCodigoContable = idCodigoContable;
         this.gestion = gestion;
         this.codigo = codigo;
@@ -152,14 +143,14 @@ public class AfCodigoContable implements Serializable {
     }
 
     public Integer getIdOrigen() {
-		return idOrigen;
-	}
+        return idOrigen;
+    }
 
-	public void setIdOrigen(Integer idOrigen) {
-		this.idOrigen = idOrigen;
-	}
+    public void setIdOrigen(Integer idOrigen) {
+        this.idOrigen = idOrigen;
+    }
 
-	public Integer getIdTransaccion() {
+    public Integer getIdTransaccion() {
         return idTransaccion;
     }
 
@@ -215,7 +206,6 @@ public class AfCodigoContable implements Serializable {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfFamiliaActivo> getAfFamiliaActivoList() {
         return afFamiliaActivoList;
     }
@@ -238,7 +228,8 @@ public class AfCodigoContable implements Serializable {
             return false;
         }
         AfCodigoContable other = (AfCodigoContable) object;
-        if ((this.idCodigoContable == null && other.idCodigoContable != null) || (this.idCodigoContable != null && !this.idCodigoContable.equals(other.idCodigoContable))) {
+        if ((this.idCodigoContable == null && other.idCodigoContable != null)
+                || (this.idCodigoContable != null && !this.idCodigoContable.equals(other.idCodigoContable))) {
             return false;
         }
         return true;
@@ -248,5 +239,4 @@ public class AfCodigoContable implements Serializable {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfCodigoContable[ idCodigoContable=" + idCodigoContable + " ]";
     }
-    
 }

@@ -19,9 +19,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
-import gob.gamo.activosf.app.repository.AfRevaluoActivoFijoRepository;
-import gob.gamo.activosf.app.repository.GenDesctablaRespository;
+import lombok.RequiredArgsConstructor;
+
 import gob.gamo.activosf.app.domain.AfAccesorioActivoFijo;
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAtributoActivoFijo;
@@ -31,28 +30,25 @@ import gob.gamo.activosf.app.domain.AfImagenActivoFijo;
 import gob.gamo.activosf.app.domain.AfRevaluoActivoFijo;
 import gob.gamo.activosf.app.domain.AfTipoCambio;
 import gob.gamo.activosf.app.domain.AfTransferenciaAsignacion;
-//import gob.gamo.activosf.app.domain.CnfValor;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
-import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.dto.ActivoFijoRfidVo;
 import gob.gamo.activosf.app.dto.AgrupadorReporteVo;
-import gob.gamo.activosf.app.services.CalcContabService;
-import gob.gamo.activosf.app.utils.TransactionUtil;
-import lombok.RequiredArgsConstructor;
 import gob.gamo.activosf.app.dto.CriteriosBusquedaEnum;
 import gob.gamo.activosf.app.dto.ItemReporteVo;
 import gob.gamo.activosf.app.dto.ReporteActivoFijoEnum;
 import gob.gamo.activosf.app.dto.ReporteContableEnum;
 import gob.gamo.activosf.app.dto.StatusEnum;
-import gob.gamo.activosf.app.dto.TupleVo;
 import gob.gamo.activosf.app.dto.UserRequestVo;
+import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
+import gob.gamo.activosf.app.repository.AfRevaluoActivoFijoRepository;
+import gob.gamo.activosf.app.repository.GenDesctablaRespository;
 
 /**
  *
  * @author wherrera
  */
-
 @RequiredArgsConstructor
 public class AfActivoFijoBl {
 
@@ -72,15 +68,15 @@ public class AfActivoFijoBl {
         return afSearchService.buscadorAvanzadoContar(criterios);
     }
 
-    public List<AfActivoFijo> buscadorAvanzadoBuscar(HashMap<CriteriosBusquedaEnum, Object> criterios, Integer limit,
-            Integer offset, String[] lazy) {
+    public List<AfActivoFijo> buscadorAvanzadoBuscar(
+            HashMap<CriteriosBusquedaEnum, Object> criterios, Integer limit, Integer offset, String[] lazy) {
         List<AfActivoFijo> result = afSearchService.buscadorAvanzadoBuscar(criterios, limit, offset);
         // LazyLoadingUtil.loadCollection(result, lazy);
         return result;
     }
 
-    public List<AgrupadorReporteVo> getReporteContablePorCriterios(ReporteContableEnum reporte,
-            HashMap<CriteriosBusquedaEnum, Object> criterios, Date fechaCalculoContable) {
+    public List<AgrupadorReporteVo> getReporteContablePorCriterios(
+            ReporteContableEnum reporte, HashMap<CriteriosBusquedaEnum, Object> criterios, Date fechaCalculoContable) {
         List<AgrupadorReporteVo> result = new ArrayList<>();
         switch (reporte) {
             case INVENTARIO_ORDENADO_CODIGO_ACTIVO:
@@ -89,38 +85,33 @@ public class AfActivoFijoBl {
                 break;
             }
             case INVENTARIO_AGRUPADO_RESPONSABLE: {
-                getDataInventarioAgrupadoPorResponsable(criterios, result,
-                        fechaCalculoContable, true);
+                getDataInventarioAgrupadoPorResponsable(criterios, result, fechaCalculoContable, true);
                 break;
             }
             case INVENTARIO_AGRUPADO_POR_FAMILIA: {
-                getDataInventarioAgrupadoPorFamilia(criterios,
-                        fechaCalculoContable, result, true);
+                getDataInventarioAgrupadoPorFamilia(criterios, fechaCalculoContable, result, true);
                 break;
             }
 
             case INVENTARIO_AGRUPADO_POR_CODIGO_CONTABLE: {
-                getDataInventarioAgrupadoPorCodigoContable(criterios,
-                        fechaCalculoContable, result, true);
+                getDataInventarioAgrupadoPorCodigoContable(criterios, fechaCalculoContable, result, true);
                 break;
             }
             case INVENTARIO_AGRUPADO_POR_PARTIDA_PRESUPUESTARIA: {
-                getDataInventarioAgrupadoPorPartidaPresupuestaria(criterios,
-                        fechaCalculoContable, result, true);
+                getDataInventarioAgrupadoPorPartidaPresupuestaria(criterios, fechaCalculoContable, result, true);
                 break;
             }
             case INVENTARIO_AGRUPADO_POR_SUBFAMILIA: {
-                getDataInventarioAgrupadoPorSubfamilia(criterios,
-                        fechaCalculoContable, result, true);
+                getDataInventarioAgrupadoPorSubfamilia(criterios, fechaCalculoContable, result, true);
                 break;
             }
 
             case AGRUPADO_POR_FAMILIA_REVALUO:
             case AGRUPADO_POR_FAMILIA: {
                 Map<String, ItemReporteVo> agrupadoFamilia = new HashMap<String, ItemReporteVo>();
-                String[] lazy = { "idSubFamilia" };
+                String[] lazy = {"idSubFamilia"};
                 List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
-                //Map<TupleVo<String, String>, CnfValor> catalogos = cnfCatalogoBl.getMapCnfValor();
+                // Map<TupleVo<String, String>, CnfValor> catalogos = cnfCatalogoBl.getMapCnfValor();
 
                 realizarCalculosContablesListAsync(activosFijos, fechaCalculoContable);
                 for (AfActivoFijo afActivoFijo : activosFijos) {
@@ -132,15 +123,17 @@ public class AfActivoFijoBl {
                     if (familiaAgrupada == null) {
                         familiaAgrupada = new ItemReporteVo();
                         familiaAgrupada.setDescripcion(activoFijo.getFamilia());
-                        familiaAgrupada.setVidaUtil(afActivoFijo.getCalculoContableVo().getAniosVidaUtil());
+                        familiaAgrupada.setVidaUtil(
+                                afActivoFijo.getCalculoContableVo().getAniosVidaUtil());
                     }
                     familiaAgrupada.agruparItemReporteVo(activoFijo);
                     agrupadoFamilia.put(activoFijo.getFamilia(), familiaAgrupada);
                 }
                 AgrupadorReporteVo agrupador = new AgrupadorReporteVo();
                 agrupador.setFechaCalculo(fechaCalculoContable);
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                        .getCambio());
                 List<ItemReporteVo> items = new ArrayList<ItemReporteVo>();
                 items.addAll(agrupadoFamilia.values());
 
@@ -157,11 +150,10 @@ public class AfActivoFijoBl {
             }
         }
         return result;
-
     }
 
-    public List<AgrupadorReporteVo> getReporteActivosFijosPorCriterios(ReporteActivoFijoEnum reporte,
-            HashMap<CriteriosBusquedaEnum, Object> criterios) {
+    public List<AgrupadorReporteVo> getReporteActivosFijosPorCriterios(
+            ReporteActivoFijoEnum reporte, HashMap<CriteriosBusquedaEnum, Object> criterios) {
         List<AgrupadorReporteVo> result = new ArrayList<>();
         Date fechaReporte = new Date();
         switch (reporte) {
@@ -170,26 +162,21 @@ public class AfActivoFijoBl {
                 break;
             }
             case INVENTARIO_AGRUPADO_RESPONSABLE: {
-                getDataInventarioAgrupadoPorResponsable(criterios, result,
-                        fechaReporte, false);
+                getDataInventarioAgrupadoPorResponsable(criterios, result, fechaReporte, false);
                 break;
             }
             case INVENTARIO_AGRUPADO_POR_FAMILIA: {
-                getDataInventarioAgrupadoPorFamilia(criterios,
-                        fechaReporte, result, false);
+                getDataInventarioAgrupadoPorFamilia(criterios, fechaReporte, result, false);
                 break;
             }
             case INVENTARIO_AGRUPADO_POR_CODIGO_CONTABLE: {
-                getDataInventarioAgrupadoPorCodigoContable(criterios,
-                        fechaReporte, result, false);
+                getDataInventarioAgrupadoPorCodigoContable(criterios, fechaReporte, result, false);
             }
             case INVENTARIO_AGRUPADO_POR_PARTIDA_PRESUPUESTARIA: {
-                getDataInventarioAgrupadoPorPartidaPresupuestaria(criterios,
-                        fechaReporte, result, false);
+                getDataInventarioAgrupadoPorPartidaPresupuestaria(criterios, fechaReporte, result, false);
             }
             case INVENTARIO_AGRUPADO_POR_SUBFAMILIA: {
-                getDataInventarioAgrupadoPorSubfamilia(criterios,
-                        fechaReporte, result, false);
+                getDataInventarioAgrupadoPorSubfamilia(criterios, fechaReporte, result, false);
                 break;
             }
         }
@@ -198,9 +185,11 @@ public class AfActivoFijoBl {
 
     private void getDataInventarioAgrupadoPorResponsable(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            List<AgrupadorReporteVo> result, Date fechaReporte, boolean contable) {
+            List<AgrupadorReporteVo> result,
+            Date fechaReporte,
+            boolean contable) {
         Map<String, List<ItemReporteVo>> responsablesMap = new HashMap<String, List<ItemReporteVo>>();
-        String[] lazy = { "idUsuarioAsignado" };
+        String[] lazy = {"idUsuarioAsignado"};
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
 
         if (contable) {
@@ -230,8 +219,9 @@ public class AfActivoFijoBl {
             agrupador.setAsignado(key);
             agrupador.setFechaCalculo(fechaReporte);
             if (contable) {
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaReporte).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaReporte)
+                        .getCambio());
             }
             agrupador.setItems(responsablesMap.get(key));
             result.add(agrupador);
@@ -246,9 +236,11 @@ public class AfActivoFijoBl {
 
     private void getDataInventarioAgrupadoPorSubfamilia(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            Date fechaCalculoContable, List<AgrupadorReporteVo> result, boolean contable) {
+            Date fechaCalculoContable,
+            List<AgrupadorReporteVo> result,
+            boolean contable) {
         Map<String, List<ItemReporteVo>> subfamiliasMap = new HashMap<String, List<ItemReporteVo>>();
-        String[] lazy = { "idSubFamilia" };
+        String[] lazy = {"idSubFamilia"};
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
         if (contable) {
             realizarCalculosContablesListAsync(activosFijos, fechaCalculoContable);
@@ -278,8 +270,9 @@ public class AfActivoFijoBl {
             agrupador.setSubfamilia(key);
             agrupador.setFechaCalculo(fechaCalculoContable);
             if (contable) {
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                        .getCambio());
             }
             agrupador.setItems(subfamiliasMap.get(key));
             result.add(agrupador);
@@ -298,7 +291,9 @@ public class AfActivoFijoBl {
 
     private void getDataInventario(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            Date fechaCalculoContable, List<AgrupadorReporteVo> result, boolean contable) {
+            Date fechaCalculoContable,
+            List<AgrupadorReporteVo> result,
+            boolean contable) {
         List<ItemReporteVo> items = new ArrayList<>();
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, null);
 
@@ -323,8 +318,9 @@ public class AfActivoFijoBl {
         AgrupadorReporteVo agrupador = new AgrupadorReporteVo();
         agrupador.setFechaCalculo(fechaCalculoContable);
         if (contable) {
-            agrupador.setTipoCambioFechaCalculo(
-                    afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+            agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                    .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                    .getCambio());
         }
         agrupador.setItems(items);
         result.add(agrupador);
@@ -332,9 +328,11 @@ public class AfActivoFijoBl {
 
     private void getDataInventarioAgrupadoPorPartidaPresupuestaria(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            Date fechaCalculoContable, List<AgrupadorReporteVo> result, boolean contable) {
+            Date fechaCalculoContable,
+            List<AgrupadorReporteVo> result,
+            boolean contable) {
         Map<String, List<ItemReporteVo>> partidaPresupuestariaMap = new HashMap<String, List<ItemReporteVo>>();
-        String[] lazy = { "idSubFamilia" };
+        String[] lazy = {"idSubFamilia"};
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
 
         if (contable) {
@@ -346,8 +344,8 @@ public class AfActivoFijoBl {
             if (contable) {
                 construirItemReporteVoContable(item, afActivoFijo);
             }
-            List<ItemReporteVo> partidaPresupuestariaList = partidaPresupuestariaMap
-                    .get(item.getPartidaPresupuestaria());
+            List<ItemReporteVo> partidaPresupuestariaList =
+                    partidaPresupuestariaMap.get(item.getPartidaPresupuestaria());
             if (partidaPresupuestariaList == null) {
                 partidaPresupuestariaList = new ArrayList<>();
                 partidaPresupuestariaMap.put(item.getPartidaPresupuestaria(), partidaPresupuestariaList);
@@ -365,8 +363,9 @@ public class AfActivoFijoBl {
             agrupador.setPartidaPresupuestaria(key);
             agrupador.setFechaCalculo(fechaCalculoContable);
             if (contable) {
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                        .getCambio());
             }
             agrupador.setItems(partidaPresupuestariaMap.get(key));
             result.add(agrupador);
@@ -381,9 +380,11 @@ public class AfActivoFijoBl {
 
     private void getDataInventarioAgrupadoPorFamilia(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            Date fechaCalculoContable, List<AgrupadorReporteVo> result, boolean contable) {
+            Date fechaCalculoContable,
+            List<AgrupadorReporteVo> result,
+            boolean contable) {
         Map<String, List<ItemReporteVo>> familiasMap = new HashMap<String, List<ItemReporteVo>>();
-        String[] lazy = { "idSubFamilia" };
+        String[] lazy = {"idSubFamilia"};
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
         if (contable) {
             realizarCalculosContablesListAsync(activosFijos, fechaCalculoContable);
@@ -412,8 +413,9 @@ public class AfActivoFijoBl {
             agrupador.setFamilia(key);
             agrupador.setFechaCalculo(fechaCalculoContable);
             if (contable) {
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                        .getCambio());
             }
             agrupador.setItems(familiasMap.get(key));
             result.add(agrupador);
@@ -428,9 +430,11 @@ public class AfActivoFijoBl {
 
     private void getDataInventarioAgrupadoPorCodigoContable(
             HashMap<CriteriosBusquedaEnum, Object> criterios,
-            Date fechaCalculoContable, List<AgrupadorReporteVo> result, boolean contable) {
+            Date fechaCalculoContable,
+            List<AgrupadorReporteVo> result,
+            boolean contable) {
         Map<String, List<ItemReporteVo>> codigoContableMap = new HashMap<String, List<ItemReporteVo>>();
-        String[] lazy = { "idSubFamilia" };
+        String[] lazy = {"idSubFamilia"};
         List<AfActivoFijo> activosFijos = buscadorAvanzadoBuscar(criterios, null, null, lazy);
         if (contable) {
             realizarCalculosContablesListAsync(activosFijos, fechaCalculoContable);
@@ -459,8 +463,9 @@ public class AfActivoFijoBl {
             agrupador.setCodigoContable(key);
             agrupador.setFechaCalculo(fechaCalculoContable);
             if (contable) {
-                agrupador.setTipoCambioFechaCalculo(
-                        afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable).getCambio());
+                agrupador.setTipoCambioFechaCalculo(afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculoContable)
+                        .getCambio());
             }
             agrupador.setItems(codigoContableMap.get(key));
             result.add(agrupador);
@@ -476,17 +481,23 @@ public class AfActivoFijoBl {
     private void construirItemReporteVoContable(ItemReporteVo itemReporteVo, AfActivoFijo afActivoFijo) {
         itemReporteVo.setIndiceUfv(afActivoFijo.getCalculoContableVo().getTipoCambioIncorporacion());
         itemReporteVo.setVidaUtil(afActivoFijo.getCalculoContableVo().getAniosVidaUtil());
-        itemReporteVo.setPorcentajeDepreciacionAnual(afActivoFijo.getCalculoContableVo().getPorcentajeDepreciacion());
+        itemReporteVo.setPorcentajeDepreciacionAnual(
+                afActivoFijo.getCalculoContableVo().getPorcentajeDepreciacion());
         itemReporteVo.setDiasConsumidos(afActivoFijo.getCalculoContableVo().getDiasConsumidos());
-        itemReporteVo.setDiasVidaUtilNominal(
-                afActivoFijo.getCalculoContableVo().getDiasVidaUtilResidualNominal().intValue());
+        itemReporteVo.setDiasVidaUtilNominal(afActivoFijo
+                .getCalculoContableVo()
+                .getDiasVidaUtilResidualNominal()
+                .intValue());
         itemReporteVo.setFactorActualizacion(afActivoFijo.getCalculoContableVo().getFactorActual());
-        itemReporteVo.setActualizacionGestion(afActivoFijo.getCalculoContableVo().getActualizacionGestion());
-        itemReporteVo.setCostoFinalActualizado(afActivoFijo.getCalculoContableVo().getValorActual());
+        itemReporteVo.setActualizacionGestion(
+                afActivoFijo.getCalculoContableVo().getActualizacionGestion());
+        itemReporteVo.setCostoFinalActualizado(
+                afActivoFijo.getCalculoContableVo().getValorActual());
         itemReporteVo.setDepreciacionMigrado(afActivoFijo.getCalculoContableVo().getDepreciacionAcumuladaInicial());
         itemReporteVo.setDepreciacionGestion(afActivoFijo.getCalculoContableVo().getDepreciacionGestion());
         // itemReporteVo.setDepreciacionAcumuladaTotal(afActivoFijo.getCalculoContableVo().getDepreciacionAcumuladaInicial().add(afActivoFijo.getCalculoContableVo().getDepreciacionGestion()));
-        itemReporteVo.setDepreciacionAcumuladaTotal(afActivoFijo.getCalculoContableVo().getDepreciacionAcumulada());
+        itemReporteVo.setDepreciacionAcumuladaTotal(
+                afActivoFijo.getCalculoContableVo().getDepreciacionAcumulada());
         itemReporteVo.setValorNeto(afActivoFijo.getCalculoContableVo().getValorNeto());
         itemReporteVo.setActualizacionDepreciacionAcumulada(
                 afActivoFijo.getCalculoContableVo().getActualizacionDepreciacionAcumulada());
@@ -499,13 +510,11 @@ public class AfActivoFijoBl {
         itemReporteVo.setCodigo(afActivoFijo.getCodigoEan());
         // itemReporteVo.setCentroCosto(getDescCatalogo(catalogo, "CAT_CENTRO_COSTO",
         // afActivoFijo.getCatCentroCosto()));
-        itemReporteVo.setCentroCosto(
-                getDescCatalogo(afActivoFijo.getTabCentroCosto(), afActivoFijo.getCentroCosto()));
+        itemReporteVo.setCentroCosto(getDescCatalogo(afActivoFijo.getTabCentroCosto(), afActivoFijo.getCentroCosto()));
         itemReporteVo.setDescripcion(afActivoFijo.getDescripcion());
         // itemReporteVo.setCondicion(getDescCatalogo(catalogo, "CAT_ESTADO_USO",
         // afActivoFijo.getCatEstadoUso()));
-        itemReporteVo
-                .setCentroCosto(getDescCatalogo(afActivoFijo.getTabEstadoUso(), afActivoFijo.getEstadoUso()));
+        itemReporteVo.setCentroCosto(getDescCatalogo(afActivoFijo.getTabEstadoUso(), afActivoFijo.getEstadoUso()));
         itemReporteVo.setCostoHistorico(afActivoFijo.getCostoHistorico());
         itemReporteVo.setCostoMigrado(afActivoFijo.getCostoActual());
         itemReporteVo.setFechaMigracion(afActivoFijo.getFechaActual());
@@ -513,24 +522,27 @@ public class AfActivoFijoBl {
         itemReporteVo.setRevaluado(afActivoFijo.getRevalorizado());
         if (afActivoFijo.getRevalorizado()) {
             if (afActivoFijo.getCostoActual().compareTo(afActivoFijo.getCostoAntesRevaluo()) >= 0) {
-                itemReporteVo
-                        .setIncremento(afActivoFijo.getCostoActual().subtract(afActivoFijo.getCostoAntesRevaluo()));
+                itemReporteVo.setIncremento(
+                        afActivoFijo.getCostoActual().subtract(afActivoFijo.getCostoAntesRevaluo()));
             } else {
-                itemReporteVo
-                        .setDecremento(afActivoFijo.getCostoAntesRevaluo().subtract(afActivoFijo.getCostoActual()));
+                itemReporteVo.setDecremento(
+                        afActivoFijo.getCostoAntesRevaluo().subtract(afActivoFijo.getCostoActual()));
             }
             itemReporteVo.setAntesRevaluo(afActivoFijo.getCostoAntesRevaluo());
         }
-        itemReporteVo.setFamilia(afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo() + ": "
-                + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getDescripcion());
-        itemReporteVo.setSubfamilia(
-                afActivoFijo.getIdSubFamilia().getCodigo() + ": " + afActivoFijo.getIdSubFamilia().getDescripcion());
-        //itemReporteVo                .setEdificio(getDescCatalogo(catalogo, "CAT_EDIFICIO", afActivoFijo.getIdAmbiente().getCatEdificio()));
+        itemReporteVo.setFamilia(
+                afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo() + ": "
+                        + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getDescripcion());
+        itemReporteVo.setSubfamilia(afActivoFijo.getIdSubFamilia().getCodigo() + ": "
+                + afActivoFijo.getIdSubFamilia().getDescripcion());
+        // itemReporteVo                .setEdificio(getDescCatalogo(catalogo, "CAT_EDIFICIO",
+        // afActivoFijo.getIdAmbiente().getCatEdificio()));
         itemReporteVo.setCentroCosto(getDescCatalogo(afActivoFijo.getTabEstadoUso(), afActivoFijo.getEstadoUso()));
 
-        //itemReporteVo.setPiso(getDescCatalogo(catalogo, "CAT_PISO", afActivoFijo.getIdAmbiente().getCatPiso()));
+        // itemReporteVo.setPiso(getDescCatalogo(catalogo, "CAT_PISO", afActivoFijo.getIdAmbiente().getCatPiso()));
         itemReporteVo.setAmbiente(afActivoFijo.getIdAmbiente().getNombre());
-        itemReporteVo.setResponsable(afActivoFijo.getIdUsuarioAsignado().getIdPersona().getNombreCompleto());
+        itemReporteVo.setResponsable(
+                afActivoFijo.getIdUsuarioAsignado().getIdPersona().getNombreCompleto());
         itemReporteVo.setObservaciones(afActivoFijo.getObservaciones());
         itemReporteVo.setOrganismoFinanciador("Fuente: "
                 + getDescCatalogo(afActivoFijo.getTabFenteFinanciamiento(), afActivoFijo.getFuenteFinanciamiento())
@@ -539,19 +551,34 @@ public class AfActivoFijoBl {
         itemReporteVo.setTipoAsignacion(
                 getDescCatalogo(afActivoFijo.getTabTipoAsignacion(), afActivoFijo.getTipoAsignacion()));
 
-        itemReporteVo.setPartidaPresupuestaria(
-                afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getIdPartidaPresupuestaria().getCodigo()
-                        + ": " + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getIdPartidaPresupuestaria()
-                                .getDescripcion());
-        itemReporteVo
-                .setCodigoContable(afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getIdCodigoContable().getCodigo()
-                        + ": " + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getIdPartidaPresupuestaria()
-                                .getDescripcion());
+        itemReporteVo.setPartidaPresupuestaria(afActivoFijo
+                        .getIdSubFamilia()
+                        .getIdFamiliaActivo()
+                        .getIdPartidaPresupuestaria()
+                        .getCodigo()
+                + ": "
+                + afActivoFijo
+                        .getIdSubFamilia()
+                        .getIdFamiliaActivo()
+                        .getIdPartidaPresupuestaria()
+                        .getDescripcion());
+        itemReporteVo.setCodigoContable(afActivoFijo
+                        .getIdSubFamilia()
+                        .getIdFamiliaActivo()
+                        .getIdCodigoContable()
+                        .getCodigo()
+                + ": "
+                + afActivoFijo
+                        .getIdSubFamilia()
+                        .getIdFamiliaActivo()
+                        .getIdPartidaPresupuestaria()
+                        .getDescripcion());
 
         StringBuilder atributos = new StringBuilder();
         if (afActivoFijo.getAfAtributoActivoFijoList() != null) {
             for (AfAtributoActivoFijo item : afActivoFijo.getAfAtributoActivoFijoList()) {
-                atributos.append(getDescCatalogo(item.getTabTipoAtributo(), item.getTipoAtributo()))
+                atributos
+                        .append(getDescCatalogo(item.getTabTipoAtributo(), item.getTipoAtributo()))
                         .append(": ");
                 atributos.append(item.getDetalle()).append("\n");
             }
@@ -563,9 +590,9 @@ public class AfActivoFijoBl {
         StringBuilder componentes = new StringBuilder();
         if (afActivoFijo.getAfComponenteActivoFijoList() != null) {
             for (AfComponenteActivoFijo item : afActivoFijo.getAfComponenteActivoFijoList()) {
-/*                 componentes.append(
-                        getDescCatalogo(catalogo, "CAT_COMPONENTE_ACTIVO_FIJO", item.getCatComponenteActivoFijo()))
-                        .append(": "); */
+                /*                 componentes.append(
+                getDescCatalogo(catalogo, "CAT_COMPONENTE_ACTIVO_FIJO", item.getCatComponenteActivoFijo()))
+                .append(": "); */
                 componentes.append(item.getCantidad()).append("\n");
             }
         } else {
@@ -585,23 +612,27 @@ public class AfActivoFijoBl {
 
         StringBuilder garantia = new StringBuilder();
         if (afActivoFijo.getIdGarantiaActivoFijo() != null) {
-            garantia.append("Tipo: ").append(getDescCatalogo(afActivoFijo.getIdGarantiaActivoFijo().getTabTipoGarantia(),
-                    afActivoFijo.getIdGarantiaActivoFijo().getTipoGarantia())).append("\n");
-            garantia.append("Del ").append(
-                    AgrupadorReporteVo.SD_NORMAL.format(afActivoFijo.getIdGarantiaActivoFijo().getFechaInicio()));
-            garantia.append(" al ").append(
-                    AgrupadorReporteVo.SD_NORMAL.format(afActivoFijo.getIdGarantiaActivoFijo().getFechaInicio()));
+            garantia.append("Tipo: ")
+                    .append(getDescCatalogo(
+                            afActivoFijo.getIdGarantiaActivoFijo().getTabTipoGarantia(),
+                            afActivoFijo.getIdGarantiaActivoFijo().getTipoGarantia()))
+                    .append("\n");
+            garantia.append("Del ")
+                    .append(AgrupadorReporteVo.SD_NORMAL.format(
+                            afActivoFijo.getIdGarantiaActivoFijo().getFechaInicio()));
+            garantia.append(" al ")
+                    .append(AgrupadorReporteVo.SD_NORMAL.format(
+                            afActivoFijo.getIdGarantiaActivoFijo().getFechaInicio()));
         } else {
             garantia.append("SIN GARANTIA");
         }
         itemReporteVo.setGarantia(garantia.toString());
-
     }
 
-    private String getDescCatalogo(Integer cnfCatalogo,
-            Integer cnfValor) {
+    private String getDescCatalogo(Integer cnfCatalogo, Integer cnfValor) {
         if (cnfValor != null) {
-            Optional<GenDesctabla> genDesctablaOpt = genDesctablaRespository.findByDesCodtabAndDesCodigo(cnfCatalogo, cnfValor);
+            Optional<GenDesctabla> genDesctablaOpt =
+                    genDesctablaRespository.findByDesCodtabAndDesCodigo(cnfCatalogo, cnfValor);
             if (genDesctablaOpt.isPresent()) {
                 return genDesctablaOpt.get().getDesDescrip();
             } else {
@@ -611,21 +642,25 @@ public class AfActivoFijoBl {
         } else {
             return null;
         }
-
     }
 
     public void realizarCalculosContablesIndividual(AfActivoFijo afActivoFijoOrigen, Date fechaCalculo) {
-        AfActivoFijo afActivoFijo = afActivoFijoRepository.findById(afActivoFijoOrigen.getIdActivoFijo())
+        AfActivoFijo afActivoFijo = afActivoFijoRepository
+                .findById(afActivoFijoOrigen.getIdActivoFijo())
                 .orElseThrow(() -> new DataException("id inexistente material"));
         if (fechaCalculo == null) {
             fechaCalculo = new Date();
         }
         CalcContabService calculoContableVo = new CalcContabService(afActivoFijo, fechaCalculo);
-        AfTipoCambio tipoCambioVidaUtil = afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV",
-                calculoContableVo.getFechaVidaUtil());
+        AfTipoCambio tipoCambioVidaUtil =
+                afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", calculoContableVo.getFechaVidaUtil());
         calculoContableVo.calcular(
-                afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", afActivoFijo.getFechaActual()).getCambio(),
-                afTipoCambioBl.getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculo).getCambio(),
+                afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", afActivoFijo.getFechaActual())
+                        .getCambio(),
+                afTipoCambioBl
+                        .getAfTipoCambioByCatMonedaAndFecha("UFV", fechaCalculo)
+                        .getCambio(),
                 tipoCambioVidaUtil != null ? tipoCambioVidaUtil.getCambio() : BigDecimal.ZERO);
 
         afActivoFijoOrigen.setCalculoContableVo(calculoContableVo);
@@ -645,9 +680,12 @@ public class AfActivoFijoBl {
                 System.out.println("--ID--> " + afActivoFijo.getIdActivoFijo());
                 System.out.println("--Gestion--> " + afActivoFijo.getGestion());
                 System.out.println("--FechaActual--> " + afActivoFijo.getFechaActual());
-                Future<CalcContabService> calculoContableVo = afActivoFijoBlAsync
-                        .realizarCalculosContablesIndividualAsync(afActivoFijo.getIdActivoFijo(),
-                                afActivoFijo.getGestion(), fechaCalculo, afTipoCambio.getCambio());
+                Future<CalcContabService> calculoContableVo =
+                        afActivoFijoBlAsync.realizarCalculosContablesIndividualAsync(
+                                afActivoFijo.getIdActivoFijo(),
+                                afActivoFijo.getGestion(),
+                                fechaCalculo,
+                                afTipoCambio.getCambio());
                 calculos.put(afActivoFijo, calculoContableVo);
             }
 
@@ -657,7 +695,8 @@ public class AfActivoFijoBl {
                 for (AfActivoFijo afActivoFijo : keys) {
                     if (calculos.get(afActivoFijo).isDone()) {
                         try {
-                            afActivoFijo.setCalculoContableVo(calculos.get(afActivoFijo).get());
+                            afActivoFijo.setCalculoContableVo(
+                                    calculos.get(afActivoFijo).get());
                             forRemove.add(afActivoFijo);
                         } catch (InterruptedException | ExecutionException e) {
                             throw new DataException("Error al procesar asíncronamete ", e);
@@ -689,10 +728,11 @@ public class AfActivoFijoBl {
         afActivoFijoRepository.save(afActivoFijo);
     }
 
-    public void revaluoActivoFijo(AfRevaluoActivoFijo afRevaluoActivoFijo, AfActivoFijo afActivoFijo,
-            UserRequestVo userRequestVo) {
+    public void revaluoActivoFijo(
+            AfRevaluoActivoFijo afRevaluoActivoFijo, AfActivoFijo afActivoFijo, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
-        AfActivoFijo activo = afActivoFijoRepository.findById(afActivoFijo.getIdActivoFijo())
+        AfActivoFijo activo = afActivoFijoRepository
+                .findById(afActivoFijo.getIdActivoFijo())
                 .orElseThrow(() -> new DataException("id inexistente AF"));
         realizarCalculosContablesIndividual(activo, afRevaluoActivoFijo.getFechaRevaluo());
         afRevaluoActivoFijo.setDepAlRevaluo(activo.getDepAcumuladaActual());
@@ -712,11 +752,10 @@ public class AfActivoFijoBl {
         activo.setDepAcumuladaActual(BigDecimal.ZERO);
         activo.setRevalorizado(true);
         afActivoFijoRepository.save(activo);
-
     }
 
-    public void disableAfActivoFijo(AfActivoFijo afActivoFijo, AfBajaActivoFijo afBajaActivoFijo,
-            UserRequestVo userRequestVo) {
+    public void disableAfActivoFijo(
+            AfActivoFijo afActivoFijo, AfBajaActivoFijo afBajaActivoFijo, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afActivoFijo.setCatEstadoActivoFijo("DEBAJA");
         afBajaActivoFijo.setIdActivoFijo(afActivoFijo);
@@ -729,9 +768,12 @@ public class AfActivoFijoBl {
         afActivoFijoRepository.save(afActivoFijo);
     }
 
-    public void transferAfActivoFijo(AfActivoFijo afActivoFijo, AfTransferenciaAsignacion afTransferenciaAsignacion,
+    public void transferAfActivoFijo(
+            AfActivoFijo afActivoFijo,
+            AfTransferenciaAsignacion afTransferenciaAsignacion,
             AfTransferenciaAsignacion.TipoTransferencia catTransferenciaAsignacion,
-            List<AfImagenActivoFijo> afImagenActivoFijos, UserRequestVo userRequestVo) {
+            List<AfImagenActivoFijo> afImagenActivoFijos,
+            UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
 
         afTransferenciaAsignacion.setIdUsuarioDestino(afActivoFijo.getIdUsuarioAsignado());
@@ -765,8 +807,11 @@ public class AfActivoFijoBl {
         afActivoFijoRepository.save(afActivoFijo);
     }
 
-    public void addAfAccesorioActivoFijo(AfActivoFijo afActivoFijo, AfAccesorioActivoFijo afAccesorioActivoFijo,
-            List<AfImagenActivoFijo> afImagenActivoFijos, UserRequestVo userRequestVo) {
+    public void addAfAccesorioActivoFijo(
+            AfActivoFijo afActivoFijo,
+            AfAccesorioActivoFijo afAccesorioActivoFijo,
+            List<AfImagenActivoFijo> afImagenActivoFijos,
+            UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
 
         afAccesorioActivoFijo.setEstado(StatusEnum.ACTIVE.getStatus());
@@ -808,24 +853,22 @@ public class AfActivoFijoBl {
     }
 
     public List<AfActivoFijo> findAllActivesAfActivoFijo() {
-        return afActivoFijoRepository.findAll();// .findAllActives();
+        return afActivoFijoRepository.findAll(); // .findAllActives();
     }
 
     public AfActivoFijo findByPkAfActivoFijo(Integer pk) {
         return afActivoFijoRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente AF: " + pk));
-
     }
 
     public AfActivoFijo findByPkAfActivoFijoLazy(Integer pk) {
-        AfActivoFijo afActivoFijo = afActivoFijoRepository.findById(pk)
-                .orElseThrow(() -> new DataException("id inexistente AF: " + pk));
+        AfActivoFijo afActivoFijo =
+                afActivoFijoRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente AF: " + pk));
         // LazyLoadingUtil.load(afActivoFijo, "idSubFamilia");
         return afActivoFijo;
-
     }
 
-    public List<AfActivoFijo> findAllAfActivoFijoByNotaRecepcion(Integer gestion, Integer idNotaRecepcion,
-            String[] lazy) {
+    public List<AfActivoFijo> findAllAfActivoFijoByNotaRecepcion(
+            Integer gestion, Integer idNotaRecepcion, String[] lazy) {
         List<AfActivoFijo> result = afActivoFijoRepository.findAllAfActivoFijoByNotaRecepcion(idNotaRecepcion);
         // LazyLoadingUtil.loadCollection(result, lazy);
         return result;
@@ -837,7 +880,8 @@ public class AfActivoFijoBl {
         return result;
     }
 
-    public List<AfActivoFijo> findAllAfActivoFijoAsignadoPorIdUsuario(Integer gestion, Integer idUsuario, String[] lazy) {
+    public List<AfActivoFijo> findAllAfActivoFijoAsignadoPorIdUsuario(
+            Integer gestion, Integer idUsuario, String[] lazy) {
         List<AfActivoFijo> result = afActivoFijoRepository.findAllAfActivoFijoAsignadoPorIdUsuario(gestion, idUsuario);
         // LazyLoadingUtil.loadCollection(result, lazy);
         return result;
@@ -878,7 +922,7 @@ public class AfActivoFijoBl {
 
     /******************************************** */
 
-/*     private String getDescCatalogo0(Map<TupleVo<String, String>, CnfValor> catalogo, String cnfCatalogo,
+    /*     private String getDescCatalogo0(Map<TupleVo<String, String>, CnfValor> catalogo, String cnfCatalogo,
             String cnfValor) {
         if (cnfValor != null) {
             CnfValor valor = catalogo.get(new TupleVo<String, String>(cnfCatalogo, cnfValor));

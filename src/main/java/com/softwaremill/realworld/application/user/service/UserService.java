@@ -1,17 +1,15 @@
 package com.softwaremill.realworld.application.user.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.softwaremill.realworld.application.user.controller.LoginUserRequest;
 import com.softwaremill.realworld.application.user.controller.SignUpUserRequest;
 import com.softwaremill.realworld.application.user.controller.UpdateUserRequest;
 import com.softwaremill.realworld.domain.user.User;
 import com.softwaremill.realworld.domain.user.UserRepository;
 import com.softwaremill.realworld.domain.user.UserVO;
-
-import gob.gamo.activosf.app.config.BearerTokenSupplier;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final BearerTokenSupplier bearerTokenSupplier;
 
     @Transactional
     public User signUp(SignUpUserRequest request) {
@@ -41,7 +38,7 @@ public class UserService {
                 .findByEmail(request.email())
                 .filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
                 .map(user -> {
-                    //String token = bearerTokenSupplier.supply(user);
+                    // String token = bearerTokenSupplier.supply(user);
                     String token = "";
                     return new UserVO(user.possessToken(token));
                 })

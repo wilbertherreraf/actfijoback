@@ -9,14 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfProveedor;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 /**
  *
  * @author wherrera
  */
-
-public interface AfProveedorRepository extends JpaRepository<AfProveedor, Integer>{
-
-}
+public interface AfProveedorRepository extends JpaRepository<AfProveedor, Integer> {}

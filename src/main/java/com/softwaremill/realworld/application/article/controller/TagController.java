@@ -1,11 +1,11 @@
 package com.softwaremill.realworld.application.article.controller;
 
-import com.softwaremill.realworld.application.article.service.TagService;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.softwaremill.realworld.application.article.service.TagService;
 
 import lombok.RequiredArgsConstructor;
 

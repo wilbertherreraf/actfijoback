@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -16,8 +17,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileId implements Serializable {
-    @Column(name = "prr_rolid")    
+    @Column(name = "prr_rolid")
     private Integer rolId;
+
     @Column(name = "prr_resid")
     private Integer recursoId;
 }

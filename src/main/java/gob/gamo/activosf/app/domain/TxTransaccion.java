@@ -5,22 +5,16 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -28,30 +22,23 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "tx_transaccion")
-
 public class TxTransaccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
-    
+
     @Column(name = "tx_usuario")
     private Integer txUsuario;
-    
-    
-    
+
     @Column(name = "tx_host")
     private String txHost;
 
-    public TxTransaccion() {
-    }
+    public TxTransaccion() {}
 
     public TxTransaccion(Integer idTransaccion) {
         this.idTransaccion = idTransaccion;
@@ -110,7 +97,8 @@ public class TxTransaccion {
             return false;
         }
         TxTransaccion other = (TxTransaccion) object;
-        if ((this.idTransaccion == null && other.idTransaccion != null) || (this.idTransaccion != null && !this.idTransaccion.equals(other.idTransaccion))) {
+        if ((this.idTransaccion == null && other.idTransaccion != null)
+                || (this.idTransaccion != null && !this.idTransaccion.equals(other.idTransaccion))) {
             return false;
         }
         return true;
@@ -120,5 +108,4 @@ public class TxTransaccion {
     public String toString() {
         return "gob.gamo.activosf.app.domain.TxTransaccion[ idTransaccion=" + idTransaccion + " ]";
     }
-    
 }

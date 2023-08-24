@@ -1,8 +1,8 @@
 package com.softwaremill.realworld.domain.article;
 
-import com.softwaremill.realworld.domain.user.ProfileVO;
-
 import java.time.LocalDateTime;
+
+import com.softwaremill.realworld.domain.user.ProfileVO;
 
 public record CommentVO(int id, LocalDateTime createdAt, LocalDateTime updatedAt, String body, ProfileVO author) {
     public static CommentVO myComment(Comment comment) {

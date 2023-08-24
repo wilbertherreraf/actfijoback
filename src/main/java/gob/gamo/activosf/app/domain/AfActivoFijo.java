@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import gob.gamo.activosf.app.services.CalcContabService;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,25 +20,26 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
+import gob.gamo.activosf.app.services.CalcContabService;
 
 /**
  *
  * @author wherrera
  */
-
 @Entity
 @Getter
 @Builder
@@ -49,200 +47,258 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
 public class AfActivoFijo implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "id_activo_fijo")
     private Integer idActivoFijo;
+
     @Column(name = "correlativo")
     private Integer correlativo;
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
+
     @Column(name = "revalorizado")
     private boolean revalorizado;
-    
+
     @Column(name = "codigo_antiguo")
     private String codigoAntiguo;
-    
+
     @Column(name = "cat_centro_costo")
     private String catCentroCosto;
-	@Column(name = "tab_centro_costo")
-	private Integer tabCentroCosto;
-	@Column(name = "centro_costo")
-	private Integer centroCosto;
-    
+
+    @Column(name = "tab_centro_costo")
+    private Integer tabCentroCosto;
+
+    @Column(name = "centro_costo")
+    private Integer centroCosto;
+
     @Column(name = "cat_estado_uso")
     private String catEstadoUso;
+
     @Column(name = "tab_estado_uso")
-	private Integer tabEstadoUso;
-	@Column(name = "estado_uso")
-	private Integer estadoUso;
+    private Integer tabEstadoUso;
+
+    @Column(name = "estado_uso")
+    private Integer estadoUso;
 
     @Column(name = "cat_tipo_asignacion")
     private String catTipoAsignacion;
-	@Column(name = "tab_tipo_asignacion")
-	private Integer tabTipoAsignacion;
-	@Column(name = "tipo_asignacion")
-	private Integer tipoAsignacion;
+
+    @Column(name = "tab_tipo_asignacion")
+    private Integer tabTipoAsignacion;
+
+    @Column(name = "tipo_asignacion")
+    private Integer tipoAsignacion;
 
     @Column(name = "cat_tipo_actualizacion")
     private String catTipoActualizacion;
-    @Column(name = "tab_tipo_actualizacion")
-	private Integer tabTipoActualizacion;
-	@Column(name = "tipo_actualizacion")
-	private Integer tipoActualizacion;
 
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "tab_tipo_actualizacion")
+    private Integer tabTipoActualizacion;
+
+    @Column(name = "tipo_actualizacion")
+    private Integer tipoActualizacion;
+
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to
+    // enforce field validation
     @Column(name = "costo_historico")
     private BigDecimal costoHistorico;
-    
+
     @Column(name = "costo_actual")
     private BigDecimal costoActual;
-    
+
     @Column(name = "costo_antes_revaluo")
     private BigDecimal costoAntesRevaluo;
-    
+
     @Column(name = "dep_acumulada_actual")
     private BigDecimal depAcumuladaActual;
-    
+
     @Column(name = "dep_acumulada_historico")
     private BigDecimal depAcumuladaHistorico;
-    
+
     @Column(name = "fecha_historico")
     @Temporal(TemporalType.DATE)
     private Date fechaHistorico;
-    
+
     @Column(name = "fecha_actual")
     @Temporal(TemporalType.DATE)
     private Date fechaActual;
-    
+
     @Column(name = "factor_depreciacion_historico")
     private BigDecimal factorDepreciacionHistorico;
-    
+
     @Column(name = "factor_depreciacion_actual")
     private BigDecimal factorDepreciacionActual;
-    
+
     @Column(name = "incorporacion_especial")
     private boolean incorporacionEspecial;
-    
+
     @Column(name = "cat_fuente_financiamiento")
     private String catFuenteFinanciamiento;
+
     @Column(name = "tab_fuente_financiamiento")
-	private Integer tabFenteFinanciamiento;
-	@Column(name = "fuente_financiamiento")
-	private Integer fuenteFinanciamiento;
+    private Integer tabFenteFinanciamiento;
+
+    @Column(name = "fuente_financiamiento")
+    private Integer fuenteFinanciamiento;
 
     @Column(name = "cat_organismo_financiador")
     private String catOrganismoFinanciador;
+
     @Column(name = "tab_organismo_financiador")
-	private Integer tabOrganismoFinanciador;
-	@Column(name = "organismo_financiador")
-	private Integer organismoFinanciador;
+    private Integer tabOrganismoFinanciador;
+
+    @Column(name = "organismo_financiador")
+    private Integer organismoFinanciador;
 
     @Column(name = "nro_convenio")
     private String nroConvenio;
-    
+
     @Column(name = "orden_compra")
     private String ordenCompra;
-    
+
     @JoinColumn(name = "id_usuario_asignado", referencedColumnName = "id_usuario")
-    @ManyToOne(optional = true, fetch = FetchType.LAZY) 
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private TxUsuario idUsuarioAsignado;
-    
+
     @Column(name = "descripcion")
     private String descripcion;
-    
+
     @Column(name = "observaciones")
     private String observaciones;
-    
+
     @Column(name = "codigo_extendido")
     private String codigoExtendido;
-    
+
     @Column(name = "codigo_rfid")
     private String codigoRfid;
-    
+
     @Column(name = "codigo_ean")
     private String codigoEan;
 
     @Column(name = "cat_estado_activo_fijo")
     private String catEstadoActivoFijo;
+
     @Column(name = "tab_estado_activo_fijo")
-	private Integer tabEstadoActivoFijo;
-	@Column(name = "estado_activo_fijo")
-	private Integer estadoActivoFijo;
-    
+    private Integer tabEstadoActivoFijo;
+
+    @Column(name = "estado_activo_fijo")
+    private Integer estadoActivoFijo;
+
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY)
     private List<AfBajaActivoFijo> afBajaActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfAtributoActivoFijo> afAtributoActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfComponenteActivoFijo> afComponenteActivoFijoList;
-    @OneToMany(mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfSolicitudActivoFijo> afSolicitudActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfAccesorioActivoFijo> afAccesorioActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY, orphanRemoval=true) //EAGER
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "idActivoFijo",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true) // EAGER
     private List<AfRevaluoActivoFijo> afRevaluoActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfTransferenciaAsignacion> afTransferenciaAsignacionList;
+
     @JoinColumn(name = "id_sub_familia", referencedColumnName = "id_sub_familia")
-    @ManyToOne(fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(fetch = FetchType.LAZY) // EAGER
     private AfSubFamiliaActivo idSubFamilia;
+
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
-    @ManyToOne(optional = true, fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(optional = true, fetch = FetchType.LAZY) // EAGER
     private AfProveedor idProveedor;
+
     @JoinColumn(name = "id_nota_recepcion", referencedColumnName = "id_nota_recepcion")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(optional = false, fetch = FetchType.LAZY) // EAGER
     private AfNotaRecepcion idNotaRecepcion;
+
     @JoinColumn(name = "id_garantia_activo_fijo", referencedColumnName = "id_garantia_activo_fijo")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // EAGER
     private AfGarantiaActivoFijo idGarantiaActivoFijo;
+
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // EAGER
     private AfFactura idFactura;
+
     @JoinColumn(name = "id_ambiente", referencedColumnName = "id_ambiente")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY) //EAGER
+    @ManyToOne(optional = false, fetch = FetchType.LAZY) // EAGER
     private AfAmbiente idAmbiente;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) //EAGER
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY) // EAGER
     private List<AfImagenActivoFijo> afImagenActivoFijoList;
 
     @Transient
     private CalcContabService calculoContableVo;
-    
+
     public AfActivoFijo(Integer idActivoFijo) {
         this.idActivoFijo = idActivoFijo;
     }
 
-    public AfActivoFijo(Integer idActivoFijo, Integer gestion, boolean revalorizado, String catCentroCosto, String catEstadoUso, String catTipoActualizacion, BigDecimal costoHistorico, BigDecimal costoActual, BigDecimal depAcumuladaActual, BigDecimal depAcumuladaHistorico, Date fechaHistorico, Date fechaActual, BigDecimal factorDepreciacionHistorico, BigDecimal factorDepreciacionActual, boolean incorporacionEspecial, String catFuenteFinanciamiento, String descripcion, String codigoRfid, String codigoEan, String catEstadoActivoFijo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfActivoFijo(
+            Integer idActivoFijo,
+            Integer gestion,
+            boolean revalorizado,
+            String catCentroCosto,
+            String catEstadoUso,
+            String catTipoActualizacion,
+            BigDecimal costoHistorico,
+            BigDecimal costoActual,
+            BigDecimal depAcumuladaActual,
+            BigDecimal depAcumuladaHistorico,
+            Date fechaHistorico,
+            Date fechaActual,
+            BigDecimal factorDepreciacionHistorico,
+            BigDecimal factorDepreciacionActual,
+            boolean incorporacionEspecial,
+            String catFuenteFinanciamiento,
+            String descripcion,
+            String codigoRfid,
+            String codigoEan,
+            String catEstadoActivoFijo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idActivoFijo = idActivoFijo;
         this.gestion = gestion;
         this.revalorizado = revalorizado;
@@ -272,8 +328,8 @@ public class AfActivoFijo implements Serializable {
 
     @Transient
     public CalcContabService getCalculoContableVo() {
-		return calculoContableVo;
-	}
+        return calculoContableVo;
+    }
 
     @Transient
     public void setCalculoContableVo(CalcContabService calculoContableVo) {
@@ -369,14 +425,14 @@ public class AfActivoFijo implements Serializable {
     }
 
     public BigDecimal getCostoAntesRevaluo() {
-		return costoAntesRevaluo;
-	}
+        return costoAntesRevaluo;
+    }
 
-	public void setCostoAntesRevaluo(BigDecimal costoAntesRevaluo) {
-		this.costoAntesRevaluo = costoAntesRevaluo;
-	}
+    public void setCostoAntesRevaluo(BigDecimal costoAntesRevaluo) {
+        this.costoAntesRevaluo = costoAntesRevaluo;
+    }
 
-	public BigDecimal getDepAcumuladaActual() {
+    public BigDecimal getDepAcumuladaActual() {
         return depAcumuladaActual;
     }
 
@@ -441,14 +497,14 @@ public class AfActivoFijo implements Serializable {
     }
 
     public String getCatOrganismoFinanciador() {
-		return catOrganismoFinanciador;
-	}
+        return catOrganismoFinanciador;
+    }
 
-	public void setCatOrganismoFinanciador(String catOrganismoFinanciador) {
-		this.catOrganismoFinanciador = catOrganismoFinanciador;
-	}
+    public void setCatOrganismoFinanciador(String catOrganismoFinanciador) {
+        this.catOrganismoFinanciador = catOrganismoFinanciador;
+    }
 
-	public String getNroConvenio() {
+    public String getNroConvenio() {
         return nroConvenio;
     }
 
@@ -489,14 +545,14 @@ public class AfActivoFijo implements Serializable {
     }
 
     public String getCodigoExtendido() {
-		return codigoExtendido;
-	}
+        return codigoExtendido;
+    }
 
-	public void setCodigoExtendido(String codigoExtendido) {
-		this.codigoExtendido = codigoExtendido;
-	}
+    public void setCodigoExtendido(String codigoExtendido) {
+        this.codigoExtendido = codigoExtendido;
+    }
 
-	public String getCodigoRfid() {
+    public String getCodigoRfid() {
         return codigoRfid;
     }
 
@@ -584,7 +640,6 @@ public class AfActivoFijo implements Serializable {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfBajaActivoFijo> getAfBajaActivoFijoList() {
         return afBajaActivoFijoList;
     }
@@ -593,7 +648,6 @@ public class AfActivoFijo implements Serializable {
         this.afBajaActivoFijoList = afBajaActivoFijoList;
     }
 
-    
     public List<AfAtributoActivoFijo> getAfAtributoActivoFijoList() {
         return afAtributoActivoFijoList;
     }
@@ -602,7 +656,6 @@ public class AfActivoFijo implements Serializable {
         this.afAtributoActivoFijoList = afAtributoActivoFijoList;
     }
 
-    
     public List<AfComponenteActivoFijo> getAfComponenteActivoFijoList() {
         return afComponenteActivoFijoList;
     }
@@ -611,7 +664,6 @@ public class AfActivoFijo implements Serializable {
         this.afComponenteActivoFijoList = afComponenteActivoFijoList;
     }
 
-    
     public List<AfSolicitudActivoFijo> getAfSolicitudActivoFijoList() {
         return afSolicitudActivoFijoList;
     }
@@ -620,7 +672,6 @@ public class AfActivoFijo implements Serializable {
         this.afSolicitudActivoFijoList = afSolicitudActivoFijoList;
     }
 
-    
     public List<AfAccesorioActivoFijo> getAfAccesorioActivoFijoList() {
         return afAccesorioActivoFijoList;
     }
@@ -629,7 +680,6 @@ public class AfActivoFijo implements Serializable {
         this.afAccesorioActivoFijoList = afAccesorioActivoFijoList;
     }
 
-    
     public List<AfRevaluoActivoFijo> getAfRevaluoActivoFijoList() {
         return afRevaluoActivoFijoList;
     }
@@ -638,7 +688,6 @@ public class AfActivoFijo implements Serializable {
         this.afRevaluoActivoFijoList = afRevaluoActivoFijoList;
     }
 
-    
     public List<AfTransferenciaAsignacion> getAfTransferenciaAsignacionList() {
         return afTransferenciaAsignacionList;
     }
@@ -695,7 +744,6 @@ public class AfActivoFijo implements Serializable {
         this.idAmbiente = idAmbiente;
     }
 
-    
     public List<AfImagenActivoFijo> getAfImagenActivoFijoList() {
         return afImagenActivoFijoList;
     }
@@ -718,43 +766,41 @@ public class AfActivoFijo implements Serializable {
             return false;
         }
         AfActivoFijo other = (AfActivoFijo) object;
-        if ((this.idActivoFijo == null && other.idActivoFijo != null) || (this.idActivoFijo != null && !this.idActivoFijo.equals(other.idActivoFijo))) {
+        if ((this.idActivoFijo == null && other.idActivoFijo != null)
+                || (this.idActivoFijo != null && !this.idActivoFijo.equals(other.idActivoFijo))) {
             return false;
         }
         return true;
     }
 
-	@Override
-	public String toString() {
-		return "AfActivoFijo [idActivoFijo=" + idActivoFijo + ", correlativo="
-				+ correlativo + ", gestion=" + gestion + ", revalorizado="
-				+ revalorizado + ", codigoAntiguo=" + codigoAntiguo
-				+ ", catCentroCosto=" + catCentroCosto + ", catEstadoUso="
-				+ catEstadoUso + ", catTipoAsignacion=" + catTipoAsignacion
-				+ ", catTipoActualizacion=" + catTipoActualizacion
-				+ ", costoHistorico=" + costoHistorico + ", costoActual="
-				+ costoActual + ", costoAntesRevaluo=" + costoAntesRevaluo
-				+ ", depAcumuladaActual=" + depAcumuladaActual
-				+ ", depAcumuladaHistorico=" + depAcumuladaHistorico
-				+ ", fechaHistorico=" + fechaHistorico + ", fechaActual="
-				+ fechaActual + ", factorDepreciacionHistorico="
-				+ factorDepreciacionHistorico + ", factorDepreciacionActual="
-				+ factorDepreciacionActual + ", incorporacionEspecial="
-				+ incorporacionEspecial + ", catFuenteFinanciamiento="
-				+ catFuenteFinanciamiento + ", catOrganismoFinanciador="
-				+ catOrganismoFinanciador + ", nroConvenio=" + nroConvenio
-				+ ", ordenCompra=" + ordenCompra + ", idUsuarioAsignado="
-				+ idUsuarioAsignado + ", descripcion=" + descripcion
-				+ ", observaciones=" + observaciones + ", codigoExtendido="
-				+ codigoExtendido + ", codigoRfid=" + codigoRfid
-				+ ", codigoEan=" + codigoEan + ", catEstadoActivoFijo="
-				+ catEstadoActivoFijo + ", estado=" + estado
-				+ ", idTransaccion=" + idTransaccion + ", txFchIni=" + txFchIni
-				+ ", txUsrIni=" + txUsrIni + ", txHostIni=" + txHostIni
-				+ ", txFchMod=" + txFchMod + ", txUsrMod=" + txUsrMod
-				+ ", txHostMod=" + txHostMod + "]";
-	}
-
-    
-    
+    @Override
+    public String toString() {
+        return "AfActivoFijo [idActivoFijo=" + idActivoFijo + ", correlativo="
+                + correlativo + ", gestion=" + gestion + ", revalorizado="
+                + revalorizado + ", codigoAntiguo=" + codigoAntiguo
+                + ", catCentroCosto=" + catCentroCosto + ", catEstadoUso="
+                + catEstadoUso + ", catTipoAsignacion=" + catTipoAsignacion
+                + ", catTipoActualizacion=" + catTipoActualizacion
+                + ", costoHistorico=" + costoHistorico + ", costoActual="
+                + costoActual + ", costoAntesRevaluo=" + costoAntesRevaluo
+                + ", depAcumuladaActual=" + depAcumuladaActual
+                + ", depAcumuladaHistorico=" + depAcumuladaHistorico
+                + ", fechaHistorico=" + fechaHistorico + ", fechaActual="
+                + fechaActual + ", factorDepreciacionHistorico="
+                + factorDepreciacionHistorico + ", factorDepreciacionActual="
+                + factorDepreciacionActual + ", incorporacionEspecial="
+                + incorporacionEspecial + ", catFuenteFinanciamiento="
+                + catFuenteFinanciamiento + ", catOrganismoFinanciador="
+                + catOrganismoFinanciador + ", nroConvenio=" + nroConvenio
+                + ", ordenCompra=" + ordenCompra + ", idUsuarioAsignado="
+                + idUsuarioAsignado + ", descripcion=" + descripcion
+                + ", observaciones=" + observaciones + ", codigoExtendido="
+                + codigoExtendido + ", codigoRfid=" + codigoRfid
+                + ", codigoEan=" + codigoEan + ", catEstadoActivoFijo="
+                + catEstadoActivoFijo + ", estado=" + estado
+                + ", idTransaccion=" + idTransaccion + ", txFchIni=" + txFchIni
+                + ", txUsrIni=" + txUsrIni + ", txHostIni=" + txHostIni
+                + ", txFchMod=" + txFchMod + ", txUsrMod=" + txUsrMod
+                + ", txHostMod=" + txHostMod + "]";
+    }
 }

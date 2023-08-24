@@ -5,13 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,22 +18,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-
 
 /**
  *
@@ -53,111 +45,118 @@ import lombok.NoArgsConstructor;
 public class AfNotaRecepcion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_nota_recepcion")
     private Integer idNotaRecepcion;
+
     @Column(name = "correlativo")
     private Integer correlativo;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
-    
+
     @Column(name = "cat_tipo_movimiento")
     private String catTipoMovimiento;
-	@Column(name = "tab_tipo_movimiento")
-	private Integer tabTipoMovimiento;
-	@Column(name = "tipo_movimiento")
-	private Integer tipoMovimiento;          
-    
-    
+
+    @Column(name = "tab_tipo_movimiento")
+    private Integer tabTipoMovimiento;
+
+    @Column(name = "tipo_movimiento")
+    private Integer tipoMovimiento;
+
     @Column(name = "cat_motivo_tipo_movimiento")
     private String catMotivoTipoMovimiento;
-    
-    
-    
+
     @Column(name = "cat_tipo_documento_recepcion")
     private String catTipoDocumentoRecepcion;
-	@Column(name = "tab_tipo_documento_recepcion")
-	private Integer tabTipoDocumentoRecepcion;
-	@Column(name = "tipo_documento_recepcion")
-	private Integer tipoDocumentoRecepcion;       
-    
-    
+
+    @Column(name = "tab_tipo_documento_recepcion")
+    private Integer tabTipoDocumentoRecepcion;
+
+    @Column(name = "tipo_documento_recepcion")
+    private Integer tipoDocumentoRecepcion;
+
     @Column(name = "nro_documento_recepcion")
     private String nroDocumentoRecepcion;
-    
-    
+
     @Column(name = "fecha_recepcion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRecepcion;
-    
+
     @Column(name = "orden_compra")
     private String ordenCompra;
-    
-    
-    
+
     @Column(name = "cat_estado_nota_recepcion")
     private String catEstadoNotaRecepcion;
-	@Column(name = "tab_estado_nota_recepcion")
-	private Integer tabEstadoNotaRecepcion;
-	@Column(name = "estado_nota_recepcion")
-	private Integer estadoNotaRecepcion;   
+
+    @Column(name = "tab_estado_nota_recepcion")
+    private Integer tabEstadoNotaRecepcion;
+
+    @Column(name = "estado_nota_recepcion")
+    private Integer estadoNotaRecepcion;
 
     @JoinColumn(name = "id_usuario_recepcion", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    
     private TxUsuario idUsuarioRecepcion;
 
     @JoinColumn(name = "id_area_solicitante", referencedColumnName = "id_area")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-     
     private TxArea idAreaSolicitante;
 
     @JoinColumn(name = "id_control_calidad", referencedColumnName = "id_usuario")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private TxUsuario idControlCalidad;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idNotaRecepcion", fetch = FetchType.LAZY, orphanRemoval=true)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idNotaRecepcion", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<AfComisionRecepcion> afComisionRecepcionList;
+
     @OneToMany(mappedBy = "idNotaRecepcion", fetch = FetchType.EAGER)
     private List<AfTransferenciaAsignacion> afTransferenciaAsignacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idNotaRecepcion", fetch = FetchType.LAZY, orphanRemoval=true)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idNotaRecepcion", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<AfActivoFijo> afActivoFijoList;
 
-    public AfNotaRecepcion(Integer idNotaRecepcion, Integer gestion, String catTipoMovimiento, String catMotivoTipoMovimiento, String catTipoDocumentoRecepcion, String nroDocumentoRecepcion, Date fechaRecepcion, String catEstadoNotaRecepcion, TxUsuario idUsuarioRecepcion, TxArea idAreaSolicitante, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfNotaRecepcion(
+            Integer idNotaRecepcion,
+            Integer gestion,
+            String catTipoMovimiento,
+            String catMotivoTipoMovimiento,
+            String catTipoDocumentoRecepcion,
+            String nroDocumentoRecepcion,
+            Date fechaRecepcion,
+            String catEstadoNotaRecepcion,
+            TxUsuario idUsuarioRecepcion,
+            TxArea idAreaSolicitante,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idNotaRecepcion = idNotaRecepcion;
         this.gestion = gestion;
         this.catTipoMovimiento = catTipoMovimiento;
@@ -343,7 +342,6 @@ public class AfNotaRecepcion {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfComisionRecepcion> getAfComisionRecepcionList() {
         return afComisionRecepcionList;
     }
@@ -352,7 +350,6 @@ public class AfNotaRecepcion {
         this.afComisionRecepcionList = afComisionRecepcionList;
     }
 
-    
     public List<AfTransferenciaAsignacion> getAfTransferenciaAsignacionList() {
         return afTransferenciaAsignacionList;
     }
@@ -361,7 +358,6 @@ public class AfNotaRecepcion {
         this.afTransferenciaAsignacionList = afTransferenciaAsignacionList;
     }
 
-    
     public List<AfActivoFijo> getAfActivoFijoList() {
         return afActivoFijoList;
     }
@@ -384,7 +380,8 @@ public class AfNotaRecepcion {
             return false;
         }
         AfNotaRecepcion other = (AfNotaRecepcion) object;
-        if ((this.idNotaRecepcion == null && other.idNotaRecepcion != null) || (this.idNotaRecepcion != null && !this.idNotaRecepcion.equals(other.idNotaRecepcion))) {
+        if ((this.idNotaRecepcion == null && other.idNotaRecepcion != null)
+                || (this.idNotaRecepcion != null && !this.idNotaRecepcion.equals(other.idNotaRecepcion))) {
             return false;
         }
         return true;
@@ -394,5 +391,4 @@ public class AfNotaRecepcion {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfNotaRecepcion[ idNotaRecepcion=" + idNotaRecepcion + " ]";
     }
-    
 }

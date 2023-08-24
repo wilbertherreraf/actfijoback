@@ -6,11 +6,11 @@ import java.util.logging.Logger;
 
 import jakarta.annotation.PostConstruct;
 
-//@Startup
-//@Singleton
+// @Startup
+// @Singleton
 public class MonitorDiario {
 
-    //private CatalogosBl catalogosBl;
+    // private CatalogosBl catalogosBl;
 
     private AfTipoCambioBl afTipoCambioBl;
 
@@ -22,12 +22,11 @@ public class MonitorDiario {
 
     Logger log = Logger.getLogger("bo.gob.uif.safi");
 
-    public MonitorDiario() {
-    }
+    public MonitorDiario() {}
 
     @PostConstruct
     public void init() {
-        //parametros = catalogosBl.getValoresPorCatalogo("CAT_PARAMETROS_SAFI");
+        // parametros = catalogosBl.getValoresPorCatalogo("CAT_PARAMETROS_SAFI");
         revisarUfv();
         revisarMateriales();
     }

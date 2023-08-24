@@ -1,21 +1,16 @@
 package gob.gamo.activosf.app.domain.entities;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-import org.springframework.data.annotation.CreatedDate;
+import jakarta.persistence.*;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.softwaremill.realworld.domain.article.Article;
-import com.softwaremill.realworld.domain.article.ArticleTag;
-import com.softwaremill.realworld.domain.article.ArticleTagId;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -27,7 +22,7 @@ import lombok.Builder;
 public class Userrol {
     @EmbeddedId
     private UserrolId id;
-    
+
     @MapsId("userId")
     @JoinColumn(name = "uro_usrid")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,12 +32,12 @@ public class Userrol {
     @JoinColumn(name = "uro_rolid")
     @ManyToOne(fetch = FetchType.LAZY)
     private Roles rol;
-/*
-    @CreatedDate
-    @Builder.Default
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-*/
+    /*
+        @CreatedDate
+        @Builder.Default
+        @Column(nullable = false, updatable = false)
+        private LocalDateTime createdAt = LocalDateTime.now();
+    */
     public Userrol(User user, Roles rol) {
         this.id = new UserrolId(user.getId(), rol.getId());
         this.user = user;

@@ -5,11 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,17 +17,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -37,99 +29,98 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_material")
-
 public class AfMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_material")
     private Integer idMaterial;
-    
-    
+
     @Column(name = "codigo")
     private String codigo;
-    
-    
-    
+
     @Column(name = "cat_familia_material")
     private String catFamiliaMaterial;
-    
-    
-    
+
     @Column(name = "cat_medida")
     private String catMedida;
-    
-    
-    
+
     @Column(name = "nombre")
     private String nombre;
-    
-    
+
     @Column(name = "minimo")
     private Integer minimo;
-    
-    
+
     @Column(name = "maximo")
     private Integer maximo;
-    
-    
+
     @Column(name = "fungible")
     private boolean fungible;
-    
-    
+
     @Column(name = "revisar_minimo")
     private boolean revisarMinimo;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(mappedBy = "idMaterial", fetch = FetchType.LAZY)
     private List<AfKardexMaterial> afKardexMaterialList;
+
     @JoinColumn(name = "id_partida_presupuestaria", referencedColumnName = "id_partida_presupuestaria")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private AfPartidaPresupuestaria idPartidaPresupuestaria;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMaterial", fetch = FetchType.LAZY)
     private List<AfSolicitudMaterial> afSolicitudMaterialList;
+
     @OneToMany(mappedBy = "idMaterial", fetch = FetchType.LAZY)
     private List<AfMaterialProveedor> afMaterialProveedorList;
+
     @OneToMany(mappedBy = "idMaterial", fetch = FetchType.LAZY)
     private List<AfAltaMaterialDetalle> afAltaMaterialDetalleList;
 
-    public AfMaterial() {
-    }
+    public AfMaterial() {}
 
     public AfMaterial(Integer idMaterial) {
         this.idMaterial = idMaterial;
     }
 
-    public AfMaterial(Integer idMaterial, String catFamiliaMaterial, String catMedida, String nombre, Integer minimo, Integer maximo, boolean fungible, boolean revisarMinimo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfMaterial(
+            Integer idMaterial,
+            String catFamiliaMaterial,
+            String catMedida,
+            String nombre,
+            Integer minimo,
+            Integer maximo,
+            boolean fungible,
+            boolean revisarMinimo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idMaterial = idMaterial;
         this.catFamiliaMaterial = catFamiliaMaterial;
         this.catMedida = catMedida;
@@ -146,10 +137,10 @@ public class AfMaterial {
     }
 
     @Transient
-    public String  getCodigoCompleto() {
-    	return codigo;
+    public String getCodigoCompleto() {
+        return codigo;
     }
-    
+
     public Integer getIdMaterial() {
         return idMaterial;
     }
@@ -159,12 +150,12 @@ public class AfMaterial {
     }
 
     public String getCodigo() {
-		return codigo;
-	}
+        return codigo;
+    }
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
     public String getCatFamiliaMaterial() {
         return catFamiliaMaterial;
@@ -286,7 +277,6 @@ public class AfMaterial {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfKardexMaterial> getAfKardexMaterialList() {
         return afKardexMaterialList;
     }
@@ -303,7 +293,6 @@ public class AfMaterial {
         this.idPartidaPresupuestaria = idPartidaPresupuestaria;
     }
 
-    
     public List<AfSolicitudMaterial> getAfSolicitudMaterialList() {
         return afSolicitudMaterialList;
     }
@@ -312,7 +301,6 @@ public class AfMaterial {
         this.afSolicitudMaterialList = afSolicitudMaterialList;
     }
 
-    
     public List<AfMaterialProveedor> getAfMaterialProveedorList() {
         return afMaterialProveedorList;
     }
@@ -321,7 +309,6 @@ public class AfMaterial {
         this.afMaterialProveedorList = afMaterialProveedorList;
     }
 
-    
     public List<AfAltaMaterialDetalle> getAfAltaMaterialDetalleList() {
         return afAltaMaterialDetalleList;
     }
@@ -344,7 +331,8 @@ public class AfMaterial {
             return false;
         }
         AfMaterial other = (AfMaterial) object;
-        if ((this.idMaterial == null && other.idMaterial != null) || (this.idMaterial != null && !this.idMaterial.equals(other.idMaterial))) {
+        if ((this.idMaterial == null && other.idMaterial != null)
+                || (this.idMaterial != null && !this.idMaterial.equals(other.idMaterial))) {
             return false;
         }
         return true;
@@ -354,5 +342,4 @@ public class AfMaterial {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfMaterial[ idMaterial=" + idMaterial + " ]";
     }
-    
 }

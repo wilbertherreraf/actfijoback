@@ -2,10 +2,10 @@ package gob.gamo.activosf.app.domain.entities;
 
 import java.util.Objects;
 
+import jakarta.persistence.*;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,26 +27,27 @@ public class Recurso {
     @Column(name = "res_descrip")
     private String descrip;
 
-/*     @Column(name = "res_url")
+    /*     @Column(name = "res_url")
     private String url; */
 
-    public Recurso(String codrec, String descripcion){
+    public Recurso(String codrec, String descripcion) {
         this.codrec = codrec;
         this.descrip = descripcion;
     }
 
-    public void permissioning( Roles rol) {
+    public void permissioning(Roles rol) {
         rol.addRecurso(this);
     }
- 
+
     @Override
     public boolean equals(Object o) {
-        return o instanceof Recurso other && Objects.equals(this.id, other.id) && Objects.equals(this.codrec, other.codrec);
+        return o instanceof Recurso other
+                && Objects.equals(this.id, other.id)
+                && Objects.equals(this.codrec, other.codrec);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(this.id, this.codrec);
-    }    
-    
+    }
 }

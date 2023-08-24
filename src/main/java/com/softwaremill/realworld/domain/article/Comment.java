@@ -1,16 +1,15 @@
 package com.softwaremill.realworld.domain.article;
 
-import com.softwaremill.realworld.domain.user.User;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.softwaremill.realworld.domain.user.User;
 
 import lombok.*;
 
@@ -47,7 +46,7 @@ public class Comment {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public boolean isWritten( User user) {
+    public boolean isWritten(User user) {
         return this.author.equals(user);
     }
 

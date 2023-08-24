@@ -5,76 +5,69 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
  * @author wherrera
  */
-//@Entity
-//@Table(name = "cnf_opciones")
-
+// @Entity
+// @Table(name = "cnf_opciones")
 
 public class CnfOpciones {
     @Id
-    
-    
     @Column(name = "id_opcion")
     private Integer idOpcion;
-    
+
     @Column(name = "descripcion")
     private String descripcion;
-    
+
     @Column(name = "url")
     private String url;
+
     @Column(name = "tx_id")
     private Integer txId;
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
+
     @Column(name = "usuario")
     private String usuario;
-    
+
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "tipo_opcion")
     private String tipoOpcion;
-    
+
     @Column(name = "aplicacion")
     private String aplicacion;
+
     @Column(name = "orden")
     private Integer orden;
+
     @OneToMany(mappedBy = "idOpcion", fetch = FetchType.LAZY)
     private List<CnfRolOpcion> cnfRolOpcionList;
+
     @OneToMany(mappedBy = "idOpcionPadre", fetch = FetchType.LAZY)
     private List<CnfOpciones> cnfOpcionesList;
+
     @JoinColumn(name = "id_opcion_padre", referencedColumnName = "id_opcion")
     @ManyToOne(fetch = FetchType.LAZY)
     private CnfOpciones idOpcionPadre;
 
-    public CnfOpciones() {
-    }
+    public CnfOpciones() {}
 
     public CnfOpciones(Integer idOpcion) {
         this.idOpcion = idOpcion;
@@ -160,7 +153,6 @@ public class CnfOpciones {
         this.orden = orden;
     }
 
-    
     public List<CnfRolOpcion> getCnfRolOpcionList() {
         return cnfRolOpcionList;
     }
@@ -169,7 +161,6 @@ public class CnfOpciones {
         this.cnfRolOpcionList = cnfRolOpcionList;
     }
 
-    
     public List<CnfOpciones> getCnfOpcionesList() {
         return cnfOpcionesList;
     }
@@ -200,7 +191,8 @@ public class CnfOpciones {
             return false;
         }
         CnfOpciones other = (CnfOpciones) object;
-        if ((this.idOpcion == null && other.idOpcion != null) || (this.idOpcion != null && !this.idOpcion.equals(other.idOpcion))) {
+        if ((this.idOpcion == null && other.idOpcion != null)
+                || (this.idOpcion != null && !this.idOpcion.equals(other.idOpcion))) {
             return false;
         }
         return true;
@@ -210,5 +202,4 @@ public class CnfOpciones {
     public String toString() {
         return "gob.gamo.activosf.app.domain.CnfOpciones[ idOpcion=" + idOpcion + " ]";
     }
-    
 }

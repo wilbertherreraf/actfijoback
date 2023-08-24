@@ -28,7 +28,7 @@ public final class UtilsDate {
      * dd.MM.yy 09.04.98, yyyy.MM.dd G 'at' hh:mm:ss z 1998.04.09 AD at 06:15:55
      * PDT EEE, MMM d, ''yy Thu, Apr 9, '98 h:mm a 6:15 PM H:mm 18:15
      * H:mm:ss:SSS 18:15:55:624 K:mm a,z 6:15 PM,PDT yyyy.MMMMM.dd GGG hh:mm aaa
-     * 
+     *
      * @param date
      *               cadena fecha
      * @param format
@@ -56,7 +56,7 @@ public final class UtilsDate {
      * dd.MM.yy 09.04.98 yyyy.MM.dd G 'at' hh:mm:ss z 1998.04.09 AD at 06:15:55
      * PDT EEE, MMM d, ''yy Thu, Apr 9, '98 h:mm a 6:15 PM H:mm 18:15
      * H:mm:ss:SSS 18:15:55:624 K:mm a,z 6:15 PM,PDT yyyy.MMMMM.dd GGG hh:mm aaa
-     * 
+     *
      * @param date
      *               fecha a dar formato
      * @param format
@@ -80,7 +80,7 @@ public final class UtilsDate {
     /**
      * retorna un objeto XML de formato fecha para intercambio de fechas en
      * objetos xml
-     * 
+     *
      * @param fecha
      * @param delimitador
      * @return
@@ -123,12 +123,11 @@ public final class UtilsDate {
     /**
      * Compara fechas retorna -1 si fecha1 es menor a fecha2, 1 si fecha1 es
      * mayor a fecha2 y cero si son iguales
-     * 
+     *
      * @param fecha1
      * @param fecha2
      * @return
      */
-
     public static int compara(Date fecha1, Date fecha2) {
         if (fecha1 == null || fecha2 == null) {
             return 0;
@@ -159,7 +158,7 @@ public final class UtilsDate {
 
     /**
      * Agrega o resta dias, meses ... a una fecha determinada
-     * 
+     *
      * @param fecha
      *                       fecha base a calcular
      * @param cantidadTiempo
@@ -190,7 +189,7 @@ public final class UtilsDate {
 
     /**
      * Agrega o resta dias, meses ... a una fecha determinada
-     * 
+     *
      * @param fecha
      *                       fecha base a calcular
      * @param cantidadTiempo
@@ -231,7 +230,7 @@ public final class UtilsDate {
      * dia=5
      * mes=2
      * año=1
-     * 
+     *
      * @return
      */
     public static Function<Date, Function<Integer, Integer>> dmyDate() {
@@ -275,8 +274,10 @@ public final class UtilsDate {
         System.out.println(c.getActualMinimum(Calendar.DATE));
         System.out.println(c.getMinimum(Calendar.DATE));
         System.out.println(UtilsDate.stringFromDate(
-                UtilsDate.addTime(UtilsDate.dateFromString("01/01/" + c.get(Calendar.YEAR), "dd/MM/yyyy"),
-                        c.getActualMaximum(Calendar.DAY_OF_YEAR) - 1, 5),
+                UtilsDate.addTime(
+                        UtilsDate.dateFromString("01/01/" + c.get(Calendar.YEAR), "dd/MM/yyyy"),
+                        c.getActualMaximum(Calendar.DAY_OF_YEAR) - 1,
+                        5),
                 "dd/MM/yyyy"));
 
         Calendar calendar = new GregorianCalendar();
@@ -294,5 +295,4 @@ public final class UtilsDate {
         System.out.println("mes " + dmyDate().apply(d).apply(2));
         System.out.println("dia " + dmyDate().apply(d).apply(5));
     }
-
 }

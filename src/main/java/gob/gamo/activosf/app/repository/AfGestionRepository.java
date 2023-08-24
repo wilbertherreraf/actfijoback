@@ -5,7 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,13 +16,13 @@ import gob.gamo.activosf.app.domain.AfGestion;
  *
  * @author wherrera
  */
-
-public interface AfGestionRepository extends JpaRepository<AfGestion, Integer>{
+public interface AfGestionRepository extends JpaRepository<AfGestion, Integer> {
 
     @Query("SELECT a FROM AfGestion a WHERE a.vigente = :vigente AND a.estado = 'A'")
-    public Optional<AfGestion> getAfGestionVigente(Boolean vigente) ;
+    public Optional<AfGestion> getAfGestionVigente(Boolean vigente);
 
-    @Query("SELECT a FROM AfGestion a WHERE a.gestion IN ( SELECT max(ag.gestion) FROM AfGestion ag WHERE ag.estado = 'A')")
+    @Query(
+            "SELECT a FROM AfGestion a WHERE a.gestion IN ( SELECT max(ag.gestion) FROM AfGestion ag WHERE ag.estado = 'A')")
     public Optional<AfGestion> getMaxAfGestion();
 
     @Query("SELECT a FROM AfGestion a WHERE a.gestion = :gestion AND a.estado = 'A'")

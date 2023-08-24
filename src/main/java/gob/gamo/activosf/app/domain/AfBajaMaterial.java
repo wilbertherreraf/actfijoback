@@ -8,7 +8,6 @@ package gob.gamo.activosf.app.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,14 +16,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -32,91 +26,91 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_baja_material")
-
 public class AfBajaMaterial implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_baja_material")
     private Integer idBajaMaterial;
+
     @Column(name = "correlativo")
     private Integer correlativo;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
-    
+
     @Column(name = "cat_tipo_baja_material")
     private String catTipoBajaMaterial;
+
     @Column(name = "fecha_baja")
     @Temporal(TemporalType.DATE)
     private Date fechaBaja;
+
     @JoinColumn(name = "id_usuario_baja", referencedColumnName = "id_usuario")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private TxUsuario idUsuarioBaja;
-    
-    
-    
+
     @Column(name = "detalle")
     private String detalle;
-    
-    
+
     @Column(name = "cantidad")
     private Integer cantidad;
-    
-    
-    
+
     @Column(name = "cat_estado_baja_material")
     private String catEstadoBajaMaterial;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_registro_kardex_material", referencedColumnName = "id_registro_kardex_material")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfRegistroKardexMaterial idRegistroKardexMaterial;
+
     @JoinColumn(name = "id_kardex_material", referencedColumnName = "id_kardex_material")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private AfKardexMaterial idKardexMaterial;
 
-    public AfBajaMaterial() {
-    }
+    public AfBajaMaterial() {}
 
     public AfBajaMaterial(Integer idBajaMaterial) {
         this.idBajaMaterial = idBajaMaterial;
     }
 
-    public AfBajaMaterial(Integer idBajaMaterial, Integer gestion, String catTipoBajaMaterial, String detalle, Integer cantidad, String catEstadoBajaMaterial, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfBajaMaterial(
+            Integer idBajaMaterial,
+            Integer gestion,
+            String catTipoBajaMaterial,
+            String detalle,
+            Integer cantidad,
+            String catEstadoBajaMaterial,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idBajaMaterial = idBajaMaterial;
         this.gestion = gestion;
         this.catTipoBajaMaterial = catTipoBajaMaterial;
@@ -267,22 +261,22 @@ public class AfBajaMaterial implements Serializable {
     }
 
     public Date getFechaBaja() {
-		return fechaBaja;
-	}
+        return fechaBaja;
+    }
 
-	public void setFechaBaja(Date fechaBaja) {
-		this.fechaBaja = fechaBaja;
-	}
+    public void setFechaBaja(Date fechaBaja) {
+        this.fechaBaja = fechaBaja;
+    }
 
-	public TxUsuario getIdUsuarioBaja() {
-		return idUsuarioBaja;
-	}
+    public TxUsuario getIdUsuarioBaja() {
+        return idUsuarioBaja;
+    }
 
-	public void setIdUsuarioBaja(TxUsuario idUsuarioBaja) {
-		this.idUsuarioBaja = idUsuarioBaja;
-	}
+    public void setIdUsuarioBaja(TxUsuario idUsuarioBaja) {
+        this.idUsuarioBaja = idUsuarioBaja;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         Integer hash = 0;
         hash += (idBajaMaterial != null ? idBajaMaterial.hashCode() : 0);
@@ -296,7 +290,8 @@ public class AfBajaMaterial implements Serializable {
             return false;
         }
         AfBajaMaterial other = (AfBajaMaterial) object;
-        if ((this.idBajaMaterial == null && other.idBajaMaterial != null) || (this.idBajaMaterial != null && !this.idBajaMaterial.equals(other.idBajaMaterial))) {
+        if ((this.idBajaMaterial == null && other.idBajaMaterial != null)
+                || (this.idBajaMaterial != null && !this.idBajaMaterial.equals(other.idBajaMaterial))) {
             return false;
         }
         return true;
@@ -306,5 +301,4 @@ public class AfBajaMaterial implements Serializable {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfBajaMaterial[ idBajaMaterial=" + idBajaMaterial + " ]";
     }
-    
 }

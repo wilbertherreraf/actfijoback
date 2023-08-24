@@ -5,10 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfComisionRecepcion;
@@ -17,9 +13,4 @@ import gob.gamo.activosf.app.domain.AfComisionRecepcion;
  *
  * @author wherrera
  */
-
-public interface AfComisionRecepcionRepository extends JpaRepository<AfComisionRecepcion, Integer>{
-
-
-    
-}
+public interface AfComisionRecepcionRepository extends JpaRepository<AfComisionRecepcion, Integer> {}

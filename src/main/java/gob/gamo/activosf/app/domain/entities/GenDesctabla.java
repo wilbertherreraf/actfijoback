@@ -1,14 +1,14 @@
 package gob.gamo.activosf.app.domain.entities;
 
 import jakarta.persistence.*;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
@@ -19,13 +19,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GenDesctabla {
 
-	@EmbeddedId
-	private GenDesctablaId id;
+    @EmbeddedId
+    private GenDesctablaId id;
 
-	@Column(name = "des_codeiso")
-	private String desCodeiso;
+    @Column(name = "des_codeiso")
+    private String desCodeiso;
 
-	@Column(name = "des_descrip")
-	private String desDescrip;
-    
+    @Column(name = "des_descrip")
+    private String desDescrip;
 }

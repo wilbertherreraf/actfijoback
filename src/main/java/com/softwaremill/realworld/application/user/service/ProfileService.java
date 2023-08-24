@@ -1,13 +1,13 @@
 package com.softwaremill.realworld.application.user.service;
 
-import com.softwaremill.realworld.domain.user.ProfileVO;
-import com.softwaremill.realworld.domain.user.User;
-import com.softwaremill.realworld.domain.user.UserRepository;
-
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.softwaremill.realworld.domain.user.ProfileVO;
+import com.softwaremill.realworld.domain.user.User;
+import com.softwaremill.realworld.domain.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

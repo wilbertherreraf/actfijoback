@@ -16,11 +16,11 @@ import gob.gamo.activosf.app.domain.AfNotaRecepcion;
  *
  * @author wherrera
  */
-
 public interface AfNotaRecepcionRepository extends JpaRepository<AfNotaRecepcion, Integer> {
     @Query("SELECT a FROM AfNotaRecepcion a WHERE a.gestion = :gestion AND a.estado = 'A'")
     public List<AfNotaRecepcion> findAllActivesByGestion(Integer gestion);
 
-    @Query("SELECT a FROM AfNotaRecepcion a WHERE a.gestion = :gestion AND a.estado = 'A' AND a.idNotaRecepcion > 0 ORDER BY a.idNotaRecepcion DESC")
+    @Query(
+            "SELECT a FROM AfNotaRecepcion a WHERE a.gestion = :gestion AND a.estado = 'A' AND a.idNotaRecepcion > 0 ORDER BY a.idNotaRecepcion DESC")
     public List<AfNotaRecepcion> findAllActivesByGestionSinMigracion(Integer gestion);
 }

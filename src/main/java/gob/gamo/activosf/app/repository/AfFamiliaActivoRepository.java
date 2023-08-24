@@ -17,12 +17,10 @@ import gob.gamo.activosf.app.domain.AfFamiliaActivo;
  *
  * @author wherrera
  */
-
-public interface AfFamiliaActivoRepository extends JpaRepository<AfFamiliaActivo, Integer>{
+public interface AfFamiliaActivoRepository extends JpaRepository<AfFamiliaActivo, Integer> {
     @Query("SELECT a FROM AfFamiliaActivo a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.codigo")
-	public List<AfFamiliaActivo> findAllActivesByGestion(Integer gestion) ;
-    
+    public List<AfFamiliaActivo> findAllActivesByGestion(Integer gestion);
+
     @Query("SELECT a FROM AfFamiliaActivo a WHERE a.codigo = :codigo AND  a.gestion = :gestion AND a.estado = 'A'")
-	public Optional<AfFamiliaActivo> findAfFamiliaActivoByCodigoAndGestion(String codigo, Integer gestion) ;
-    
+    public Optional<AfFamiliaActivo> findAfFamiliaActivoByCodigoAndGestion(String codigo, Integer gestion);
 }

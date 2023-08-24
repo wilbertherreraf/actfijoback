@@ -5,57 +5,50 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
  * @author wherrera
  */
-//@Entity
-//@Table(name = "cnf_rol_opcion")
+// @Entity
+// @Table(name = "cnf_rol_opcion")
 
 public class CnfRolOpcion {
     @Id
-    
-    
     @Column(name = "id_rol_opcion")
     private Integer idRolOpcion;
+
     @Column(name = "tx_id")
     private Integer txId;
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
+
     @Column(name = "usuario")
     private String usuario;
-    
+
     @Column(name = "estado")
     private String estado;
+
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
     @ManyToOne(fetch = FetchType.LAZY)
     private CnfRoles idRol;
+
     @JoinColumn(name = "id_opcion", referencedColumnName = "id_opcion")
     @ManyToOne(fetch = FetchType.LAZY)
     private CnfOpciones idOpcion;
 
-    public CnfRolOpcion() {
-    }
+    public CnfRolOpcion() {}
 
     public CnfRolOpcion(Integer idRolOpcion) {
         this.idRolOpcion = idRolOpcion;
@@ -131,7 +124,8 @@ public class CnfRolOpcion {
             return false;
         }
         CnfRolOpcion other = (CnfRolOpcion) object;
-        if ((this.idRolOpcion == null && other.idRolOpcion != null) || (this.idRolOpcion != null && !this.idRolOpcion.equals(other.idRolOpcion))) {
+        if ((this.idRolOpcion == null && other.idRolOpcion != null)
+                || (this.idRolOpcion != null && !this.idRolOpcion.equals(other.idRolOpcion))) {
             return false;
         }
         return true;
@@ -141,5 +135,4 @@ public class CnfRolOpcion {
     public String toString() {
         return "gob.gamo.activosf.app.domain.CnfRolOpcion[ idRolOpcion=" + idRolOpcion + " ]";
     }
-    
 }

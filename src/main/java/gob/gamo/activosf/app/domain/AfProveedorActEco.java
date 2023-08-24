@@ -5,9 +5,8 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +15,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -31,61 +25,59 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_proveedor_act_eco")
-
 public class AfProveedorActEco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_proveedor_act_eco")
     private Integer idProveedorActEco;
-    
-    
-    
+
     @Column(name = "cat_actividad_economica")
     private String catActividadEconomica;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfProveedor idProveedor;
 
-    public AfProveedorActEco() {
-    }
+    public AfProveedorActEco() {}
 
     public AfProveedorActEco(Integer idProveedorActEco) {
         this.idProveedorActEco = idProveedorActEco;
     }
 
-    public AfProveedorActEco(Integer idProveedorActEco, String catActividadEconomica, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfProveedorActEco(
+            Integer idProveedorActEco,
+            String catActividadEconomica,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idProveedorActEco = idProveedorActEco;
         this.catActividadEconomica = catActividadEconomica;
         this.estado = estado;
@@ -197,7 +189,8 @@ public class AfProveedorActEco {
             return false;
         }
         AfProveedorActEco other = (AfProveedorActEco) object;
-        if ((this.idProveedorActEco == null && other.idProveedorActEco != null) || (this.idProveedorActEco != null && !this.idProveedorActEco.equals(other.idProveedorActEco))) {
+        if ((this.idProveedorActEco == null && other.idProveedorActEco != null)
+                || (this.idProveedorActEco != null && !this.idProveedorActEco.equals(other.idProveedorActEco))) {
             return false;
         }
         return true;
@@ -207,5 +200,4 @@ public class AfProveedorActEco {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfProveedorActEco[ idProveedorActEco=" + idProveedorActEco + " ]";
     }
-    
 }

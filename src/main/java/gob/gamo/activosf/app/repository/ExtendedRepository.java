@@ -10,5 +10,4 @@ import org.springframework.data.repository.NoRepositoryBean;
 public interface ExtendedRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
     List<T> findByAttributeContainsText(String attributeName, String text);
-
 }

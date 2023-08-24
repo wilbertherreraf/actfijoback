@@ -5,26 +5,19 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -32,45 +25,44 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "org_unidad")
-
 public class TxArea {
     @Id
-    
-    
     @Column(name = "id_area")
     private Integer idArea;
-    
+
     @Column(name = "nombre")
     private String nombre;
-    
+
     @Column(name = "tipo_area")
     private String tipoArea;
+
     @Column(name = "tx_id")
     private Integer txId;
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
+
     @Column(name = "usuario")
     private String usuario;
-    
+
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "abreviacion")
     private String abreviacion;
-    
+
     @Column(name = "cite")
     private String cite;
+
     @OneToMany(mappedBy = "idAreaPadre", fetch = FetchType.LAZY)
     private List<TxArea> txAreaList;
+
     @JoinColumn(name = "id_area_padre", referencedColumnName = "id_area")
     @ManyToOne(fetch = FetchType.LAZY)
     private TxArea idAreaPadre;
 
-
-    public TxArea() {
-    }
+    public TxArea() {}
 
     public TxArea(Integer idArea) {
         this.idArea = idArea;
@@ -148,7 +140,6 @@ public class TxArea {
         this.cite = cite;
     }
 
-    
     public List<TxArea> getTxAreaList() {
         return txAreaList;
     }
@@ -165,7 +156,6 @@ public class TxArea {
         this.idAreaPadre = idAreaPadre;
     }
 
-    
     @Override
     public int hashCode() {
         Integer hash = 0;
@@ -180,7 +170,8 @@ public class TxArea {
             return false;
         }
         TxArea other = (TxArea) object;
-        if ((this.idArea == null && other.idArea != null) || (this.idArea != null && !this.idArea.equals(other.idArea))) {
+        if ((this.idArea == null && other.idArea != null)
+                || (this.idArea != null && !this.idArea.equals(other.idArea))) {
             return false;
         }
         return true;
@@ -190,5 +181,4 @@ public class TxArea {
     public String toString() {
         return "gob.gamo.activosf.app.domain.TxArea[ idArea=" + idArea + " ]";
     }
-    
 }

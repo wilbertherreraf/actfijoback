@@ -6,13 +6,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 import gob.gamo.activosf.app.config.BearerTokenSupplier;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
-import lombok.RequiredArgsConstructor;
 
 /**
  * UserService
@@ -21,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-     private final PasswordEncoder passwordEncoder;
-    private final BearerTokenSupplier bearerTokenSupplier;   
+    private final PasswordEncoder passwordEncoder;
+    private final BearerTokenSupplier bearerTokenSupplier;
 
     @Transactional
     public User signUp(SignUpUserRequest request) {
@@ -53,28 +54,28 @@ public class UserService {
     public List<User> getusers() {
         return userRepository.findAll();
     }
-/* 
-    @Transactional
-    public UserVO update(User user, UpdateUserRequest request) {
-        String email = request.email();
-        if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
+    /*
+        @Transactional
+        public UserVO update(User user, UpdateUserRequest request) {
+            String email = request.email();
+            if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
+                throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
+            }
+
+            String username = request.username();
+            if (!user.getUsername().equals(username) && userRepository.existsByUsername(username)) {
+                throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(request.username()));
+            }
+
+            user.updateEmail(email);
+            user.updateUsername(username);
+            user.updatePassword(passwordEncoder, request.password());
+            user.updateBio(request.bio());
+            user.updateImage(request.image());
+
+            return new UserVO(user);
         }
-
-        String username = request.username();
-        if (!user.getUsername().equals(username) && userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(request.username()));
-        }
-
-        user.updateEmail(email);
-        user.updateUsername(username);
-        user.updatePassword(passwordEncoder, request.password());
-        user.updateBio(request.bio());
-        user.updateImage(request.image());
-
-        return new UserVO(user);
-    }
-*/
+    */
     private User createNewUser(SignUpUserRequest request) {
         return User.builder()
                 .email(request.email())
@@ -82,7 +83,5 @@ public class UserService {
                 .password(passwordEncoder.encode(request.password()))
                 .nombres(request.nombres())
                 .build();
-    }    
-
-    
+    }
 }

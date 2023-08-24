@@ -14,8 +14,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public boolean isEmpty() {
         if (this.root == null) {
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     public int size() {
@@ -26,8 +25,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         Node<T> requiredEmployee = search(id);
         if (requiredEmployee == null) {
             throw new IllegalIDException("No Employee with given ID : " + id + "!");
-        } else
-            return requiredEmployee.getLevel();
+        } else return requiredEmployee.getLevel();
     }
 
     public int maxLevel() {
@@ -36,8 +34,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
 
         for (Node<T> child : nRoot.childArray) {
             int lvl = maxLevel(1, child);
-            if (lvl > nlvl)
-                nlvl = lvl;
+            if (lvl > nlvl) nlvl = lvl;
         }
 
         return nlvl;
@@ -46,13 +43,10 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public int maxLevel(int lvl, Node<T> n) throws IllegalIDException {
         int nlvl = lvl;
         for (Node<T> child : n.childArray) {
-                int lch = maxLevel(lvl + 1, child);
-                if (lch >= nlvl)
-                    nlvl = lch;
-
+            int lch = maxLevel(lvl + 1, child);
+            if (lch >= nlvl) nlvl = lch;
         }
-        if (lvl == nlvl)
-            nlvl = lvl + 1;
+        if (lvl == nlvl) nlvl = lvl + 1;
         // log.info("malevel {} -> {}",lvl, nlvl);
         return nlvl;
     }
@@ -61,8 +55,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         Node<T> requiredEmployee = search(id);
         if (requiredEmployee == null) {
             throw new IllegalIDException("No Employee with given ID : " + id + "!");
-        } else
-            return requiredEmployee;
+        } else return requiredEmployee;
     }
 
     public void hireOwner(int id) throws NotEmptyException {
@@ -106,7 +99,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         theNewEmployee.setLevel(theBoss.getLevel() + 1);
         theNewEmployee.parent = theBoss;
         theBoss.getChildArray().add(theNewEmployee);
-        //log.info("level {} newid: {} :> {}", maxLevel(), id, theNewEmployee.nodeID());
+        // log.info("level {} newid: {} :> {}", maxLevel(), id, theNewEmployee.nodeID());
     }
 
     public void fireEmployee(int id) throws IllegalIDException {
@@ -116,8 +109,8 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
             throw new IllegalIDException("No Employee with given ID : " + id + " to be deleted!");
         }
         if (theEmployee.getChildArray().size() != 0) {
-            throw new IllegalIDException("Could NOT delete the Employee with given ID : " + id +
-                    " as it has some Employees! Please provide manageid for new boss of Employees under him");
+            throw new IllegalIDException("Could NOT delete the Employee with given ID : " + id
+                    + " as it has some Employees! Please provide manageid for new boss of Employees under him");
         }
         Node<T> hisBoss = theEmployee.parent;
         if (hisBoss != null) {
@@ -125,7 +118,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         }
         theEmployee.parent = null;
         deleteKey(id); // No need to handle the case when Employee ID doesn't exist here, as already
-                       // handled above
+        // handled above
     }
 
     public void fireEmployee(int id, int manageid) throws IllegalIDException {
@@ -196,8 +189,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
             }
             if (commonpointer != null) {
                 break;
-            } else
-                pointer1 = pointer1.parent;
+            } else pointer1 = pointer1.parent;
         }
         return commonpointer.getKey();
     }
@@ -273,11 +265,13 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         int lvl = maxLevel();
         for (int i = 1; i <= lvl; i++) {
             LinkedList<Node<T>> e1 = getbylevel(root, i);
-            String sn2 = e1.stream().map(nodo -> nodo.getKey() + " [" +
-                    nodo.childArray.stream().map(no -> no.getKey() + "").collect(Collectors.joining(";")) + "]")
+            String sn2 = e1.stream()
+                    .map(nodo -> nodo.getKey() + " ["
+                            + nodo.childArray.stream()
+                                    .map(no -> no.getKey() + "")
+                                    .collect(Collectors.joining(";")) + "]")
                     .collect(Collectors.joining("   "));
-            if (e1.size() > 0)
-                strl.add(sn2);
+            if (e1.size() > 0) strl.add(sn2);
         }
         return strl;
     }

@@ -17,18 +17,17 @@ import gob.gamo.activosf.app.domain.AfMaterial;
  *
  * @author wherrera
  */
-
-public interface AfMaterialRepository extends JpaRepository<AfMaterial,Integer>{
+public interface AfMaterialRepository extends JpaRepository<AfMaterial, Integer> {
 
     @Query("SELECT a FROM AfMaterial a WHERE a.estado = 'A' ORDER BY a.nombre")
-	public List<AfMaterial> findAllActives() ;
-    
+    public List<AfMaterial> findAllActives();
+
     @Query("SELECT a.idMaterial "
-    			+ " FROM AfKardexMaterial a "
-    			+ " WHERE a.estado = 'A' "
-    			+ " AND a.gestion = :gestion "
-    			+ " AND a.idAlmacen = :idAlmacen "
-    			+ " ORDER BY a.idMaterial.nombre")
-                //ojooo param id class
+            + " FROM AfKardexMaterial a "
+            + " WHERE a.estado = 'A' "
+            + " AND a.gestion = :gestion "
+            + " AND a.idAlmacen = :idAlmacen "
+            + " ORDER BY a.idMaterial.nombre")
+    // ojooo param id class
     public List<AfMaterial> findAllActivesAfMaterialPorAfAlmacenYGestion(AfAlmacen afAlmacen, Integer gestion);
 }

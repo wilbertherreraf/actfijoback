@@ -5,13 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -19,21 +15,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-
 
 /**
  *
@@ -49,49 +42,55 @@ import lombok.NoArgsConstructor;
 public class AfGarantiaActivoFijo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_garantia_activo_fijo")
     private Integer idGarantiaActivoFijo;
+
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
+
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
-    
+
     @Column(name = "cat_tipo_garantia")
     private String catTipoGarantia;
+
     @Column(name = "tab_tipo_garantia")
-	private Integer tabTipoGarantia;
-	@Column(name = "tipo_garantia")
-	private Integer tipoGarantia;    
+    private Integer tabTipoGarantia;
+
+    @Column(name = "tipo_garantia")
+    private Integer tipoGarantia;
 
     @Column(name = "codigo_contrato")
     private String codigoContrato;
-    
+
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(mappedBy = "idGarantiaActivoFijo", fetch = FetchType.LAZY)
     private List<AfActivoFijo> afActivoFijoList;
 
@@ -99,7 +98,13 @@ public class AfGarantiaActivoFijo {
         this.idGarantiaActivoFijo = idGarantiaActivoFijo;
     }
 
-    public AfGarantiaActivoFijo(Integer idGarantiaActivoFijo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfGarantiaActivoFijo(
+            Integer idGarantiaActivoFijo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idGarantiaActivoFijo = idGarantiaActivoFijo;
         this.estado = estado;
         this.idTransaccion = idTransaccion;
@@ -212,7 +217,6 @@ public class AfGarantiaActivoFijo {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfActivoFijo> getAfActivoFijoList() {
         return afActivoFijoList;
     }
@@ -235,7 +239,9 @@ public class AfGarantiaActivoFijo {
             return false;
         }
         AfGarantiaActivoFijo other = (AfGarantiaActivoFijo) object;
-        if ((this.idGarantiaActivoFijo == null && other.idGarantiaActivoFijo != null) || (this.idGarantiaActivoFijo != null && !this.idGarantiaActivoFijo.equals(other.idGarantiaActivoFijo))) {
+        if ((this.idGarantiaActivoFijo == null && other.idGarantiaActivoFijo != null)
+                || (this.idGarantiaActivoFijo != null
+                        && !this.idGarantiaActivoFijo.equals(other.idGarantiaActivoFijo))) {
             return false;
         }
         return true;
@@ -245,5 +251,4 @@ public class AfGarantiaActivoFijo {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfGarantiaActivoFijo[ idGarantiaActivoFijo=" + idGarantiaActivoFijo + " ]";
     }
-    
 }

@@ -15,43 +15,43 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrgHierarchyTest {
 
-    OrgUnidad u1 = OrgUnidad.builder().id_unidad(1000).domicilio("DDDDDDD").build();
-    OrgUnidad u2 = OrgUnidad.builder().id_unidad(2).id_unidad_padre(1000).domicilio("asdf asd2").build();
-    OrgUnidad u3 = OrgUnidad.builder().id_unidad(300).id_unidad_padre(1000).domicilio("afsred").build();
-    OrgUnidad u5 = OrgUnidad.builder().id_unidad(5).id_unidad_padre(2).domicilio("5").build();
-    OrgUnidad u6 = OrgUnidad.builder().id_unidad(6000).id_unidad_padre(300).domicilio("6 adscadfdf").build();
-    OrgUnidad u7 = OrgUnidad.builder().id_unidad(7).id_unidad_padre(5).domicilio("7").build();
-    OrgUnidad u8 = OrgUnidad.builder().id_unidad(888).id_unidad_padre(5).domicilio("8").build();
-    OrgUnidad u9 = OrgUnidad.builder().id_unidad(9).id_unidad_padre(888).domicilio("9").build();
-    OrgUnidad u10 = OrgUnidad.builder().id_unidad(10).id_unidad_padre(300).domicilio("10").build();
-    OrgUnidad u11 = OrgUnidad.builder().id_unidad(11).id_unidad_padre(888).domicilio("11").build();
-    OrgUnidad u12 = OrgUnidad.builder().id_unidad(12).id_unidad_padre(11).domicilio("12 asdwerqe").build();
-    OrgUnidad u15 = OrgUnidad.builder().id_unidad(100).id_unidad_padre(7).domicilio("15 asdwerqe").build();
-    OrgUnidad u16 = OrgUnidad.builder().id_unidad(101).id_unidad_padre(12).domicilio("101 asdwerqe").build();
-    OrgUnidad u17 = OrgUnidad.builder().id_unidad(102).id_unidad_padre(101).domicilio("101 asdwerqe").build();
-    OrgUnidad u18 = OrgUnidad.builder().id_unidad(105).id_unidad_padre(102).domicilio("105 asdwerqe").build();
+    OrgUnidad u1 = OrgUnidad.builder().idUnidad(1000).domicilio("DDDDDDD").build();
+    OrgUnidad u2 = OrgUnidad.builder().idUnidad(2).idUnidadPadre(1000).domicilio("asdf asd2").build();
+    OrgUnidad u3 = OrgUnidad.builder().idUnidad(300).idUnidadPadre(1000).domicilio("afsred").build();
+    OrgUnidad u5 = OrgUnidad.builder().idUnidad(5).idUnidadPadre(2).domicilio("5").build();
+    OrgUnidad u6 = OrgUnidad.builder().idUnidad(6000).idUnidadPadre(300).domicilio("6 adscadfdf").build();
+    OrgUnidad u7 = OrgUnidad.builder().idUnidad(7).idUnidadPadre(5).domicilio("7").build();
+    OrgUnidad u8 = OrgUnidad.builder().idUnidad(888).idUnidadPadre(5).domicilio("8").build();
+    OrgUnidad u9 = OrgUnidad.builder().idUnidad(9).idUnidadPadre(888).domicilio("9").build();
+    OrgUnidad u10 = OrgUnidad.builder().idUnidad(10).idUnidadPadre(300).domicilio("10").build();
+    OrgUnidad u11 = OrgUnidad.builder().idUnidad(11).idUnidadPadre(888).domicilio("11").build();
+    OrgUnidad u12 = OrgUnidad.builder().idUnidad(12).idUnidadPadre(11).domicilio("12 asdwerqe").build();
+    OrgUnidad u15 = OrgUnidad.builder().idUnidad(100).idUnidadPadre(7).domicilio("15 asdwerqe").build();
+    OrgUnidad u16 = OrgUnidad.builder().idUnidad(101).idUnidadPadre(12).domicilio("101 asdwerqe").build();
+    OrgUnidad u17 = OrgUnidad.builder().idUnidad(102).idUnidadPadre(101).domicilio("101 asdwerqe").build();
+    OrgUnidad u18 = OrgUnidad.builder().idUnidad(105).idUnidadPadre(102).domicilio("105 asdwerqe").build();
 
     @Test
     void tree() {
         try {
-            log.info("********* iniciooooooooooooooo ************ root {} ", u1.getId_unidad());
+            log.info("********* iniciooooooooooooooo ************ root {} ", u1.getIdUnidad());
             OrgHierarchyInterface<OrgUnidad> org = new OrgHierarchy<OrgUnidad>();
-            org.hireOwner(new Node<OrgUnidad>(u1.getId_unidad(), u1));
+            org.hireOwner(new Node<OrgUnidad>(u1.getIdUnidad(), u1));
 
-            org.hireEmployee(createNode(u2), u2.getId_unidad_padre());
-            org.hireEmployee(createNode(u3), u3.getId_unidad_padre());
-            org.hireEmployee(createNode(u5), u5.getId_unidad_padre());
-            org.hireEmployee(createNode(u6), u6.getId_unidad_padre());
-            org.hireEmployee(createNode(u7), u7.getId_unidad_padre());
-            org.hireEmployee(createNode(u8), u8.getId_unidad_padre());
-            org.hireEmployee(createNode(u9), u9.getId_unidad_padre());
-            org.hireEmployee(createNode(u10), u10.getId_unidad_padre());
-            org.hireEmployee(createNode(u11), u11.getId_unidad_padre());
-            org.hireEmployee(createNode(u12), u12.getId_unidad_padre());
-            org.hireEmployee(createNode(u15), u15.getId_unidad_padre());
-            org.hireEmployee(createNode(u16), u16.getId_unidad_padre());
-            org.hireEmployee(createNode(u17), u17.getId_unidad_padre());
-            // org.hireEmployee(createNode(u12), u12.getId_unidad_padre());
+            org.hireEmployee(createNode(u2), u2.getIdUnidadPadre());
+            org.hireEmployee(createNode(u3), u3.getIdUnidadPadre());
+            org.hireEmployee(createNode(u5), u5.getIdUnidadPadre());
+            org.hireEmployee(createNode(u6), u6.getIdUnidadPadre());
+            org.hireEmployee(createNode(u7), u7.getIdUnidadPadre());
+            org.hireEmployee(createNode(u8), u8.getIdUnidadPadre());
+            org.hireEmployee(createNode(u9), u9.getIdUnidadPadre());
+            org.hireEmployee(createNode(u10), u10.getIdUnidadPadre());
+            org.hireEmployee(createNode(u11), u11.getIdUnidadPadre());
+            org.hireEmployee(createNode(u12), u12.getIdUnidadPadre());
+            org.hireEmployee(createNode(u15), u15.getIdUnidadPadre());
+            org.hireEmployee(createNode(u16), u16.getIdUnidadPadre());
+            org.hireEmployee(createNode(u17), u17.getIdUnidadPadre());
+            // org.hireEmployee(createNode(u12), u12.getIdUnidadPadre());
 
             Node<OrgUnidad> rootid = org.returnRoot();
             org.nivls(rootid).stream().forEach(l -> {
@@ -66,19 +66,19 @@ public class OrgHierarchyTest {
             log.info("toStringNode 1 -> {} root: {} sRoot {} level: {} ", org.toStringNode(1000), root.nodeID(),
                     org.size(), org.maxLevel());
 
-            Node<OrgUnidad> empSearch = org.searchNode(u3.getId_unidad());
+            Node<OrgUnidad> empSearch = org.searchNode(u3.getIdUnidad());
             LinkedList<Node<OrgUnidad>> result = empSearch.childs();
             result.forEach(r -> {
                 log.info("Chil {}", r.nodeID());
             });
             log.info("Replace =======> size {}", org.size());
-            org.hireEmployee(createNode(u18), u18.getId_unidad_padre());
-            Node<OrgUnidad> unold = org.searchNode(u5.getId_unidad());
+            org.hireEmployee(createNode(u18), u18.getIdUnidadPadre());
+            Node<OrgUnidad> unold = org.searchNode(u5.getIdUnidad());
             log.info("Replace ch> {} lvl: {}", unold.nodeID(), unold.maxLevel());
-            // org.fireEmployee(u2.getId_unidad(), u3.getId_unidad());
-            // org.fireWithNew(u2.getId_unidad(), createNode(u18),
-            // u18.getId_unidad_padre());
-            // org.hireEmployee(createNode(u2), u2.getId_unidad_padre());
+            // org.fireEmployee(u2.getIdUnidad(), u3.getIdUnidad());
+            // org.fireWithNew(u2.getIdUnidad(), createNode(u18),
+            // u18.getIdUnidadPadre());
+            // org.hireEmployee(createNode(u2), u2.getIdUnidadPadre());
 
             org.nivls(unold).stream().forEach(l -> {
                 log.info("" + l);
@@ -103,15 +103,15 @@ public class OrgHierarchyTest {
             Integer idpadre = 5;
 
             Optional<OrgUnidad> oupadre = list.stream()
-                    .filter(r -> idpadre != null && r.getId_unidad().compareTo(idpadre) == 0).findFirst();
+                    .filter(r -> idpadre != null && r.getIdUnidad().compareTo(idpadre) == 0).findFirst();
             if (oupadre.isPresent()) {
                 List<OrgUnidad> listR = search(list, idpadre);
-                org.hireOwner(new Node<OrgUnidad>(oupadre.get().getId_unidad(), oupadre.get()));
+                org.hireOwner(new Node<OrgUnidad>(oupadre.get().getIdUnidad(), oupadre.get()));
 
                 listR.forEach(r -> {
-                    log.info("OU: {} padre: {}", r.getId_unidad(), r.getId_unidad_padre());
-                    if (r.getId_unidad().compareTo(idpadre) != 0) {
-                        org.hireEmployee(createNode(r), r.getId_unidad_padre());
+                    log.info("OU: {} padre: {}", r.getIdUnidad(), r.getIdUnidadPadre());
+                    if (r.getIdUnidad().compareTo(idpadre) != 0) {
+                        org.hireEmployee(createNode(r), r.getIdUnidadPadre());
                     }
                 });
             }
@@ -136,16 +136,16 @@ public class OrgHierarchyTest {
             Integer idpadre = 102;
 
             Optional<OrgUnidad> oupadre = list.stream()
-                    .filter(r -> idpadre != null && r.getId_unidad().compareTo(idpadre) == 0).findFirst();
+                    .filter(r -> idpadre != null && r.getIdUnidad().compareTo(idpadre) == 0).findFirst();
 
             if (oupadre.isPresent()) {
-                List<OrgUnidad> listR = searchUp(list, oupadre.get().getId_unidad_padre());
-                org.hireOwner(new Node<OrgUnidad>(oupadre.get().getId_unidad(), oupadre.get()));
+                List<OrgUnidad> listR = searchUp(list, oupadre.get().getIdUnidadPadre());
+                org.hireOwner(new Node<OrgUnidad>(oupadre.get().getIdUnidad(), oupadre.get()));
 
                 listR.forEach(r -> {
-                    log.info("OU: {} padre: {}", r.getId_unidad(), r.getId_unidad_padre());
-                    if (r.getId_unidad().compareTo(idpadre) != 0) {
-                        //org.hireEmployee(createNode(r), r.getId_unidad_padre());
+                    log.info("OU: {} padre: {}", r.getIdUnidad(), r.getIdUnidadPadre());
+                    if (r.getIdUnidad().compareTo(idpadre) != 0) {
+                        //org.hireEmployee(createNode(r), r.getIdUnidadPadre());
                     }
                 });
             }
@@ -163,15 +163,15 @@ public class OrgHierarchyTest {
     public List<OrgUnidad> search(List<OrgUnidad> list, Integer idpadre) {
         List<OrgUnidad> result = new ArrayList<>();
 
-        result = list.stream().filter(r -> idpadre != null && r.getId_unidad().compareTo(idpadre) == 0)
+        result = list.stream().filter(r -> idpadre != null && r.getIdUnidad().compareTo(idpadre) == 0)
                 .collect(Collectors.toList());
 
-        List<OrgUnidad> conPadre = list.stream().filter(r -> idpadre != null && r.getId_unidad_padre() != null
-                && r.getId_unidad_padre().compareTo(idpadre) == 0).collect(Collectors.toList());
+        List<OrgUnidad> conPadre = list.stream().filter(r -> idpadre != null && r.getIdUnidadPadre() != null
+                && r.getIdUnidadPadre().compareTo(idpadre) == 0).collect(Collectors.toList());
 
         for (OrgUnidad orgUnidad : conPadre) {
-            if (orgUnidad.getId_unidad() > 0) {
-                List<OrgUnidad> conPadreAux = search(list, orgUnidad.getId_unidad());
+            if (orgUnidad.getIdUnidad() > 0) {
+                List<OrgUnidad> conPadreAux = search(list, orgUnidad.getIdUnidad());
                 result.addAll(conPadreAux);
             }
         }
@@ -181,12 +181,12 @@ public class OrgHierarchyTest {
     public List<OrgUnidad> searchUp(List<OrgUnidad> list, Integer idpadre) {
         List<OrgUnidad> result = new ArrayList<>();
 
-        result = list.stream().filter(r -> idpadre != null && r.getId_unidad().compareTo(idpadre) == 0)
+        result = list.stream().filter(r -> idpadre != null && r.getIdUnidad().compareTo(idpadre) == 0)
                 .collect(Collectors.toList());
         return result;
     }
 
     public Node<OrgUnidad> createNode(OrgUnidad orgUnidad) {
-        return new Node<OrgUnidad>(orgUnidad.getId_unidad(), orgUnidad);
+        return new Node<OrgUnidad>(orgUnidad.getIdUnidad(), orgUnidad);
     }
 }

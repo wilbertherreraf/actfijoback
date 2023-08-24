@@ -5,13 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,21 +18,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-
 
 /**
  *
@@ -52,90 +45,105 @@ import lombok.NoArgsConstructor;
 public class AfSolicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_solicitud")
     private Integer idSolicitud;
+
     @Column(name = "correlativo")
     private Integer correlativo;
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
+
     @Column(name = "cat_tipo_solicitud")
     private String catTipoSolicitud;
-	@Column(name = "tab_tipo_solicitud")
-	private Integer tabTipoSolicitud;
-	@Column(name = "tipo_solicitud")
-	private Integer tipoSolicitud;       
-    
-    
+
+    @Column(name = "tab_tipo_solicitud")
+    private Integer tabTipoSolicitud;
+
+    @Column(name = "tipo_solicitud")
+    private Integer tipoSolicitud;
+
     @Column(name = "cat_estado_solicitud")
     private String catEstadoSolicitud;
+
     @JoinColumn(name = "id_usuario_solicitud", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private TxUsuario idUsuarioSolicitud;
-    
+
     @Column(name = "detalle_solicitud")
     private String detalleSolicitud;
-    
+
     @Column(name = "fecha_solicitud")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaSolicitud;
+
     @JoinColumn(name = "id_usuario_autorizacion", referencedColumnName = "id_usuario")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private TxUsuario idUsuarioAutorizacion;
-    
+
     @Column(name = "detalle_autorizacion")
     private String detalleAutorizacion;
+
     @Column(name = "fecha_autorizacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAutorizacion;
+
     @JoinColumn(name = "id_usuario_ejecucion", referencedColumnName = "id_usuario")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private TxUsuario idUsuarioEjecucion;
-    
+
     @Column(name = "detalle_ejecucion")
     private String detalleEjecucion;
+
     @Column(name = "fecha_ejecucion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaEjecucion;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(mappedBy = "idSolicitud", fetch = FetchType.LAZY)
     private List<AfSolicitudActivoFijo> afSolicitudActivoFijoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSolicitud", fetch = FetchType.EAGER, orphanRemoval=true)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSolicitud", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AfSolicitudMaterial> afSolicitudMaterialList;
 
-    public AfSolicitud(Integer idSolicitud, Integer gestion, String catTipoSolicitud, String catEstadoSolicitud, TxUsuario idUsuarioSolicitud, String detalleSolicitud, Date fechaSolicitud, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfSolicitud(
+            Integer idSolicitud,
+            Integer gestion,
+            String catTipoSolicitud,
+            String catEstadoSolicitud,
+            TxUsuario idUsuarioSolicitud,
+            String detalleSolicitud,
+            Date fechaSolicitud,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idSolicitud = idSolicitud;
         this.gestion = gestion;
         this.catTipoSolicitud = catTipoSolicitud;
@@ -326,7 +334,6 @@ public class AfSolicitud {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfSolicitudActivoFijo> getAfSolicitudActivoFijoList() {
         return afSolicitudActivoFijoList;
     }
@@ -335,7 +342,6 @@ public class AfSolicitud {
         this.afSolicitudActivoFijoList = afSolicitudActivoFijoList;
     }
 
-    
     public List<AfSolicitudMaterial> getAfSolicitudMaterialList() {
         return afSolicitudMaterialList;
     }
@@ -358,7 +364,8 @@ public class AfSolicitud {
             return false;
         }
         AfSolicitud other = (AfSolicitud) object;
-        if ((this.idSolicitud == null && other.idSolicitud != null) || (this.idSolicitud != null && !this.idSolicitud.equals(other.idSolicitud))) {
+        if ((this.idSolicitud == null && other.idSolicitud != null)
+                || (this.idSolicitud != null && !this.idSolicitud.equals(other.idSolicitud))) {
             return false;
         }
         return true;
@@ -368,5 +375,4 @@ public class AfSolicitud {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfSolicitud[ idSolicitud=" + idSolicitud + " ]";
     }
-    
 }

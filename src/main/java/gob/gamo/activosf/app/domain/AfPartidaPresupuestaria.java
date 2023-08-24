@@ -5,11 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,16 +15,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -34,74 +26,72 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_partida_presupuestaria")
-
 public class AfPartidaPresupuestaria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_partida_presupuestaria")
     private Integer idPartidaPresupuestaria;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
-    
+
     @Column(name = "codigo")
     private String codigo;
-    
-    
-    
+
     @Column(name = "descripcion")
     private String descripcion;
-    
+
     @Column(name = "id_origen")
     private Integer idOrigen;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPartidaPresupuestaria", fetch = FetchType.LAZY)
     private List<AfMaterial> afMaterialList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPartidaPresupuestaria", fetch = FetchType.LAZY)
     private List<AfFamiliaActivo> afFamiliaActivoList;
 
-    public AfPartidaPresupuestaria() {
-    }
+    public AfPartidaPresupuestaria() {}
 
     public AfPartidaPresupuestaria(Integer idPartidaPresupuestaria) {
         this.idPartidaPresupuestaria = idPartidaPresupuestaria;
     }
 
-    public AfPartidaPresupuestaria(Integer idPartidaPresupuestaria, Integer gestion, String codigo, String descripcion, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfPartidaPresupuestaria(
+            Integer idPartidaPresupuestaria,
+            Integer gestion,
+            String codigo,
+            String descripcion,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idPartidaPresupuestaria = idPartidaPresupuestaria;
         this.gestion = gestion;
         this.codigo = codigo;
@@ -209,7 +199,6 @@ public class AfPartidaPresupuestaria {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfMaterial> getAfMaterialList() {
         return afMaterialList;
     }
@@ -218,7 +207,6 @@ public class AfPartidaPresupuestaria {
         this.afMaterialList = afMaterialList;
     }
 
-    
     public List<AfFamiliaActivo> getAfFamiliaActivoList() {
         return afFamiliaActivoList;
     }
@@ -228,14 +216,14 @@ public class AfPartidaPresupuestaria {
     }
 
     public Integer getIdOrigen() {
-		return idOrigen;
-	}
+        return idOrigen;
+    }
 
-	public void setIdOrigen(Integer idOrigen) {
-		this.idOrigen = idOrigen;
-	}
+    public void setIdOrigen(Integer idOrigen) {
+        this.idOrigen = idOrigen;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         Integer hash = 0;
         hash += (idPartidaPresupuestaria != null ? idPartidaPresupuestaria.hashCode() : 0);
@@ -249,7 +237,9 @@ public class AfPartidaPresupuestaria {
             return false;
         }
         AfPartidaPresupuestaria other = (AfPartidaPresupuestaria) object;
-        if ((this.idPartidaPresupuestaria == null && other.idPartidaPresupuestaria != null) || (this.idPartidaPresupuestaria != null && !this.idPartidaPresupuestaria.equals(other.idPartidaPresupuestaria))) {
+        if ((this.idPartidaPresupuestaria == null && other.idPartidaPresupuestaria != null)
+                || (this.idPartidaPresupuestaria != null
+                        && !this.idPartidaPresupuestaria.equals(other.idPartidaPresupuestaria))) {
             return false;
         }
         return true;
@@ -257,7 +247,7 @@ public class AfPartidaPresupuestaria {
 
     @Override
     public String toString() {
-        return "gob.gamo.activosf.app.domain.AfPartidaPresupuestaria[ idPartidaPresupuestaria=" + idPartidaPresupuestaria + " ]";
+        return "gob.gamo.activosf.app.domain.AfPartidaPresupuestaria[ idPartidaPresupuestaria="
+                + idPartidaPresupuestaria + " ]";
     }
-    
 }

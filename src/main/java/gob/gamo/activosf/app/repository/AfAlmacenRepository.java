@@ -6,7 +6,6 @@
 package gob.gamo.activosf.app.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import gob.gamo.activosf.app.domain.AfAlmacen;
 
@@ -14,8 +13,4 @@ import gob.gamo.activosf.app.domain.AfAlmacen;
  *
  * @author wherrera
  */
-
-public interface AfAlmacenRepository extends JpaRepository<AfAlmacen, Integer>{
-
-
-}
+public interface AfAlmacenRepository extends JpaRepository<AfAlmacen, Integer> {}

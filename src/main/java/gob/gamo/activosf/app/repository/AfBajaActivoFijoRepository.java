@@ -5,7 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfBajaActivoFijo;
@@ -14,8 +13,4 @@ import gob.gamo.activosf.app.domain.AfBajaActivoFijo;
  *
  * @author wherrera
  */
-
-public interface AfBajaActivoFijoRepository extends JpaRepository<AfBajaActivoFijo, Integer>{
-
-    
-}
+public interface AfBajaActivoFijoRepository extends JpaRepository<AfBajaActivoFijo, Integer> {}

@@ -5,10 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,16 +15,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -33,85 +26,83 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_factura")
-
 public class AfFactura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_factura")
     private Integer idFactura;
-    
-    
-    
+
     @Column(name = "nro_factura")
     private String nroFactura;
-    
-    
+
     @Column(name = "fecha_factura")
     @Temporal(TemporalType.DATE)
     private Date fechaFactura;
-    
+
     @Column(name = "nro_autorizacion")
     private String nroAutorizacion;
-    
+
     @Column(name = "codigo_control")
     private String codigoControl;
-    
-    
-    
+
     @Column(name = "razon_social")
     private String razonSocial;
-    
-    
-    
+
     @Column(name = "nit")
     private String nit;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFactura", fetch = FetchType.LAZY)
     private List<AfAccesorioActivoFijo> afAccesorioActivoFijoList;
+
     @OneToMany(mappedBy = "idFactura", fetch = FetchType.LAZY)
     private List<AfAltaMaterial> afAltaMaterialList;
+
     @OneToMany(mappedBy = "idFactura", fetch = FetchType.LAZY)
     private List<AfActivoFijo> afActivoFijoList;
 
-    public AfFactura() {
-    }
+    public AfFactura() {}
 
     public AfFactura(Integer idFactura) {
         this.idFactura = idFactura;
     }
 
-    public AfFactura(Integer idFactura, String nroFactura, Date fechaFactura, String razonSocial, String nit, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfFactura(
+            Integer idFactura,
+            String nroFactura,
+            Date fechaFactura,
+            String razonSocial,
+            String nit,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idFactura = idFactura;
         this.nroFactura = nroFactura;
         this.fechaFactura = fechaFactura;
@@ -244,7 +235,6 @@ public class AfFactura {
         this.txHostMod = txHostMod;
     }
 
-    
     public List<AfAccesorioActivoFijo> getAfAccesorioActivoFijoList() {
         return afAccesorioActivoFijoList;
     }
@@ -253,7 +243,6 @@ public class AfFactura {
         this.afAccesorioActivoFijoList = afAccesorioActivoFijoList;
     }
 
-    
     public List<AfAltaMaterial> getAfAltaMaterialList() {
         return afAltaMaterialList;
     }
@@ -262,7 +251,6 @@ public class AfFactura {
         this.afAltaMaterialList = afAltaMaterialList;
     }
 
-    
     public List<AfActivoFijo> getAfActivoFijoList() {
         return afActivoFijoList;
     }
@@ -285,7 +273,8 @@ public class AfFactura {
             return false;
         }
         AfFactura other = (AfFactura) object;
-        if ((this.idFactura == null && other.idFactura != null) || (this.idFactura != null && !this.idFactura.equals(other.idFactura))) {
+        if ((this.idFactura == null && other.idFactura != null)
+                || (this.idFactura != null && !this.idFactura.equals(other.idFactura))) {
             return false;
         }
         return true;
@@ -295,5 +284,4 @@ public class AfFactura {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfFactura[ idFactura=" + idFactura + " ]";
     }
-    
 }

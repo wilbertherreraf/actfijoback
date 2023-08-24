@@ -1,20 +1,20 @@
 package com.softwaremill.realworld.application.article.controller;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.softwaremill.realworld.application.article.service.ArticleService;
 import com.softwaremill.realworld.domain.article.ArticleFacets;
 import com.softwaremill.realworld.domain.article.ArticleVO;
 import com.softwaremill.realworld.domain.article.CommentVO;
 import com.softwaremill.realworld.domain.user.User;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
 

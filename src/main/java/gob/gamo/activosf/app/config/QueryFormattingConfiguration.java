@@ -40,7 +40,8 @@ public class QueryFormattingConfiguration {
             FormatStyle formatStyle = isDDL(query) ? FormatStyle.DDL : FormatStyle.BASIC;
             Formatter queryFormatter = formatStyle.getFormatter();
 
-            String prettyQuery = queryFormatter.format(query).replace("+0900", "").strip();
+            String prettyQuery =
+                    queryFormatter.format(query).replace("+0900", "").strip();
 
             return summary(prettyQuery, connectionId, elapsed, callstack());
         }

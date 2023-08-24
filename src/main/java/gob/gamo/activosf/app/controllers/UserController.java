@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
-import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
 import gob.gamo.activosf.app.dto.sec.UserResponse;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.services.sec.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -29,7 +29,7 @@ public class UserController {
 
     @PostMapping("/api/users")
     public ModelAndView signUp(@RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
-        log.info("inicio signup {} {}",request.email(), request.nombres());
+        log.info("inicio signup {} {}", request.email(), request.nombres());
         userService.signUp(request);
 
         // Redirect to login API to automatically login when signup is complete
@@ -41,7 +41,7 @@ public class UserController {
     @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
     public UserResponse login(@RequestBody LoginUserRequest request) {
-        log.info("inicio a login {}",request.toString());
+        log.info("inicio a login {}", request.toString());
         UserVO userVO = userService.login(request);
         return new UserResponse(userVO);
     }
@@ -51,7 +51,7 @@ public class UserController {
         UserVO userVO = new UserVO(me);
         return new UserResponse(userVO);
     }
-/*
+    /*
     @PutMapping("/api/user")
     public UserResponse updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
         UserVO userVO = userService.update(me, request);

@@ -1,13 +1,5 @@
 package com.softwaremill.realworld.application.article.service;
 
-import com.softwaremill.realworld.application.article.controller.CreateArticleRequest;
-import com.softwaremill.realworld.application.article.controller.CreateCommentRequest;
-import com.softwaremill.realworld.application.article.controller.UpdateArticleRequest;
-import com.softwaremill.realworld.domain.article.*;
-import com.softwaremill.realworld.domain.user.FollowId;
-import com.softwaremill.realworld.domain.user.FollowRepository;
-import com.softwaremill.realworld.domain.user.User;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,6 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.softwaremill.realworld.application.article.controller.CreateArticleRequest;
+import com.softwaremill.realworld.application.article.controller.CreateCommentRequest;
+import com.softwaremill.realworld.application.article.controller.UpdateArticleRequest;
+import com.softwaremill.realworld.domain.article.*;
+import com.softwaremill.realworld.domain.user.FollowId;
+import com.softwaremill.realworld.domain.user.FollowRepository;
+import com.softwaremill.realworld.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
 

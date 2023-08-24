@@ -13,6 +13,6 @@ public interface GenDesctablaRespository extends JpaRepository<GenDesctabla, Gen
     @Query("SELECT t FROM GenDesctabla t WHERE t.id.desCodtab = :desCodtab")
     public List<GenDesctabla> findByDesCodtab(Integer desCodtab);
 
-    @Query("SELECT t FROM GenDesctabla t WHERE t.id.desCodtab = :desCodtab and t.id.desCodigo = :desCodigo ")        
-	public Optional<GenDesctabla> findByDesCodtabAndDesCodigo(Integer desCodtab, Integer desCodigo);
+    @Query("SELECT t FROM GenDesctabla t WHERE t.id.desCodtab = :desCodtab and t.id.desCodigo = :desCodigo ")
+    public Optional<GenDesctabla> findByDesCodtabAndDesCodigo(Integer desCodtab, Integer desCodigo);
 }

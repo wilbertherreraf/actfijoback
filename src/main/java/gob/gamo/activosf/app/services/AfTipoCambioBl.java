@@ -6,20 +6,18 @@
 package gob.gamo.activosf.app.services;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
-import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
 import gob.gamo.activosf.app.domain.AfTipoCambio;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
 
 /**
  *
  * @author wherrera
  */
-
 public class AfTipoCambioBl {
 
     AfTipoCambioRepository afTipoCambioRepository;
@@ -47,7 +45,8 @@ public class AfTipoCambioBl {
     }
 
     public AfTipoCambio getAfTipoCambioByCatMonedaAndFecha(String catMoneda, Date fecha) {
-        return afTipoCambioRepository.getAfTipoCambioByCatMonedaAndFecha(catMoneda, fecha)
+        return afTipoCambioRepository
+                .getAfTipoCambioByCatMonedaAndFecha(catMoneda, fecha)
                 .orElseThrow(() -> new DataException("Tipo de cambio inexistente " + catMoneda + " fecha " + fecha));
     }
 

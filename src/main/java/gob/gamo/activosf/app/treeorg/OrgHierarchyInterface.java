@@ -10,7 +10,9 @@ public interface OrgHierarchyInterface<T> {
     public int size(); /* Returns the number of employees in the organization */
 
     public int level(int id) throws IllegalIDException; /* Returns the level of the employee with ID=id */
+
     public int maxLevel();
+
     public void hireOwner(Node<T> owner) throws NotEmptyException;
 
     public void hireOwner(int id) throws NotEmptyException; /*

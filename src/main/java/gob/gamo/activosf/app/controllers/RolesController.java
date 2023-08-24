@@ -1,9 +1,9 @@
 package gob.gamo.activosf.app.controllers;
 
 import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SingleRolResponse;
 import gob.gamo.activosf.app.services.sec.RolesService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-//@Api("Role Controller")
+// @Api("Role Controller")
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -37,7 +38,7 @@ public class RolesController {
     }
 
     @PostMapping("/roles")
-    //@PreAuthorize("hasRole('rol:write')")
+    // @PreAuthorize("hasRole('rol:write')")
     public SingleRolResponse createRol(User me, @RequestBody RolesVO request) {
         RolesVO rol = rolesService.createRol(me, request);
         return new SingleRolResponse(rol);
@@ -50,8 +51,7 @@ public class RolesController {
     }
 
     @PutMapping("/roles/{codrol}")
-    public SingleRolResponse updateRol(
-            User me, @PathVariable String codrol, @RequestBody RolesVO request) {
+    public SingleRolResponse updateRol(User me, @PathVariable String codrol, @RequestBody RolesVO request) {
         RolesVO rol = rolesService.updateRol(me, codrol, request);
         return new SingleRolResponse(rol);
     }

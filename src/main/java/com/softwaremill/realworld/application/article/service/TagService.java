@@ -1,12 +1,12 @@
 package com.softwaremill.realworld.application.article.service;
 
-import com.softwaremill.realworld.domain.article.Tag;
-import com.softwaremill.realworld.domain.article.TagRepository;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.softwaremill.realworld.domain.article.Tag;
+import com.softwaremill.realworld.domain.article.TagRepository;
 
 import lombok.RequiredArgsConstructor;
 

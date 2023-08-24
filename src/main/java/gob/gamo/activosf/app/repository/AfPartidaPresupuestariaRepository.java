@@ -16,9 +16,7 @@ import gob.gamo.activosf.app.domain.AfPartidaPresupuestaria;
  *
  * @author wherrera
  */
-
-public interface AfPartidaPresupuestariaRepository extends JpaRepository<AfPartidaPresupuestaria, Integer>{
+public interface AfPartidaPresupuestariaRepository extends JpaRepository<AfPartidaPresupuestaria, Integer> {
     @Query("SELECT a FROM AfPartidaPresupuestaria a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.codigo")
-	public List<AfPartidaPresupuestaria> findAllActivesByGestion(Integer gestion) ;
-    
+    public List<AfPartidaPresupuestaria> findAllActivesByGestion(Integer gestion);
 }

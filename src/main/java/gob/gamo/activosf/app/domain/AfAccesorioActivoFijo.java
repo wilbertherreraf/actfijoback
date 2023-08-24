@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,28 +20,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Min;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
-
 /**
  *
  * @author wherrera
  */
-
 @Entity
 @Getter
 @Builder
@@ -53,85 +46,89 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AfAccesorioActivoFijo implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_accesorio_activo_fijo")
     private Integer idAccesorioActivoFijo;
-    
-    
-    
+
     @Column(name = "cat_tipo_accesorio")
     private String catTipoAccesorio;
-	@Column(name = "tab_tipo_accesorio")
-	private Integer tabTipoAccesorio;
-	@Column(name = "tipo_accesorio")
-	private Integer tipoAccesorio;    
-    
+
+    @Column(name = "tab_tipo_accesorio")
+    private Integer tabTipoAccesorio;
+
+    @Column(name = "tipo_accesorio")
+    private Integer tipoAccesorio;
+
     @Column(name = "fecha_adquisicion")
     @Temporal(TemporalType.DATE)
     private Date fechaAdquisicion;
-    
-    
-    
+
     @Column(name = "detalle")
     private String detalle;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to
+    // enforce field validation
     @Min(value = 1)
-    
-    
     @Column(name = "importe_total")
     private BigDecimal importeTotal;
+
     @Min(value = 1)
-    
-    
     @Column(name = "cantidad")
     private Integer cantidad;
-    
+
     @Column(name = "observacion")
     private String observacion;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional=false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     private AfFactura idFactura;
+
     @JoinColumn(name = "id_activo_fijo", referencedColumnName = "id_activo_fijo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfActivoFijo idActivoFijo;
+
     @OneToMany(mappedBy = "idAccesorioActivoFijo", fetch = FetchType.LAZY)
     private List<AfImagenActivoFijo> afImagenActivoFijoList;
 
-    public AfAccesorioActivoFijo(Integer idAccesorioActivoFijo, String catTipoAccesorio, Date fechaAdquisicion, String detalle, BigDecimal importeTotal, Integer cantidad, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfAccesorioActivoFijo(
+            Integer idAccesorioActivoFijo,
+            String catTipoAccesorio,
+            Date fechaAdquisicion,
+            String detalle,
+            BigDecimal importeTotal,
+            Integer cantidad,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idAccesorioActivoFijo = idAccesorioActivoFijo;
         this.catTipoAccesorio = catTipoAccesorio;
         this.fechaAdquisicion = fechaAdquisicion;
@@ -281,7 +278,6 @@ public class AfAccesorioActivoFijo implements Serializable {
         this.idActivoFijo = idActivoFijo;
     }
 
-    
     public List<AfImagenActivoFijo> getAfImagenActivoFijoList() {
         return afImagenActivoFijoList;
     }
@@ -304,7 +300,9 @@ public class AfAccesorioActivoFijo implements Serializable {
             return false;
         }
         AfAccesorioActivoFijo other = (AfAccesorioActivoFijo) object;
-        if ((this.idAccesorioActivoFijo == null && other.idAccesorioActivoFijo != null) || (this.idAccesorioActivoFijo != null && !this.idAccesorioActivoFijo.equals(other.idAccesorioActivoFijo))) {
+        if ((this.idAccesorioActivoFijo == null && other.idAccesorioActivoFijo != null)
+                || (this.idAccesorioActivoFijo != null
+                        && !this.idAccesorioActivoFijo.equals(other.idAccesorioActivoFijo))) {
             return false;
         }
         return true;
@@ -312,7 +310,7 @@ public class AfAccesorioActivoFijo implements Serializable {
 
     @Override
     public String toString() {
-        return "gob.gamo.activosf.app.domain.AfAccesorioActivoFijo[ idAccesorioActivoFijo=" + idAccesorioActivoFijo + " ]";
+        return "gob.gamo.activosf.app.domain.AfAccesorioActivoFijo[ idAccesorioActivoFijo=" + idAccesorioActivoFijo
+                + " ]";
     }
-    
 }

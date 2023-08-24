@@ -2,7 +2,6 @@ package gob.gamo.activosf.app.treeorg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +115,7 @@ public class Node<T> {
      * public T getValueCrr() {
      * return valueCrr;
      * }
-     * 
+     *
      * public void setValueCrr(T valueCrr) {
      * this.valueCrr = (T) valueCrr;
      * }
@@ -183,15 +182,17 @@ public class Node<T> {
     public List<String> nivls() {
         List<String> strl = new ArrayList<>();
         int lvl = maxLevel();
-        
+
         for (Entry<Integer, LinkedList<Node<T>>> e : treeCampos.entrySet()) {
             int i = e.getKey();
             LinkedList<Node<T>> e1 = treeCampos.get(i);
-            String sn2 = e1.stream().map(nodo -> nodo.getKey() + " [" +
-                    nodo.childArray.stream().map(no -> no.getKey() + "").collect(Collectors.joining(";")) + "]")
+            String sn2 = e1.stream()
+                    .map(nodo -> nodo.getKey() + " ["
+                            + nodo.childArray.stream()
+                                    .map(no -> no.getKey() + "")
+                                    .collect(Collectors.joining(";")) + "]")
                     .collect(Collectors.joining("   "));
-            if (e1.size() > 0)
-                strl.add(sn2);
+            if (e1.size() > 0) strl.add(sn2);
         }
         return strl;
     }
@@ -205,8 +206,7 @@ public class Node<T> {
 
         for (Node<T> child : childArray) {
             int lvl = maxLevel(1, child);
-            if (lvl > nlvl)
-                nlvl = lvl;
+            if (lvl > nlvl) nlvl = lvl;
             /*
              * if (!treeCampos.containsKey(lvl)) {
              * treeCampos.put(lvl, new LinkedList<Node<T>>());
@@ -232,7 +232,7 @@ public class Node<T> {
             if (lch > nlvl) {
                 nlvl = lch;
             }
-/*             if (!treeCampos.containsKey(child.getLevel())) {
+            /*             if (!treeCampos.containsKey(child.getLevel())) {
                 treeCampos.put(child.getLevel(), new LinkedList<Node<T>>());
             }
             treeCampos.get(n.getLevel()).add(n); */
@@ -273,14 +273,14 @@ public class Node<T> {
      * else
      * return null;
      * }
-     * 
+     *
      * public String currentID() {
      * if (swfMencampos != null && swfMencampos instanceof SwfMencampos)
      * return hasCurrent() ? ((SwfMencampos) swfMencamposCrr).toStringID() : "";
      * else
      * return null;
      * }
-     * 
+     *
      * public String nodoID() {
      * if (swfMencampos != null && swfMencampos instanceof SwfMencampos)
      * return swfMencampos != null ? ((SwfMencampos) swfMencampos).toStringID() :

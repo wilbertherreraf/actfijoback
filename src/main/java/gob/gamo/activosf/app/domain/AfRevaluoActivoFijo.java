@@ -5,10 +5,9 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,14 +16,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -32,90 +26,91 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_revaluo_activo_fijo")
-
 public class AfRevaluoActivoFijo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_revaluo_activo_fijo")
     private Integer idRevaluoActivoFijo;
-    
-    
+
     @Column(name = "fecha_revaluo")
     @Temporal(TemporalType.DATE)
     private Date fechaRevaluo;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    
-    
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to
+    // enforce field validation
+
     @Column(name = "nuevo_factor_depreciacion")
     private BigDecimal nuevoFactorDepreciacion;
-    
-    
-    
+
     @Column(name = "dispocision_respaldo")
     private String dispocisionRespaldo;
-    
+
     @Column(name = "motivo")
     private String motivo;
+
     @Column(name = "costo_historico")
     private BigDecimal costoHistorico;
+
     @Column(name = "costo_nuevo")
     private BigDecimal costoNuevo;
-    
-    
+
     @Column(name = "dep_al_revaluo")
     private BigDecimal depAlRevaluo;
-    
-    
+
     @Column(name = "dep_acum_al_revaluo")
     private BigDecimal depAcumAlRevaluo;
-    
-    
+
     @Column(name = "valor_neto_al_revaluo")
     private BigDecimal valorNetoAlRevaluo;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_activo_fijo", referencedColumnName = "id_activo_fijo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfActivoFijo idActivoFijo;
 
-    public AfRevaluoActivoFijo() {
-    }
+    public AfRevaluoActivoFijo() {}
 
     public AfRevaluoActivoFijo(Integer idRevaluoActivoFijo) {
         this.idRevaluoActivoFijo = idRevaluoActivoFijo;
     }
 
-    public AfRevaluoActivoFijo(Integer idRevaluoActivoFijo, Date fechaRevaluo, BigDecimal nuevoFactorDepreciacion, String dispocisionRespaldo, BigDecimal depAlRevaluo, BigDecimal depAcumAlRevaluo, BigDecimal valorNetoAlRevaluo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfRevaluoActivoFijo(
+            Integer idRevaluoActivoFijo,
+            Date fechaRevaluo,
+            BigDecimal nuevoFactorDepreciacion,
+            String dispocisionRespaldo,
+            BigDecimal depAlRevaluo,
+            BigDecimal depAcumAlRevaluo,
+            BigDecimal valorNetoAlRevaluo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idRevaluoActivoFijo = idRevaluoActivoFijo;
         this.fechaRevaluo = fechaRevaluo;
         this.nuevoFactorDepreciacion = nuevoFactorDepreciacion;
@@ -296,7 +291,8 @@ public class AfRevaluoActivoFijo {
             return false;
         }
         AfRevaluoActivoFijo other = (AfRevaluoActivoFijo) object;
-        if ((this.idRevaluoActivoFijo == null && other.idRevaluoActivoFijo != null) || (this.idRevaluoActivoFijo != null && !this.idRevaluoActivoFijo.equals(other.idRevaluoActivoFijo))) {
+        if ((this.idRevaluoActivoFijo == null && other.idRevaluoActivoFijo != null)
+                || (this.idRevaluoActivoFijo != null && !this.idRevaluoActivoFijo.equals(other.idRevaluoActivoFijo))) {
             return false;
         }
         return true;
@@ -306,5 +302,4 @@ public class AfRevaluoActivoFijo {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfRevaluoActivoFijo[ idRevaluoActivoFijo=" + idRevaluoActivoFijo + " ]";
     }
-    
 }

@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,15 +18,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -35,71 +29,73 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_solicitud_material")
-
 public class AfSolicitudMaterial implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_solicitud_material")
     private Integer idSolicitudMaterial;
-    
-    
+
     @Column(name = "cantidad_solicitada")
     private Integer cantidadSolicitada;
+
     @Column(name = "cantidad_aprobada")
     private Integer cantidadAprobada;
+
     @Column(name = "cantidad_entregada")
     private Integer cantidadEntregada;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_solicitud", referencedColumnName = "id_solicitud")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade=CascadeType.ALL )
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private AfSolicitud idSolicitud;
+
     @JoinColumn(name = "id_material", referencedColumnName = "id_material")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private AfMaterial idMaterial;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSolicitudMaterial", fetch = FetchType.LAZY)
     private List<AfRegistroKardexMaterial> afRegistroKardexMaterialList;
 
-    public AfSolicitudMaterial() {
-    }
+    public AfSolicitudMaterial() {}
 
     public AfSolicitudMaterial(Integer idSolicitudMaterial) {
         this.idSolicitudMaterial = idSolicitudMaterial;
     }
 
-    public AfSolicitudMaterial(Integer idSolicitudMaterial, Integer cantidadSolicitada, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfSolicitudMaterial(
+            Integer idSolicitudMaterial,
+            Integer cantidadSolicitada,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idSolicitudMaterial = idSolicitudMaterial;
         this.cantidadSolicitada = cantidadSolicitada;
         this.estado = estado;
@@ -222,15 +218,14 @@ public class AfSolicitudMaterial implements Serializable {
     }
 
     public List<AfRegistroKardexMaterial> getAfRegistroKardexMaterialList() {
-		return afRegistroKardexMaterialList;
-	}
+        return afRegistroKardexMaterialList;
+    }
 
-	public void setAfRegistroKardexMaterialList(
-			List<AfRegistroKardexMaterial> afRegistroKardexMaterialList) {
-		this.afRegistroKardexMaterialList = afRegistroKardexMaterialList;
-	}
+    public void setAfRegistroKardexMaterialList(List<AfRegistroKardexMaterial> afRegistroKardexMaterialList) {
+        this.afRegistroKardexMaterialList = afRegistroKardexMaterialList;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         Integer hash = 0;
         hash += (idSolicitudMaterial != null ? idSolicitudMaterial.hashCode() : 0);
@@ -244,7 +239,8 @@ public class AfSolicitudMaterial implements Serializable {
             return false;
         }
         AfSolicitudMaterial other = (AfSolicitudMaterial) object;
-        if ((this.idSolicitudMaterial == null && other.idSolicitudMaterial != null) || (this.idSolicitudMaterial != null && !this.idSolicitudMaterial.equals(other.idSolicitudMaterial))) {
+        if ((this.idSolicitudMaterial == null && other.idSolicitudMaterial != null)
+                || (this.idSolicitudMaterial != null && !this.idSolicitudMaterial.equals(other.idSolicitudMaterial))) {
             return false;
         }
         return true;
@@ -254,5 +250,4 @@ public class AfSolicitudMaterial implements Serializable {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfSolicitudMaterial[ idSolicitudMaterial=" + idSolicitudMaterial + " ]";
     }
-    
 }

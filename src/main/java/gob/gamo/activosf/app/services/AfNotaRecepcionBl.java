@@ -16,14 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
-import gob.gamo.activosf.app.repository.AfComisionRecepcionRepository;
-import gob.gamo.activosf.app.repository.AfFamiliaActivoRepository;
-import gob.gamo.activosf.app.repository.AfNotaRecepcionRepository;
-import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
-import gob.gamo.activosf.app.repository.AfTransferenciaAsignacionRepository;
-import gob.gamo.activosf.app.utils.LazyLoadingUtil;
-import gob.gamo.activosf.app.utils.TransactionUtil;
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAtributoActivoFijo;
 import gob.gamo.activosf.app.domain.AfComisionRecepcion;
@@ -32,19 +24,27 @@ import gob.gamo.activosf.app.domain.AfImagenActivoFijo;
 import gob.gamo.activosf.app.domain.AfNotaRecepcion;
 import gob.gamo.activosf.app.domain.AfTransferenciaAsignacion;
 import gob.gamo.activosf.app.domain.TxTransaccion;
-import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.dto.StatusEnum;
 import gob.gamo.activosf.app.dto.UserRequestVo;
+import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
+import gob.gamo.activosf.app.repository.AfComisionRecepcionRepository;
+import gob.gamo.activosf.app.repository.AfFamiliaActivoRepository;
+import gob.gamo.activosf.app.repository.AfNotaRecepcionRepository;
+import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
+import gob.gamo.activosf.app.repository.AfTransferenciaAsignacionRepository;
+import gob.gamo.activosf.app.utils.LazyLoadingUtil;
 
 /**
  *
  * @author wherrera
  */
-
 public class AfNotaRecepcionBl {
 
     enum CodeType {
-        CODE, BARCODE_128, RFID
+        CODE,
+        BARCODE_128,
+        RFID
     };
 
     AfNotaRecepcionRepository afNotaRecepcionRepository;
@@ -68,7 +68,8 @@ public class AfNotaRecepcionBl {
         String result = null;
         switch (codeType) {
             case CODE:
-                result = "UIF-" + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo() + "-"
+                result = "UIF-"
+                        + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo() + "-"
                         + afActivoFijo.getIdSubFamilia().getCodigo() + "-"
                         + String.format("%04d", afActivoFijo.getCorrelativo());
                 break;
@@ -78,7 +79,8 @@ public class AfNotaRecepcionBl {
                         + String.format("%04d", afActivoFijo.getCorrelativo());
                 break;
             case RFID:
-                result = "A0000000" + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo()
+                result = "A0000000"
+                        + afActivoFijo.getIdSubFamilia().getIdFamiliaActivo().getCodigo()
                         + afActivoFijo.getIdSubFamilia().getCodigo()
                         + String.format("%04d", afActivoFijo.getCorrelativo());
                 break;
@@ -86,19 +88,27 @@ public class AfNotaRecepcionBl {
         return result;
     }
 
-    private String generateCodeForAfComponenteActivoFijo(AfComponenteActivoFijo afComponenteActivoFijo,
-            CodeType codeType) {
+    private String generateCodeForAfComponenteActivoFijo(
+            AfComponenteActivoFijo afComponenteActivoFijo, CodeType codeType) {
         // Luego de coordinar con RFID colocar aqui la codificación adecuada.
-        return "C-" + afComponenteActivoFijo.getIdActivoFijo().getIdSubFamilia().getIdFamiliaActivo().getCodigo()
-                + "-" + afComponenteActivoFijo.getIdActivoFijo().getIdSubFamilia().getCodigo()
-                + "-" + String.format("%04d", afComponenteActivoFijo.getIdActivoFijo().getCorrelativo());
+        return "C-"
+                + afComponenteActivoFijo
+                        .getIdActivoFijo()
+                        .getIdSubFamilia()
+                        .getIdFamiliaActivo()
+                        .getCodigo()
+                + "-"
+                + afComponenteActivoFijo.getIdActivoFijo().getIdSubFamilia().getCodigo()
+                + "-"
+                + String.format("%04d", afComponenteActivoFijo.getIdActivoFijo().getCorrelativo());
     }
 
     public void enterAfNotaRecepcion(AfNotaRecepcion afNotaRecepcion, UserRequestVo userRequestVo) {
         // TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afNotaRecepcion = findByPkAfNotaRecepcion(afNotaRecepcion.getIdNotaRecepcion(), false);
         afNotaRecepcion.setCatEstadoNotaRecepcion("INGRES");
-        if (afNotaRecepcion.getAfActivoFijoList() != null && afNotaRecepcion.getAfActivoFijoList().size() != 0) {
+        if (afNotaRecepcion.getAfActivoFijoList() != null
+                && afNotaRecepcion.getAfActivoFijoList().size() != 0) {
             for (AfActivoFijo activoFijo : afNotaRecepcion.getAfActivoFijoList()) {
                 activoFijo.setGestion(afNotaRecepcion.getGestion());
                 if (activoFijo.getIdUsuarioAsignado() != null) {
@@ -116,7 +126,7 @@ public class AfNotaRecepcionBl {
                     afTransferenciaAsignacion.setCatTipoAsignacion(activoFijo.getCatTipoAsignacion());
                     if ("ASGNDO".equals(activoFijo.getCatTipoAsignacion())) {
                         afTransferenciaAsignacion.setCatMotivoTransferencia("CUMFUN"); // CUMFUN: CUMPLIMIENTO DE SUS
-                                                                                       // FUNCIONES
+                        // FUNCIONES
                     } else if ("CUSTOD".equals(activoFijo.getCatTipoAsignacion())) {
                         afTransferenciaAsignacion.setCatMotivoTransferencia("CUSTOD"); // CUSTOD: PARA SU CUSTODIA
                     }
@@ -145,7 +155,8 @@ public class AfNotaRecepcionBl {
         // correlativo.
         // Luego de asignado el correlativo podemos generar las etiquetas
         afNotaRecepcionRepository.save(afNotaRecepcion);
-        if (afNotaRecepcion.getAfActivoFijoList() != null && !afNotaRecepcion.getAfActivoFijoList().isEmpty()) {
+        if (afNotaRecepcion.getAfActivoFijoList() != null
+                && !afNotaRecepcion.getAfActivoFijoList().isEmpty()) {
             for (AfActivoFijo activoFijo : afNotaRecepcion.getAfActivoFijoList()) {
                 activoFijo.setCodigoEan(generateCodeForAfActivoFijo(activoFijo, CodeType.BARCODE_128));
                 activoFijo.setCodigoRfid(generateCodeForAfActivoFijo(activoFijo, CodeType.RFID));
@@ -172,15 +183,16 @@ public class AfNotaRecepcionBl {
                     // Se reestablece
                     activoFijo.setFechaActual(fechaActual);
                     activoFijo.setCostoActual(activoFijo.getCalculoContableVo().getValorActual());
-                    activoFijo.setDepAcumuladaActual(activoFijo.getCalculoContableVo().getDepreciacionAcumulada());
+                    activoFijo.setDepAcumuladaActual(
+                            activoFijo.getCalculoContableVo().getDepreciacionAcumulada());
                 }
             }
         }
         afNotaRecepcionRepository.save(afNotaRecepcion);
     }
 
-    public void enterAfActivoFijoMigracion(AfActivoFijo activoFijo, UserRequestVo userRequestVo,
-            String catMotivoTipoMovimiento) {
+    public void enterAfActivoFijoMigracion(
+            AfActivoFijo activoFijo, UserRequestVo userRequestVo, String catMotivoTipoMovimiento) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
 
         activoFijo.setCatFuenteFinanciamiento("00");
@@ -200,8 +212,8 @@ public class AfNotaRecepcionBl {
         afTransferenciaAsignacion.setIdUsuarioDestino(activoFijo.getIdUsuarioAsignado());
         afTransferenciaAsignacion.setIdAmbienteDestino(activoFijo.getIdAmbiente());
         afTransferenciaAsignacion.setIdNotaRecepcion(afNotaRecepcion);
-        afTransferenciaAsignacion
-                .setCatTransferenciaAsignacion(AfTransferenciaAsignacion.TipoTransferencia.ASIGNACION.getValor());
+        afTransferenciaAsignacion.setCatTransferenciaAsignacion(
+                AfTransferenciaAsignacion.TipoTransferencia.ASIGNACION.getValor());
         afTransferenciaAsignacion.setCatTipoAsignacion(activoFijo.getCatTipoAsignacion());
 
         if ("ASGNDO".equals(activoFijo.getCatTipoAsignacion())) {
@@ -232,8 +244,8 @@ public class AfNotaRecepcionBl {
                 && !activoFijo.getAfComponenteActivoFijoList().isEmpty()) {
             for (AfComponenteActivoFijo afComponenteActivoFijo : activoFijo.getAfComponenteActivoFijoList()) {
                 afComponenteActivoFijo.setCorrelativo(i++);
-                afComponenteActivoFijo
-                        .setCodigoRfid(generateCodeForAfComponenteActivoFijo(afComponenteActivoFijo, CodeType.RFID));
+                afComponenteActivoFijo.setCodigoRfid(
+                        generateCodeForAfComponenteActivoFijo(afComponenteActivoFijo, CodeType.RFID));
                 afComponenteActivoFijo.setCodigoEan(
                         generateCodeForAfComponenteActivoFijo(afComponenteActivoFijo, CodeType.BARCODE_128));
                 // TransactionUtil.setUpdateTransactionData(afComponenteActivoFijo);
@@ -267,10 +279,12 @@ public class AfNotaRecepcionBl {
     public void persistAfNotaRecepcion(AfNotaRecepcion afNotaRecepcion, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afNotaRecepcion.setCatEstadoNotaRecepcion("PROREC");
-        if (afNotaRecepcion.getAfActivoFijoList() != null && afNotaRecepcion.getAfActivoFijoList().size() != 0) {
+        if (afNotaRecepcion.getAfActivoFijoList() != null
+                && afNotaRecepcion.getAfActivoFijoList().size() != 0) {
             // Solicitado así por la Lic. Susana. Si se cambia tambien cambiar
             // NotaRecepcion.addActivoFijoToList()
-            String catTipoActializacion = "02".equals(afNotaRecepcion.getCatMotivoTipoMovimiento()) ? "DONACN"
+            String catTipoActializacion = "02".equals(afNotaRecepcion.getCatMotivoTipoMovimiento())
+                    ? "DONACN"
                     : "REGINI"; // 02 POR DONACION -> DONACN
             for (AfActivoFijo activoFijo : afNotaRecepcion.getAfActivoFijoList()) {
                 activoFijo.setGestion(afNotaRecepcion.getGestion());
@@ -289,7 +303,8 @@ public class AfNotaRecepcionBl {
                  */
                 // Si es nulo o no es REVALUO
                 if (activoFijo.getFactorDepreciacionHistorico() == null) {
-                    activoFijo.setFactorDepreciacionHistorico(activoFijo.getIdSubFamilia().getFactorDepreciacion());
+                    activoFijo.setFactorDepreciacionHistorico(
+                            activoFijo.getIdSubFamilia().getFactorDepreciacion());
                 }
 
                 // GESTIONAMOS LA GARANTIA
@@ -325,12 +340,16 @@ public class AfNotaRecepcionBl {
         afNotaRecepcionRepository.save(afNotaRecepcion);
     }
 
-    public void mergeAfNotaRecepcion(AfNotaRecepcion afNotaRecepcion, List<AfComisionRecepcion> comisionRecepcion,
-            List<AfActivoFijo> activos, UserRequestVo userRequestVo) {
+    public void mergeAfNotaRecepcion(
+            AfNotaRecepcion afNotaRecepcion,
+            List<AfComisionRecepcion> comisionRecepcion,
+            List<AfActivoFijo> activos,
+            UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         if (activos != null) {
             removeAllAfActivoFijo(afNotaRecepcion.getIdNotaRecepcion(), txTransaccion);
-            String catTipoActializacion = "02".equals(afNotaRecepcion.getCatMotivoTipoMovimiento()) ? "DONACN"
+            String catTipoActializacion = "02".equals(afNotaRecepcion.getCatMotivoTipoMovimiento())
+                    ? "DONACN"
                     : "REGINI"; // 02 POR DONACION -> DONACN
             for (AfActivoFijo activoFijo : activos) {
                 activoFijo.setIdNotaRecepcion(afNotaRecepcion);
@@ -352,7 +371,8 @@ public class AfNotaRecepcionBl {
                      */
                     // Si es nulo o no es REVALUO
                     if (activoFijo.getFactorDepreciacionHistorico() == null) {
-                        activoFijo.setFactorDepreciacionHistorico(activoFijo.getIdSubFamilia().getFactorDepreciacion());
+                        activoFijo.setFactorDepreciacionHistorico(
+                                activoFijo.getIdSubFamilia().getFactorDepreciacion());
                     }
                     // TransactionUtil.setInitTransactionData(activoFijo);
                 }
@@ -374,7 +394,6 @@ public class AfNotaRecepcionBl {
 
                 // GESITONAMOS LA INFORMACION CONTABLE
                 setAtributosContables(activoFijo, catTipoActializacion);
-
             }
             afNotaRecepcion.setAfActivoFijoList(activos);
         }
@@ -389,7 +408,6 @@ public class AfNotaRecepcionBl {
                     afComisionRecepcion.setIdNotaRecepcion(afNotaRecepcion);
                     // TransactionUtil.setInitTransactionData(afComisionRecepcion);
                 }
-
             }
             afNotaRecepcion.setAfComisionRecepcionList(comisionRecepcion);
         }
@@ -417,23 +435,27 @@ public class AfNotaRecepcionBl {
         }
 
         // Calculo del factor de depreciacion del Activo Fijo con amortización variable
-        if (afActivoFijo.getIdSubFamilia().isDepreciar() && afActivoFijo.getIdSubFamilia().isAmortizacionVariable()) {
+        if (afActivoFijo.getIdSubFamilia().isDepreciar()
+                && afActivoFijo.getIdSubFamilia().isAmortizacionVariable()) {
             boolean vigenciaRegistrada = false;
             for (AfAtributoActivoFijo afAtributoActivoFijo : afActivoFijo.getAfAtributoActivoFijoList()) {
                 if ("VIGENC".equals(afAtributoActivoFijo.getCatTipoAtributo())) {
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     try {
                         LocalDate vencimiento = LocalDate.ofInstant(
-                                formatter.parse(afAtributoActivoFijo.getDetalle()).toInstant(), ZoneId.systemDefault());
+                                formatter
+                                        .parse(afAtributoActivoFijo.getDetalle())
+                                        .toInstant(),
+                                ZoneId.systemDefault());
                         // Days dias = Days.daysBetween(new LocalDate(afActivoFijo.getFechaActual()),
                         // vencimiento);
                         int days = (int) ChronoUnit.DAYS.between(
-                                LocalDate.ofInstant(afActivoFijo.getFechaActual().toInstant(), ZoneId.systemDefault()),
+                                LocalDate.ofInstant(
+                                        afActivoFijo.getFechaActual().toInstant(), ZoneId.systemDefault()),
                                 vencimiento);
                         if (days > 1) {
                             afActivoFijo.setFactorDepreciacionActual(BigDecimal.ONE.divide(
-                                    (new BigDecimal(days).divide(new BigDecimal("365"), 10,
-                                            RoundingMode.HALF_UP)),
+                                    (new BigDecimal(days).divide(new BigDecimal("365"), 10, RoundingMode.HALF_UP)),
                                     10,
                                     RoundingMode.HALF_UP));
                         } else {
@@ -458,8 +480,7 @@ public class AfNotaRecepcionBl {
     /**
      * GESTIONAMOS LOS COMPONENTES
      */
-    private void setTransactionAndCodeToAfComponenteActivoFijo(
-            TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
+    private void setTransactionAndCodeToAfComponenteActivoFijo(TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
 
         if (activoFijo.getAfComponenteActivoFijoList() != null) {
             int i = 0;
@@ -478,8 +499,7 @@ public class AfNotaRecepcionBl {
         }
     }
 
-    private void setTransactionToAfImagenActivoFijo(
-            TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
+    private void setTransactionToAfImagenActivoFijo(TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
         Date now = new Date();
         if (activoFijo.getAfImagenActivoFijoList() != null) {
             for (AfImagenActivoFijo afImagenActivoFijo : activoFijo.getAfImagenActivoFijoList()) {
@@ -498,8 +518,7 @@ public class AfNotaRecepcionBl {
     /**
      * GESTIONAMOS LOS ATRIBUTOS
      */
-    private void setTransactionToAfAtributoActivoFijo(
-            TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
+    private void setTransactionToAfAtributoActivoFijo(TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
         if (activoFijo.getAfAtributoActivoFijoList() != null) {
             for (AfAtributoActivoFijo afAtributoActivoFijo : activoFijo.getAfAtributoActivoFijoList()) {
                 if (afAtributoActivoFijo.getIdAtributoActivoFijo() == null) {
@@ -516,8 +535,7 @@ public class AfNotaRecepcionBl {
     /**
      * GESTIONAMOS LA GARANTIA
      */
-    private void setTransactionToAfGarantiaActivoFijo(
-            TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
+    private void setTransactionToAfGarantiaActivoFijo(TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
         if (activoFijo.getIdGarantiaActivoFijo() != null) {
             if (activoFijo.getIdGarantiaActivoFijo().getIdGarantiaActivoFijo() == null) {
                 activoFijo.getIdGarantiaActivoFijo().setEstado(StatusEnum.ACTIVE.getStatus());
@@ -531,8 +549,7 @@ public class AfNotaRecepcionBl {
     /**
      * GESTIONAMOS LA FACTURA
      */
-    private void setTransactionToAfFactura(
-            TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
+    private void setTransactionToAfFactura(TxTransaccion txTransaccion, AfActivoFijo activoFijo) {
         if (activoFijo.getIdFactura() != null) {
             if (activoFijo.getIdFactura().getIdFactura() == null) {
                 activoFijo.getIdFactura().setEstado(StatusEnum.ACTIVE.getStatus());
@@ -545,7 +562,8 @@ public class AfNotaRecepcionBl {
 
     public void deleteAfNotaRecepcion(AfNotaRecepcion afNotaRecepcion, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
-        afNotaRecepcion = afNotaRecepcionRepository.findById(afNotaRecepcion.getIdNotaRecepcion())
+        afNotaRecepcion = afNotaRecepcionRepository
+                .findById(afNotaRecepcion.getIdNotaRecepcion())
                 .orElseThrow(() -> new DataException("id inexistente"));
         afNotaRecepcion.setCatEstadoNotaRecepcion("CANCEL");
         for (AfComisionRecepcion afComisionRecepcion : afNotaRecepcion.getAfComisionRecepcionList()) {
@@ -566,7 +584,7 @@ public class AfNotaRecepcionBl {
     public List<AfNotaRecepcion> findAllActivesAfNotaRecepcionSinMigracion(Integer gestion) {
         List<AfNotaRecepcion> notas = afNotaRecepcionRepository.findAllActivesByGestionSinMigracion(gestion);
         for (AfNotaRecepcion afNotaRecepcion : notas) {
-            String[] lazyActivoFijo = { "afTransferenciaAsignacionList" }; /*
+            String[] lazyActivoFijo = {"afTransferenciaAsignacionList"}; /*
                                                                             * {"afBajaActivoFijoList","idSubFamilia",
                                                                             * "idUsuarioAsignado","idAmbiente",
                                                                             * "idGarantiaActivoFijo",
@@ -583,22 +601,31 @@ public class AfNotaRecepcionBl {
     }
 
     public AfNotaRecepcion findByPkAfNotaRecepcion(Integer pk, boolean lazy) {
-        AfNotaRecepcion afNotaRecepcion = afNotaRecepcionRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente"));
+        AfNotaRecepcion afNotaRecepcion =
+                afNotaRecepcionRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente"));
         if (afNotaRecepcion != null && lazy) {
-            String[] lazyActivoFijo = { "afBajaActivoFijoList", "idSubFamilia", "idUsuarioAsignado", "idFactura",
-                    "idAmbiente", "idGarantiaActivoFijo",
-                    "afAtributoActivoFijoList", "afComponenteActivoFijoList", "afAccesorioActivoFijoList",
-                    "afImagenActivoFijoList", "afTransferenciaAsignacionList", "idProveedor" };
+            String[] lazyActivoFijo = {
+                "afBajaActivoFijoList",
+                "idSubFamilia",
+                "idUsuarioAsignado",
+                "idFactura",
+                "idAmbiente",
+                "idGarantiaActivoFijo",
+                "afAtributoActivoFijoList",
+                "afComponenteActivoFijoList",
+                "afAccesorioActivoFijoList",
+                "afImagenActivoFijoList",
+                "afTransferenciaAsignacionList",
+                "idProveedor"
+            };
             initializeLazyAfNotaRecepcion(afNotaRecepcion, lazyActivoFijo);
         }
         return afNotaRecepcion;
-
     }
 
     private void initializeLazyAfNotaRecepcion(AfNotaRecepcion afNotaRecepcion, String[] lazyActivoFijo) {
         if (afNotaRecepcion.getAfActivoFijoList() != null) {
             LazyLoadingUtil.loadCollection(afNotaRecepcion.getAfActivoFijoList(), lazyActivoFijo);
-            
         }
         if (afNotaRecepcion.getAfComisionRecepcionList() != null) {
             afNotaRecepcion.getAfComisionRecepcionList().size();

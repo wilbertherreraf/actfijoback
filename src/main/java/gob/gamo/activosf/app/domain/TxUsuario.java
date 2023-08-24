@@ -5,27 +5,17 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-
 
 /**
  *
@@ -33,31 +23,30 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "sec_usuario")
-
 public class TxUsuario {
     @Id
-    
-    
     @Column(name = "id_usuario")
     private Integer idUsuario;
-    
+
     @Column(name = "alias")
     private String alias;
-    
+
     @Column(name = "tipo_usuario")
     private String tipoUsuario;
+
     @Column(name = "tx_id")
     private Integer txId;
+
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;
-    
+
     @Column(name = "usuario")
     private String usuario;
-    
+
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "contrasena")
     private String contrasena;
 
@@ -65,13 +54,12 @@ public class TxUsuario {
     @ManyToOne(fetch = FetchType.EAGER)
     private TxPersona idPersona;
 
-    public TxUsuario() {
-    }
+    public TxUsuario() {}
 
     public TxUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
-    
+
     public Integer getIdUsuario() {
         return idUsuario;
     }
@@ -136,7 +124,7 @@ public class TxUsuario {
         this.contrasena = contrasena;
     }
 
-        public TxPersona getIdPersona() {
+    public TxPersona getIdPersona() {
         return idPersona;
     }
 
@@ -158,7 +146,8 @@ public class TxUsuario {
             return false;
         }
         TxUsuario other = (TxUsuario) object;
-        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
+        if ((this.idUsuario == null && other.idUsuario != null)
+                || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
             return false;
         }
         return true;
@@ -168,6 +157,4 @@ public class TxUsuario {
     public String toString() {
         return "gob.gamo.activosf.app.domain.TxUsuario[ idUsuario=" + idUsuario + " ]";
     }
-
-	
 }

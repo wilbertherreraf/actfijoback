@@ -5,9 +5,8 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +15,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -31,81 +25,80 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_imagen_activo_fijo")
-
 public class AfImagenActivoFijo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_imagen_activo_fijo")
     private Integer idImagenActivoFijo;
-    
-    
+
     @Column(name = "imagen")
     private byte[] imagen;
-    
-    
-    
+
     @Column(name = "nombre_archivo")
     private String nombreArchivo;
-    
-    
-    
+
     @Column(name = "tipo_mime")
     private String tipoMime;
-    
-    
+
     @Column(name = "fecha_captura")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCaptura;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_transferencia_activo_fijo", referencedColumnName = "id_transferencia_activo_fijo")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfTransferenciaAsignacion idTransferenciaActivoFijo;
+
     @JoinColumn(name = "id_activo_fijo", referencedColumnName = "id_activo_fijo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfActivoFijo idActivoFijo;
+
     @JoinColumn(name = "id_accesorio_activo_fijo", referencedColumnName = "id_accesorio_activo_fijo")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfAccesorioActivoFijo idAccesorioActivoFijo;
 
-    public AfImagenActivoFijo() {
-    }
+    public AfImagenActivoFijo() {}
 
     public AfImagenActivoFijo(Integer idImagenActivoFijo) {
         this.idImagenActivoFijo = idImagenActivoFijo;
     }
 
-    public AfImagenActivoFijo(Integer idImagenActivoFijo, byte[] imagen, String nombreArchivo, String tipoMime, Date fechaCaptura, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfImagenActivoFijo(
+            Integer idImagenActivoFijo,
+            byte[] imagen,
+            String nombreArchivo,
+            String tipoMime,
+            Date fechaCaptura,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idImagenActivoFijo = idImagenActivoFijo;
         this.imagen = imagen;
         this.nombreArchivo = nombreArchivo;
@@ -260,7 +253,8 @@ public class AfImagenActivoFijo {
             return false;
         }
         AfImagenActivoFijo other = (AfImagenActivoFijo) object;
-        if ((this.idImagenActivoFijo == null && other.idImagenActivoFijo != null) || (this.idImagenActivoFijo != null && !this.idImagenActivoFijo.equals(other.idImagenActivoFijo))) {
+        if ((this.idImagenActivoFijo == null && other.idImagenActivoFijo != null)
+                || (this.idImagenActivoFijo != null && !this.idImagenActivoFijo.equals(other.idImagenActivoFijo))) {
             return false;
         }
         return true;
@@ -270,5 +264,4 @@ public class AfImagenActivoFijo {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfImagenActivoFijo[ idImagenActivoFijo=" + idImagenActivoFijo + " ]";
     }
-    
 }

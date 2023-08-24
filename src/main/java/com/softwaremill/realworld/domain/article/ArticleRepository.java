@@ -1,7 +1,5 @@
 package com.softwaremill.realworld.domain.article;
 
-import com.softwaremill.realworld.domain.user.User;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -10,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.softwaremill.realworld.domain.user.User;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(

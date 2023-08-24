@@ -1,7 +1,5 @@
 package gob.gamo.activosf.app.config;
 
-import java.util.UUID;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,10 +12,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import gob.gamo.activosf.app.domain.entities.User;
-import gob.gamo.activosf.app.repository.sec.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.domain.entities.User;
+import gob.gamo.activosf.app.repository.sec.UserRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +36,10 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             WebDataBinderFactory binderFactory) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        log.info("req:{} {}",mavContainer.getViewName(),webRequest.getParameterMap().values().toString());
+        log.info(
+                "req:{} {}",
+                mavContainer.getViewName(),
+                webRequest.getParameterMap().values().toString());
         if (authentication instanceof AnonymousAuthenticationToken) {
             return User.anonymous();
         }

@@ -1,10 +1,10 @@
 package com.softwaremill.realworld.application.user.controller;
 
+import org.springframework.web.bind.annotation.*;
+
 import com.softwaremill.realworld.application.user.service.ProfileService;
 import com.softwaremill.realworld.domain.user.ProfileVO;
 import com.softwaremill.realworld.domain.user.User;
-
-import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 

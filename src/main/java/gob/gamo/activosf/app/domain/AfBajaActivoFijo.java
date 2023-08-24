@@ -7,7 +7,7 @@ package gob.gamo.activosf.app.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import jakarta.persistence.Basic;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +16,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -31,83 +26,80 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_baja_activo_fijo")
-
 public class AfBajaActivoFijo implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_baja_activo_fijo")
     private Integer idBajaActivoFijo;
-    
-    
+
     @Column(name = "correlativo")
     private Integer correlativo;
-    
-    
+
     @Column(name = "gestion")
     private Integer gestion;
-    
-    
+
     @Column(name = "fecha_baja")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaBaja;
-    
-    
-    
+
     @Column(name = "cat_motivo_baja_activo_fijo")
     private String catMotivoBajaActivoFijo;
-    
-    
-    
+
     @Column(name = "documento_respaldo")
     private String documentoRespaldo;
-    
+
     @Column(name = "observaciones")
     private String observaciones;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_activo_fijo", referencedColumnName = "id_activo_fijo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfActivoFijo idActivoFijo;
 
-    public AfBajaActivoFijo() {
-    }
+    public AfBajaActivoFijo() {}
 
     public AfBajaActivoFijo(Integer idBajaActivoFijo) {
         this.idBajaActivoFijo = idBajaActivoFijo;
     }
 
-    public AfBajaActivoFijo(Integer idBajaActivoFijo, Integer correlativo, Integer gestion, Date fechaBaja, String catMotivoBajaActivoFijo, String documentoRespaldo, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfBajaActivoFijo(
+            Integer idBajaActivoFijo,
+            Integer correlativo,
+            Integer gestion,
+            Date fechaBaja,
+            String catMotivoBajaActivoFijo,
+            String documentoRespaldo,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idBajaActivoFijo = idBajaActivoFijo;
         this.correlativo = correlativo;
         this.gestion = gestion;
@@ -263,7 +255,8 @@ public class AfBajaActivoFijo implements Serializable {
             return false;
         }
         AfBajaActivoFijo other = (AfBajaActivoFijo) object;
-        if ((this.idBajaActivoFijo == null && other.idBajaActivoFijo != null) || (this.idBajaActivoFijo != null && !this.idBajaActivoFijo.equals(other.idBajaActivoFijo))) {
+        if ((this.idBajaActivoFijo == null && other.idBajaActivoFijo != null)
+                || (this.idBajaActivoFijo != null && !this.idBajaActivoFijo.equals(other.idBajaActivoFijo))) {
             return false;
         }
         return true;
@@ -273,5 +266,4 @@ public class AfBajaActivoFijo implements Serializable {
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfBajaActivoFijo[ idBajaActivoFijo=" + idBajaActivoFijo + " ]";
     }
-    
 }

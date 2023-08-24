@@ -5,13 +5,11 @@
  */
 package gob.gamo.activosf.app.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,15 +18,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 
 /**
  *
@@ -36,70 +29,73 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "acf_alta_material_detalle")
-
 public class AfAltaMaterialDetalle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
     @Column(name = "id_alta_material_detalle")
     private Integer idAltaMaterialDetalle;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to
+    // enforce field validation
+
     @Column(name = "importe_unitario")
     private BigDecimal importeUnitario;
-    
-    
+
     @Column(name = "cantidad")
     private Integer cantidad;
-    
-    
-    
+
     @Column(name = "estado")
     private String estado;
-    
-    
+
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    
-    
+
     @Column(name = "tx_fch_ini")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchIni;
-    
-    
+
     @Column(name = "tx_usr_ini")
     private Integer txUsrIni;
-    
-    
-    
+
     @Column(name = "tx_host_ini")
     private String txHostIni;
+
     @Column(name = "tx_fch_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFchMod;
+
     @Column(name = "tx_usr_mod")
     private Integer txUsrMod;
-    
+
     @Column(name = "tx_host_mod")
     private String txHostMod;
+
     @JoinColumn(name = "id_registro_kardex_material", referencedColumnName = "id_registro_kardex_material")
     @ManyToOne(fetch = FetchType.LAZY)
     private AfRegistroKardexMaterial idRegistroKardexMaterial;
+
     @JoinColumn(name = "id_material", referencedColumnName = "id_material")
     @ManyToOne(fetch = FetchType.EAGER)
     private AfMaterial idMaterial;
+
     @JoinColumn(name = "id_alta_material", referencedColumnName = "id_alta_material")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfAltaMaterial idAltaMaterial;
 
-    public AfAltaMaterialDetalle() {
-    }
+    public AfAltaMaterialDetalle() {}
 
     public AfAltaMaterialDetalle(Integer idAltaMaterialDetalle) {
         this.idAltaMaterialDetalle = idAltaMaterialDetalle;
     }
 
-    public AfAltaMaterialDetalle(Integer idAltaMaterialDetalle, BigDecimal importeUnitario, Integer cantidad, String estado, Integer idTransaccion, Date txFchIni, Integer txUsrIni, String txHostIni) {
+    public AfAltaMaterialDetalle(
+            Integer idAltaMaterialDetalle,
+            BigDecimal importeUnitario,
+            Integer cantidad,
+            String estado,
+            Integer idTransaccion,
+            Date txFchIni,
+            Integer txUsrIni,
+            String txHostIni) {
         this.idAltaMaterialDetalle = idAltaMaterialDetalle;
         this.importeUnitario = importeUnitario;
         this.cantidad = cantidad;
@@ -112,13 +108,13 @@ public class AfAltaMaterialDetalle {
 
     @Transient
     public BigDecimal getTotal() {
-    	BigDecimal result = null;
-    	if (importeUnitario != null){ 
-    		result = importeUnitario.multiply(new BigDecimal(cantidad),new MathContext(5, RoundingMode.HALF_UP));
-    	}
-    	return result;
+        BigDecimal result = null;
+        if (importeUnitario != null) {
+            result = importeUnitario.multiply(new BigDecimal(cantidad), new MathContext(5, RoundingMode.HALF_UP));
+        }
+        return result;
     }
-    
+
     public Integer getIdAltaMaterialDetalle() {
         return idAltaMaterialDetalle;
     }
@@ -206,7 +202,7 @@ public class AfAltaMaterialDetalle {
     public void setTxHostMod(String txHostMod) {
         this.txHostMod = txHostMod;
     }
-    
+
     public AfRegistroKardexMaterial getIdRegistroKardexMaterial() {
         return idRegistroKardexMaterial;
     }
@@ -245,7 +241,9 @@ public class AfAltaMaterialDetalle {
             return false;
         }
         AfAltaMaterialDetalle other = (AfAltaMaterialDetalle) object;
-        if ((this.idAltaMaterialDetalle == null && other.idAltaMaterialDetalle != null) || (this.idAltaMaterialDetalle != null && !this.idAltaMaterialDetalle.equals(other.idAltaMaterialDetalle))) {
+        if ((this.idAltaMaterialDetalle == null && other.idAltaMaterialDetalle != null)
+                || (this.idAltaMaterialDetalle != null
+                        && !this.idAltaMaterialDetalle.equals(other.idAltaMaterialDetalle))) {
             return false;
         }
         return true;
@@ -253,7 +251,7 @@ public class AfAltaMaterialDetalle {
 
     @Override
     public String toString() {
-        return "gob.gamo.activosf.app.domain.AfAltaMaterialDetalle[ idAltaMaterialDetalle=" + idAltaMaterialDetalle + " ]";
+        return "gob.gamo.activosf.app.domain.AfAltaMaterialDetalle[ idAltaMaterialDetalle=" + idAltaMaterialDetalle
+                + " ]";
     }
-    
 }

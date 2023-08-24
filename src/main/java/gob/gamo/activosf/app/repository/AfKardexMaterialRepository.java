@@ -19,19 +19,21 @@ import gob.gamo.activosf.app.domain.AfMaterial;
  *
  * @author wherrera
  */
-
 public interface AfKardexMaterialRepository extends JpaRepository<AfKardexMaterial, Integer> {
-    @Query("SELECT a FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.gestion = :gestion AND a.idMaterial = :idMaterial AND a.idAlmacen = :idAlmacen")
-    public Optional<AfKardexMaterial> findActiveByGestionAndMaterialAndAlmacen(Integer gestion, AfMaterial idMaterial,
-            AfAlmacen idAlmacen);
+    @Query(
+            "SELECT a FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.gestion = :gestion AND a.idMaterial = :idMaterial AND a.idAlmacen = :idAlmacen")
+    public Optional<AfKardexMaterial> findActiveByGestionAndMaterialAndAlmacen(
+            Integer gestion, AfMaterial idMaterial, AfAlmacen idAlmacen);
 
     @Query("SELECT a FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.gestion = :gestion")
     public List<AfKardexMaterial> findAllActivesByGestion(Integer gestion);
 
-    @Query("SELECT a.idMaterial FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.saldoCantidad > 0 AND a.gestion = :gestion")
+    @Query(
+            "SELECT a.idMaterial FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.saldoCantidad > 0 AND a.gestion = :gestion")
     public List<AfMaterial> getAfMaterialConSaldoCantidadDisponiblePorGestion(Integer gestion);
 
-    @Query("SELECT a FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.gestion = :gestion AND a.idMaterial IN :materialList ORDER BY a.idMaterial")
+    @Query(
+            "SELECT a FROM AfKardexMaterial a WHERE a.estado = 'A' AND a.gestion = :gestion AND a.idMaterial IN :materialList ORDER BY a.idMaterial")
     // ojoo lista pearam
     public List<AfKardexMaterial> findByAfMaterialListAndGestion(List<AfMaterial> materialList, Integer gestion);
 
@@ -42,6 +44,6 @@ public interface AfKardexMaterialRepository extends JpaRepository<AfKardexMateri
             + " AND a.saldoCantidad > 0 "
             + " AND a.idMaterial IN :materialList "
             + " ORDER BY a.idMaterial")
-    public List<AfKardexMaterial> findByAfMaterialListAndGestionConSaldo(List<AfMaterial> materialList, Integer gestion);
-
+    public List<AfKardexMaterial> findByAfMaterialListAndGestionConSaldo(
+            List<AfMaterial> materialList, Integer gestion);
 }

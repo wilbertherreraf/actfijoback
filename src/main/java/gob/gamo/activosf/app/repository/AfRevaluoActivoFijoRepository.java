@@ -5,10 +5,6 @@
  */
 package gob.gamo.activosf.app.repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import gob.gamo.activosf.app.domain.AfRevaluoActivoFijo;
@@ -17,8 +13,4 @@ import gob.gamo.activosf.app.domain.AfRevaluoActivoFijo;
  *
  * @author wherrera
  */
-
-public interface AfRevaluoActivoFijoRepository extends JpaRepository<AfRevaluoActivoFijo, Integer>{
-
-
-}
+public interface AfRevaluoActivoFijoRepository extends JpaRepository<AfRevaluoActivoFijo, Integer> {}

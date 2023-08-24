@@ -1,11 +1,8 @@
 package com.softwaremill.realworld;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-//@SpringBootApplication
+// @SpringBootApplication
 public class RealworldApplication {
-    public static void main(String[] args) {
+    /*     public static void main(String[] args) {
         SpringApplication.run(RealworldApplication.class, args);
-    }
+    } */
 }

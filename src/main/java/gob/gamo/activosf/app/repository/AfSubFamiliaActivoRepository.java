@@ -17,17 +17,17 @@ import gob.gamo.activosf.app.domain.AfSubFamiliaActivo;
 /**
  * @author wherrera
  */
-
 public interface AfSubFamiliaActivoRepository extends JpaRepository<AfSubFamiliaActivo, Integer> {
     @Query("SELECT a FROM AfSubFamiliaActivo a WHERE a.gestion = :gestion AND a.estado = 'A' ORDER BY a.descripcion")
     public List<AfSubFamiliaActivo> findAllActivesByGestion(Integer gestion);
 
-    @Query("SELECT a FROM AfSubFamiliaActivo a WHERE a.gestion = :gestion AND a.estado = 'A' AND a.idFamiliaActivo = :afFamiliaActivo ORDER BY a.codigo")
-    public List<AfSubFamiliaActivo> findAllActivesByGestionAndAfFamiliaActivo(Integer gestion,
-            AfFamiliaActivo afFamiliaActivo);
+    @Query(
+            "SELECT a FROM AfSubFamiliaActivo a WHERE a.gestion = :gestion AND a.estado = 'A' AND a.idFamiliaActivo = :afFamiliaActivo ORDER BY a.codigo")
+    public List<AfSubFamiliaActivo> findAllActivesByGestionAndAfFamiliaActivo(
+            Integer gestion, AfFamiliaActivo afFamiliaActivo);
 
-    @Query("SELECT a FROM AfSubFamiliaActivo a WHERE a.idFamiliaActivo = :idFamiliaActivo AND a.codigo = :codigo AND  a.gestion = :gestion AND a.estado = 'A'")
-    public Optional<AfSubFamiliaActivo> findAfSubFamiliaActivoByCodigoAndGestion(AfFamiliaActivo afFamiliaActivo,
-            String codigo, Integer gestion);
-
+    @Query(
+            "SELECT a FROM AfSubFamiliaActivo a WHERE a.idFamiliaActivo = :idFamiliaActivo AND a.codigo = :codigo AND  a.gestion = :gestion AND a.estado = 'A'")
+    public Optional<AfSubFamiliaActivo> findAfSubFamiliaActivoByCodigoAndGestion(
+            AfFamiliaActivo afFamiliaActivo, String codigo, Integer gestion);
 }

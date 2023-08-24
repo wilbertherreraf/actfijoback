@@ -1,18 +1,17 @@
 package com.softwaremill.realworld.domain.user;
 
-import com.softwaremill.realworld.domain.article.Article;
-import com.softwaremill.realworld.domain.article.ArticleFavorite;
-import com.softwaremill.realworld.domain.article.ArticleVO;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.softwaremill.realworld.domain.article.Article;
+import com.softwaremill.realworld.domain.article.ArticleFavorite;
+import com.softwaremill.realworld.domain.article.ArticleVO;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -78,17 +77,17 @@ public class User {
         return this.id == null && this.anonymous;
     }
 
-    public boolean isAlreadyFollowing( User target) {
+    public boolean isAlreadyFollowing(User target) {
         Follow follow = new Follow(this, target);
         return this.following.stream().anyMatch(follow::equals);
     }
 
-    public boolean isAlreadyFavorite( Article article) {
+    public boolean isAlreadyFavorite(Article article) {
         ArticleFavorite articleFavorite = new ArticleFavorite(this, article);
         return this.favoriteArticles.stream().anyMatch(articleFavorite::equals);
     }
 
-    public ProfileVO follow( User target) {
+    public ProfileVO follow(User target) {
         if (isAlreadyFollowing(target)) {
             return new ProfileVO(this, target);
         }
@@ -100,7 +99,7 @@ public class User {
         return new ProfileVO(this, target);
     }
 
-    public ProfileVO unfollow( User target) {
+    public ProfileVO unfollow(User target) {
         findFollowing(target).ifPresent(follow -> {
             this.removeFollowing(follow);
             target.removeFollower(follow);
@@ -109,7 +108,7 @@ public class User {
         return new ProfileVO(this, target);
     }
 
-    public ArticleVO favorite( Article article) {
+    public ArticleVO favorite(Article article) {
         if (isAlreadyFavorite(article)) {
             return new ArticleVO(this, article);
         }
@@ -121,7 +120,7 @@ public class User {
         return new ArticleVO(this, article);
     }
 
-    public ArticleVO unfavorite( Article article) {
+    public ArticleVO unfavorite(Article article) {
         findArticleFavorite(article).ifPresent(articleFavorite -> {
             removeFavoriteArticle(articleFavorite);
             removeUserFromFavorite(articleFavorite);
@@ -139,7 +138,7 @@ public class User {
         return this;
     }
 
-    public void updateEmail( String email) {
+    public void updateEmail(String email) {
         if (email.isBlank() || this.email.equals(email)) {
             log.info("Email(`{}`) is blank or same as current email.", email);
             return;
@@ -149,7 +148,7 @@ public class User {
         this.email = email;
     }
 
-    public void updateUsername( String username) {
+    public void updateUsername(String username) {
         if (username.isBlank() || this.username.equals(username)) {
             log.info("Username(`{}`) is blank or same as current username.", username);
             return;
@@ -158,7 +157,7 @@ public class User {
         this.username = username;
     }
 
-    public void updatePassword( PasswordEncoder passwordEncoder,  String plaintext) {
+    public void updatePassword(PasswordEncoder passwordEncoder, String plaintext) {
         if (plaintext.isBlank()) {
             log.info("Password is blank.");
             return;
@@ -167,7 +166,7 @@ public class User {
         this.password = passwordEncoder.encode(plaintext);
     }
 
-    public void updateBio( String bio) {
+    public void updateBio(String bio) {
         this.bio = bio;
     }
 
@@ -187,35 +186,35 @@ public class User {
         return this.following.stream().filter(target::isFollowing).findFirst();
     }
 
-    private boolean isFollowing( Follow follow) {
+    private boolean isFollowing(Follow follow) {
         return follow.getTo().equals(this);
     }
 
-    private void removeFollowing( Follow follow) {
+    private void removeFollowing(Follow follow) {
         this.following.remove(follow);
     }
 
-    private void removeFollower( Follow follow) {
+    private void removeFollower(Follow follow) {
         this.follower.remove(follow);
     }
 
-    private void addFavoriteArticle( ArticleFavorite articleFavorite) {
+    private void addFavoriteArticle(ArticleFavorite articleFavorite) {
         this.favoriteArticles.add(articleFavorite);
     }
 
-    private void addThisUserToFavorite( ArticleFavorite articleFavorite) {
+    private void addThisUserToFavorite(ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().add(articleFavorite);
     }
 
-    private Optional<ArticleFavorite> findArticleFavorite( Article article) {
+    private Optional<ArticleFavorite> findArticleFavorite(Article article) {
         return this.favoriteArticles.stream().filter(article::equalsArticle).findFirst();
     }
 
-    private void removeFavoriteArticle( ArticleFavorite articleFavorite) {
+    private void removeFavoriteArticle(ArticleFavorite articleFavorite) {
         this.favoriteArticles.remove(articleFavorite);
     }
 
-    private void removeUserFromFavorite( ArticleFavorite articleFavorite) {
+    private void removeUserFromFavorite(ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().remove(articleFavorite);
     }
 

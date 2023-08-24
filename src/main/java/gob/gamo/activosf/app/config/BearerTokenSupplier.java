@@ -7,14 +7,15 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import gob.gamo.activosf.app.domain.entities.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.domain.entities.User;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BearerTokenSupplier { 
+public class BearerTokenSupplier {
     private final JwtEncoder jwtEncoder;
 
     public String supply(User user) {

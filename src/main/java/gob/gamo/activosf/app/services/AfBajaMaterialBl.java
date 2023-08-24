@@ -13,21 +13,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import gob.gamo.activosf.app.repository.AfBajaMaterialRepository;
 import gob.gamo.activosf.app.domain.AfBajaMaterial;
 import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfRegistroKardexMaterial;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.domain.TxUsuario;
-import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.dto.TupleVo;
 import gob.gamo.activosf.app.dto.UserRequestVo;
+import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfBajaMaterialRepository;
 
 /**
  *
  * @author wherrera
  */
-
 public class AfBajaMaterialBl {
     AfBajaMaterialRepository afBajaMaterialRepository;
     AfRegistroKardexMaterialBl afRegistroKardexMaterialBl;
@@ -45,11 +44,10 @@ public class AfBajaMaterialBl {
                 .orElseThrow(() -> new DataException("id inexistente material"));
         afBajaMaterial.setFechaBaja(new Date());
         afBajaMaterial.setIdUsuarioBaja(new TxUsuario(userRequestVo.getUserId()));
-        List<AfRegistroKardexMaterial> afRegistroKardexMaterialList = afBajaMaterial.getIdKardexMaterial()
-                .getAfRegistroKardexMaterialList();
+        List<AfRegistroKardexMaterial> afRegistroKardexMaterialList =
+                afBajaMaterial.getIdKardexMaterial().getAfRegistroKardexMaterialList();
         Collections.sort(afRegistroKardexMaterialList, new Comparator<AfRegistroKardexMaterial>() {
-            public int compare(AfRegistroKardexMaterial o1,
-                    AfRegistroKardexMaterial o2) {
+            public int compare(AfRegistroKardexMaterial o1, AfRegistroKardexMaterial o2) {
                 return o1.getFechaRegistro().compareTo(o2.getFechaRegistro());
             }
         });
@@ -70,7 +68,9 @@ public class AfBajaMaterialBl {
         List<TupleVo<Integer, BigDecimal>> cantidadImporte = new ArrayList<TupleVo<Integer, BigDecimal>>();
         for (AfRegistroKardexMaterial afRegistroKardexMaterial : afRegistroKardexMaterialList) {
             if ((afRegistroKardexMaterial.getCatTipoRegistroKardex().startsWith("ING")
-                    || afRegistroKardexMaterial.getCatTipoRegistroKardex().startsWith("SALINI"))
+                            || afRegistroKardexMaterial
+                                    .getCatTipoRegistroKardex()
+                                    .startsWith("SALINI"))
                     && afRegistroKardexMaterial.getSaldo() != 0
                     && pendiente != 0) {
                 if (pendiente <= afRegistroKardexMaterial.getSaldo()) {
@@ -80,8 +80,8 @@ public class AfBajaMaterialBl {
                     pendiente = 0;
                     break;
                 } else {
-                    cantidadImporte.add(new TupleVo<>(afRegistroKardexMaterial.getSaldo(),
-                            afRegistroKardexMaterial.getImporteUnitario()));
+                    cantidadImporte.add(new TupleVo<>(
+                            afRegistroKardexMaterial.getSaldo(), afRegistroKardexMaterial.getImporteUnitario()));
                     afRegistroKardexMaterial.setSaldo(0);
                     afRegistroKardexMaterialBl.mergeAfRegistroKardexMaterial(afRegistroKardexMaterial, userRequestVo);
                     pendiente = pendiente - afRegistroKardexMaterial.getSaldo();
@@ -92,7 +92,7 @@ public class AfBajaMaterialBl {
         /*
          * boolean disponible = false;
          * int saldo = 0;
-         * 
+         *
          * for (AfRegistroKardexMaterial afRegistroKardexMaterial :
          * afRegistroKardexMaterialList) {
          * if (afRegistroKardexMaterial.getCatTipoRegistroKardex().startsWith("ING")) {
@@ -126,7 +126,7 @@ public class AfBajaMaterialBl {
          * saldo = saldo - afRegistroKardexMaterial.getCantidad();
          * }
          * }
-         * 
+         *
          * }
          * }
          */
@@ -167,6 +167,5 @@ public class AfBajaMaterialBl {
 
     public Optional<AfBajaMaterial> findByPkAfBajaMaterial(Integer pk) {
         return afBajaMaterialRepository.findById(pk);
-
     }
 }

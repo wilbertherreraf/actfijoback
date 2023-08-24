@@ -25,8 +25,7 @@ public class Tree<T> {
     }
 
     public void addChild(Node<T> parent, Node<T> child) {
-        if (parent == null || child == null)
-            return;
+        if (parent == null || child == null) return;
         parent.getChildArray().add(child);
         child.setParent(parent);
     }
@@ -85,22 +84,19 @@ public class Tree<T> {
         int key = newE.getKey();
 
         if (nodeRoot == null) {
-            //root = new Node<T>(key);
+            // root = new Node<T>(key);
             // return root;
             return newE;
         }
-        
-        if (nodeRoot.getKey() > key)
-            nodeRoot.nodeLeft = insertRecursive(nodeRoot.nodeLeft, newE);
-        else if (nodeRoot.getKey() < key)
-            nodeRoot.nodeRight = insertRecursive(nodeRoot.nodeRight, newE);
-        else
-            throw new IllegalKeyException();
+
+        if (nodeRoot.getKey() > key) nodeRoot.nodeLeft = insertRecursive(nodeRoot.nodeLeft, newE);
+        else if (nodeRoot.getKey() < key) nodeRoot.nodeRight = insertRecursive(nodeRoot.nodeRight, newE);
+        else throw new IllegalKeyException();
 
         nodeRoot.setHeight(1 + Math.max(getHeight(nodeRoot.nodeLeft), getHeight(nodeRoot.nodeRight)));
         int balance = balanceFactor(nodeRoot);
-        //if (getHeight(nodeRoot.nodeLeft) - getHeight(nodeRoot.nodeRight) > 1) {
-        /* if (balance > 1) {            
+        // if (getHeight(nodeRoot.nodeLeft) - getHeight(nodeRoot.nodeRight) > 1) {
+        /* if (balance > 1) {
             if (key < nodeRoot.nodeLeft.getKey()) {
                 //nodeRoot = clockwise(nodeRoot);
                 return clockwise(nodeRoot);
@@ -117,24 +113,22 @@ public class Tree<T> {
             }
         } */
 
-        if (balance > 1 && newE.getKey() < nodeRoot.nodeLeft.getKey())
-            return clockwise(nodeRoot);
- 
+        if (balance > 1 && newE.getKey() < nodeRoot.nodeLeft.getKey()) return clockwise(nodeRoot);
+
         // Right Right Case
-        if (balance < -1 && newE.getKey() > nodeRoot.nodeRight.getKey())
-            return anticlockwise(nodeRoot);
- 
+        if (balance < -1 && newE.getKey() > nodeRoot.nodeRight.getKey()) return anticlockwise(nodeRoot);
+
         // Left Right Case
         if (balance > 1 && newE.getKey() > nodeRoot.nodeLeft.getKey()) {
             nodeRoot.nodeLeft = anticlockwise(nodeRoot.nodeLeft);
             return clockwise(nodeRoot);
         }
- 
+
         // Right Left Case
         if (balance < -1 && newE.getKey() < nodeRoot.nodeRight.getKey()) {
             nodeRoot.nodeRight = clockwise(nodeRoot.nodeRight);
             return anticlockwise(nodeRoot);
-        }        
+        }
         return nodeRoot;
     }
 
@@ -172,21 +166,20 @@ public class Tree<T> {
 
                 root.setKey(var.getKey());
 
-                root.childArray = new LinkedList<Node<T>>(); ////
-                LinkedList<Node<T>> rootChildren = root.childArray; ////
-                LinkedList<Node<T>> varChildren = var.childArray; ////
+                root.childArray = new LinkedList<Node<T>>(); // //
+                LinkedList<Node<T>> rootChildren = root.childArray; // //
+                LinkedList<Node<T>> varChildren = var.childArray; // //
                 for (Node<T> n : varChildren) {
-                    rootChildren.add(n); ////
+                    rootChildren.add(n); // //
                 }
 
-                if (var.childArray.size() > 0)
-                    var.childArray.removeFirst();
-                root.parent = var.parent; ////
-                if (var.parent != null) { ////
-                    var.parent.childArray.remove(var); ////
+                if (var.childArray.size() > 0) var.childArray.removeFirst();
+                root.parent = var.parent; // //
+                if (var.parent != null) { // //
+                    var.parent.childArray.remove(var); // //
                     var.parent.childArray.push(root);
                 } ////
-                root.setLevel(var.getLevel()); ////
+                root.setLevel(var.getLevel()); // //
                 root.nodeRight = deleteRecursive(root.nodeRight, root.getKey());
             }
         }
@@ -200,8 +193,8 @@ public class Tree<T> {
                 root.nodeLeft = anticlockwise(root.nodeLeft);
                 root = clockwise(root);
             }
-        } else if (getHeight(root.nodeRight) - getHeight(root.nodeLeft) > 1) { 
-            if (getHeight(root.nodeRight.nodeRight) >= getHeight(root.nodeRight.nodeLeft)) { 
+        } else if (getHeight(root.nodeRight) - getHeight(root.nodeLeft) > 1) {
+            if (getHeight(root.nodeRight.nodeRight) >= getHeight(root.nodeRight.nodeLeft)) {
                 root = anticlockwise(root);
             } else { // Right - Left case
                 root.nodeRight = clockwise(root.nodeRight);

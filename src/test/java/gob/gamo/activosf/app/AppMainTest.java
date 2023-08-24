@@ -24,7 +24,6 @@ import gob.gamo.activosf.app.services.sec.RolesService;
 import gob.gamo.activosf.app.services.sec.UserService;
 import lombok.extern.slf4j.Slf4j;
 
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

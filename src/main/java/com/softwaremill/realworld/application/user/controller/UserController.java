@@ -2,10 +2,6 @@ package com.softwaremill.realworld.application.user.controller;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-import com.softwaremill.realworld.application.user.service.UserService;
-import com.softwaremill.realworld.domain.user.User;
-import com.softwaremill.realworld.domain.user.UserVO;
-
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import com.softwaremill.realworld.application.user.service.UserService;
+import com.softwaremill.realworld.domain.user.User;
+import com.softwaremill.realworld.domain.user.UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class UserController {
     @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
     public UserResponse login(@RequestBody LoginUserRequest request) {
-        log.info("inicio a login",request.toString());
+        log.info("inicio a login", request.toString());
         UserVO userVO = userService.login(request);
         return new UserResponse(userVO);
     }

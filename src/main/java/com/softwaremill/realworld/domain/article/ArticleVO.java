@@ -1,9 +1,9 @@
 package com.softwaremill.realworld.domain.article;
 
+import java.time.LocalDateTime;
+
 import com.softwaremill.realworld.domain.user.ProfileVO;
 import com.softwaremill.realworld.domain.user.User;
-
-import java.time.LocalDateTime;
 
 public record ArticleVO(
         String slug,

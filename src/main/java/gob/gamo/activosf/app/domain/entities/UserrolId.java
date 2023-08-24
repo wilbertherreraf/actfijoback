@@ -15,5 +15,3 @@ public class UserrolId implements Serializable {
     private Integer userId;
     private Integer rolId;
 }
-    
-
