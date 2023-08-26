@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softwaremill.realworld.IntegrationTest;
 
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;

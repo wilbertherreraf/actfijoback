@@ -1,10 +1,12 @@
 package com.softwaremill.realworld.application.user;
 
-import com.softwaremill.realworld.IntegrationTest;
 import com.softwaremill.realworld.application.user.service.ProfileService;
 import com.softwaremill.realworld.domain.user.ProfileVO;
 import com.softwaremill.realworld.domain.user.User;
 import com.softwaremill.realworld.domain.user.UserRepository;
+
+import gob.gamo.activosf.app.IntegrationTest;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

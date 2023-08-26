@@ -52,6 +52,14 @@ public class QueryFormattingConfiguration {
 
         private String summary(String query, Integer connectionId, long elapsed, StringBuilder callstack) {
             return """
+                                                                   QUERY
+                    \t%s
+                    """
+                    .formatted(query, connectionId, elapsed, callstack);
+        }
+
+        private String summaryOrig0(String query, Integer connectionId, long elapsed, StringBuilder callstack) {
+            return """
 
                     ----------------------------------------------------------------------------------------------------
                                                                    QUERY

@@ -13,10 +13,14 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 public class ObjectMapperConfiguration {
     @Bean
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+        log.info("En object mapper {}");
         return builder.modules(iso8601SerializeModule())
                 .featuresToEnable(DeserializationFeature.UNWRAP_ROOT_VALUE)
                 .featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS)

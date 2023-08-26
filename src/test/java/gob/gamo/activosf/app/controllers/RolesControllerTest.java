@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.softwaremill.realworld.IntegrationTest;
 
+import gob.gamo.activosf.app.IntegrationTest;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;

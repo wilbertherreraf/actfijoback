@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import gob.gamo.activosf.app.dto.UnidadResponse;
+
 @Entity
 @Getter
 @Builder
@@ -50,4 +52,16 @@ public class OrgUnidad {
 
     @Column(name = "estado")
     private String estado;
+
+    public static OrgUnidad createOrgUnidad(UnidadResponse req) {
+        return OrgUnidad.builder()
+                .idUnidad(req.id())
+                .domicilio(req.domicilio())
+                .idUnidadPadre(req.idUnidadPadre())
+                .nombre(req.nombre())
+                .sigla(req.sigla())
+                .telefono(req.telefono())
+                .tipoUnidad(req.tipoUnidad())
+                .build();
+    }
 }

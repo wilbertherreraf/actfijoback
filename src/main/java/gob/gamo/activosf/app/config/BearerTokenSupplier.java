@@ -21,7 +21,7 @@ public class BearerTokenSupplier {
     public String supply(User user) {
         Instant now = Instant.now();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                .issuer("XXXXXXXXXXXXX")
+                .issuer("https://realworld.io")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(300))
                 .subject(user.getId().toString())

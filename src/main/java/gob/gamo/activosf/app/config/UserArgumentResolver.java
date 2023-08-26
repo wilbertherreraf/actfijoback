@@ -34,19 +34,26 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
+
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
+
         log.info(
-                "req:{} {}",
+                "resolveArgument req:{} {}",
                 mavContainer.getViewName(),
                 webRequest.getParameterMap().values().toString());
+
         if (authentication instanceof AnonymousAuthenticationToken) {
+            log.info("authentication anonymous");
             return User.anonymous();
         }
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+        String nameTk = jwtAuthenticationToken.getName();
         String userId = jwtAuthenticationToken.getName().strip();
         String token = jwtAuthenticationToken.getToken().getTokenValue().strip();
+
+        log.info("authentication with nameTk: {}, user {}, tk: {}", nameTk, userId, token);
 
         return userRepository
                 .findById(Integer.valueOf(userId))

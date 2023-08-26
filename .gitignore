@@ -25,3 +25,6 @@ replay_pid*
 
 build/**
 bin/**/*
+*.bin
+*.bin
+*.bin

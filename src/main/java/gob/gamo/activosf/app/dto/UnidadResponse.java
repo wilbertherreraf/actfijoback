@@ -1,7 +1,10 @@
 package gob.gamo.activosf.app.dto;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import gob.gamo.activosf.app.domain.OrgUnidad;
 
+@JsonRootName("unidad")
 public record UnidadResponse(
         Integer id,
         String nombre,

@@ -51,6 +51,7 @@ public class UserController {
 
     @PutMapping("/api/user")
     public UserResponse updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
+        log.info("en uuuuuuupdate {}", request.toString());
         UserVO userVO = userService.update(me, request);
         return new UserResponse(userVO);
     }

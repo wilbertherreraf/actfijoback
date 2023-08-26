@@ -36,11 +36,16 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.commons.Constants;
+
+@Slf4j
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
+    // @Bean
+    public SecurityFilterChain securityFilterChain00(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -49,21 +54,97 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/**")
+                        .permitAll()
+                        .anyRequest()
                         .permitAll())
                 .build();
     }
 
-    public SecurityFilterChain securityFilterChain00(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
+    // @Bean
+    public SecurityFilterChain securityFilterChain000(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
+            throws Exception {
+        return http.httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .cors(SecurityConfigurerAdapter::and)
+                .authorizeHttpRequests(requests -> requests.requestMatchers(
+                                HttpMethod.POST,
+                                "/api/users",
+                                "/api/users/login",
+                                Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/**")
+                        .permitAll()
+                        .anyRequest()
+                        .permitAll())
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+                .exceptionHandling(handler -> {
+                    log.info("Error Sec... {}", handler.getClass());
+                    handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                            .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
+                .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+    // @Bean
+    public SecurityFilterChain securityFilterChain0(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
+            throws Exception {
+        return http.httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .cors(SecurityConfigurerAdapter::and)
+                .authorizeHttpRequests(requests -> requests.requestMatchers(
+                                HttpMethod.POST,
+                                "/api/users",
+                                "/api/users/login",
+                                Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/roles", "/api/v1/**", "/activosf-documentation/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/auth/roles", "/api/v1/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/auth/roles", "/api/v1/**")
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/articles/{slug}/comments",
+                                "/api/articles/{slug}",
+                                "/api/articles",
+                                "/api/profiles/{username}",
+                                "/api/tags")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+                .exceptionHandling(handler -> {
+                    log.info("Error Sec... {}", handler.getClass());
+                    handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                            .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
+                .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+    // original
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .cors(SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(
-                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
+                        requests -> //
+                        requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/auth/roles", "/api/v1/**")
+                                .requestMatchers(HttpMethod.PUT, "/api/auth/roles", "/api/v1/**")
                                 .permitAll()
+                                // .requestMatchers(HttpMethod.GET, "/api/user").authenticated()
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/api/articles/{slug}/comments",
@@ -102,6 +183,7 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
+        log.info("XXX: en decoder...{}", rsaPublicKey);
         return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
@@ -109,6 +191,7 @@ public class SecurityConfiguration {
     public JwtEncoder jwtEncoder(
             @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
             @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
+        log.info("XXX: en encoder...{}", rsaPublicKey);
         JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);

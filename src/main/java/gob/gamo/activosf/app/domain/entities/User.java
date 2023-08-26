@@ -3,6 +3,7 @@ package gob.gamo.activosf.app.domain.entities;
 import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -74,4 +75,40 @@ public class User {
         this.token = token;
         return this;
     }
+
+    public void updateEmail(String email) {
+        log.info("XXX: ??? upd {}", email);
+        if (email.isBlank() || this.email.equals(email)) {
+            log.info("Email(`{}`) is blank or same as current email.", email);
+            return;
+        }
+        // Note: Add email validation (ex. regex)
+        this.email = email;
+    }
+
+    public void updateUsername(String username) {
+        if (username.isBlank() || this.username.equals(username)) {
+            log.info("Username(`{}`) is blank or same as current username.", username);
+            return;
+        }
+
+        this.username = username;
+    }
+
+    public void updatePassword(PasswordEncoder passwordEncoder, String plaintext) {
+        if (plaintext.isBlank()) {
+            log.info("Password is blank.");
+            return;
+        }
+
+        this.password = passwordEncoder.encode(plaintext);
+    }
+
+    public void updateNombres(String nombres) {
+        this.nombres = nombres;
+    }
+    /*
+    public void updateImage(String imageUrl) {
+        this.image = imageUrl;
+    } */
 }

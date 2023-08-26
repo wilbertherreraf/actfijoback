@@ -14,14 +14,10 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
-    @Value("${activosf.openapi.dev-url}")
-    private String devUrl;
-
-    @Value("${activosf.openapi.prod-url}")
-    private String prodUrl;
-
     @Bean
-    public OpenAPI myOpenAPI() {
+    public OpenAPI myOpenAPI(
+            @Value("${activosf.openapi.dev-url}") String devUrl,
+            @Value("${activosf.openapi.prod-url}") String prodUrl) {
         Server devServer = new Server();
         devServer.setUrl(devUrl);
         devServer.setDescription("Server URL in Development environment");

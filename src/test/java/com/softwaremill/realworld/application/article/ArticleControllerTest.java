@@ -2,7 +2,6 @@ package com.softwaremill.realworld.application.article;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.softwaremill.realworld.IntegrationTest;
 import com.softwaremill.realworld.application.article.controller.CreateArticleRequest;
 import com.softwaremill.realworld.application.article.controller.CreateCommentRequest;
 import com.softwaremill.realworld.application.article.controller.UpdateArticleRequest;
@@ -13,7 +12,9 @@ import com.softwaremill.realworld.domain.article.Article;
 import com.softwaremill.realworld.domain.article.ArticleRepository;
 import com.softwaremill.realworld.domain.article.Tag;
 import com.softwaremill.realworld.domain.article.TagRepository;
-import com.softwaremill.realworld.domain.user.User; 
+import com.softwaremill.realworld.domain.user.User;
+
+import gob.gamo.activosf.app.IntegrationTest;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

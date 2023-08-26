@@ -28,9 +28,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        log.info("resolver arg {}", resolvers.size());
         resolvers.add(new UserArgumentResolver(userRepository));
         resolvers.add(pageableResolvers(resolvers));
+        log.info("resolver arg {}", resolvers.size());
     }
 
     protected HandlerMethodArgumentResolver pageableResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {

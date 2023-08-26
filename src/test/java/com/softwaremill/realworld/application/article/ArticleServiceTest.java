@@ -1,6 +1,5 @@
 package com.softwaremill.realworld.application.article;
 
-import com.softwaremill.realworld.IntegrationTest;
 import com.softwaremill.realworld.application.article.controller.CreateArticleRequest;
 import com.softwaremill.realworld.application.article.controller.CreateCommentRequest;
 import com.softwaremill.realworld.application.article.controller.UpdateArticleRequest;
@@ -8,6 +7,9 @@ import com.softwaremill.realworld.application.article.service.ArticleService;
 import com.softwaremill.realworld.domain.article.*;
 import com.softwaremill.realworld.domain.user.User;
 import com.softwaremill.realworld.domain.user.UserRepository;
+
+import gob.gamo.activosf.app.IntegrationTest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,6 @@
 package com.softwaremill.realworld.application.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softwaremill.realworld.application.user.controller.LoginUserRequest;
@@ -11,13 +10,15 @@ import com.softwaremill.realworld.domain.user.User;
 import com.softwaremill.realworld.domain.user.UserRepository;
 import com.softwaremill.realworld.domain.user.UserVO;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+/*
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor */
 public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public User signUp(SignUpUserRequest request) {
@@ -47,6 +48,7 @@ public class UserService {
 
     @Transactional
     public UserVO update(User user, UpdateUserRequest request) {
+        log.info("en update uer sssss {}", request.toString());
         String email = request.email();
         if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
