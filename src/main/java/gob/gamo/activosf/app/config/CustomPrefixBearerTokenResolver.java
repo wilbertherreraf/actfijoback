@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * Change the prefix of the Authorization token from Bearer to Token.
  */
 @Slf4j
-@Component
+// @Component
 public class CustomPrefixBearerTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
             Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
@@ -31,13 +30,9 @@ public class CustomPrefixBearerTokenResolver implements BearerTokenResolver {
         String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
         String parameterToken =
                 isParameterTokenSupportedForRequest(request) ? resolveFromRequestParameters(request) : null;
-
+        log.info("XXX:=> inicio de resolver isAuth: {}... TK: {}", authorizationHeaderToken);
         if (authorizationHeaderToken != null) {
-            log.info(
-                    "XXX: en val support {} reqparm: {}, token {}",
-                    isParameterTokenSupportedForRequest(request),
-                    resolveFromRequestParameters(request),
-                    parameterToken);
+            log.info("XXX: en val support {} reqparm: {}, token {}", authorizationHeaderToken, parameterToken);
             if (parameterToken != null) {
                 BearerTokenError error =
                         BearerTokenErrors.invalidRequest("Found multiple bearer tokens in the request");

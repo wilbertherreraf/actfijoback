@@ -1,9 +1,13 @@
 package gob.gamo.activosf.app.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,14 +21,17 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,14 +43,25 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
+    /*
+     * @Autowired
+     * private UserRepository userRepository;
+     *
+     * @Value("${security.key.public}")
+     * RSAPublicKey rsaPublicKey;
+     */
+    private final AuthEntryPointJwt authEntryPointJwt;
+
     // @Bean
     public SecurityFilterChain securityFilterChain00(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
@@ -66,12 +84,12 @@ public class SecurityConfiguration {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .cors(SecurityConfigurerAdapter::and)
+                // .cors(SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
-                                HttpMethod.POST,
-                                "/api/users",
-                                "/api/users/login",
-                                Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
+                        HttpMethod.POST,
+                        "/api/users",
+                        "/api/users/login",
+                        Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/**")
                         .permitAll()
@@ -90,76 +108,28 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    // @Bean
-    public SecurityFilterChain securityFilterChain0(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
-            throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .cors(SecurityConfigurerAdapter::and)
-                .authorizeHttpRequests(requests -> requests.requestMatchers(
-                                HttpMethod.POST,
-                                "/api/users",
-                                "/api/users/login",
-                                Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/roles", "/api/v1/**", "/activosf-documentation/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/auth/roles", "/api/v1/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/auth/roles", "/api/v1/**")
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/articles/{slug}/comments",
-                                "/api/articles/{slug}",
-                                "/api/articles",
-                                "/api/profiles/{username}",
-                                "/api/tags")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .exceptionHandling(handler -> {
-                    log.info("Error Sec... {}", handler.getClass());
-                    handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                            .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
-
-    // original
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
+        return http.cors(withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .cors(SecurityConfigurerAdapter::and)
+                // .cors( SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(
-                        requests -> //
-                        requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/api/auth/roles", "/api/v1/**")
-                                .permitAll()
-                                // .requestMatchers(HttpMethod.GET, "/api/user").authenticated()
-                                .requestMatchers(
-                                        HttpMethod.GET,
-                                        "/api/articles/{slug}/comments",
-                                        "/api/articles/{slug}",
-                                        "/api/articles",
-                                        "/api/profiles/{username}",
-                                        "/api/tags")
+                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                // .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .oauth2ResourceServer(s -> s.jwt(withDefaults()))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .exceptionHandling(
-                        handler -> handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .exceptionHandling(handler -> {
+                    log.info("Error Sec... {}", handler.getClass());
+                    // handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    handler.authenticationEntryPoint(authEntryPointJwt)
+                            .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
                 .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -167,12 +137,23 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
+        // cors.setAllowedOrigins(Arrays.asList("*"));
         cors.setAllowedOriginPatterns(List.of("*"));
-        cors.setAllowedMethods(List.of("*"));
-        cors.setAllowedHeaders(List.of("*"));
+        cors.setAllowedMethods(List.of(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.PATCH.name(),
+                HttpMethod.DELETE.name()));
+        cors.setAllowedHeaders(List.of("Authorization", "X-Activosf", "X-PINGOTHER", "Content-Type")); // orginal "*"
+        // cors.setAllowedHeaders(List.of("*")); // orginal "*" "X-PINGOTHER",
+        // "Content-Type"
+        cors.setExposedHeaders(List.of("X-Activosf", "Content-Type", "Link"));
         cors.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
+
         return source;
     }
 
@@ -184,7 +165,11 @@ public class SecurityConfiguration {
     @Bean
     public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
         log.info("XXX: en decoder...{}", rsaPublicKey);
-        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+        
+               NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build(); 
+n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                Arrays.asList(new JwtTimestampValidator(Duration.of(-1, ChronoUnit.SECONDS)))));
+        return n;//NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
     @Bean
@@ -195,5 +180,19 @@ public class SecurityConfiguration {
         JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
+    }
+
+    // @Bean
+    public StrictHttpFirewall httpFirewall() {
+
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowedHttpMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        return firewall;
+    }
+
+    // @Bean
+    public AuthEntryPointJwt authEntryPointJwt() {
+        return new AuthEntryPointJwt();
     }
 }

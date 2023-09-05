@@ -118,8 +118,8 @@ create table org_empleado (
 create table org_unidad_emp (
     id_unid_empl serial not null,
     id_unidad integer,
+    id_empleado integer,    
     id_emplresponsable integer,
-    id_emplsubordinado integer,
     fecha_reg date,
     estado varchar(10),
     constraint PK_org_unidad_emp primary key (id_unid_empl)

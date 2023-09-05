@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class User {
     @Id
     @Column(name = "user_id")

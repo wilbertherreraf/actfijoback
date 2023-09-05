@@ -1,8 +1,13 @@
 package gob.gamo.activosf.app.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,4 +46,9 @@ public class OrgEmpleado {
 
     @Column(name = "estado")
     private String estado;
+
+    @JsonIgnore
+    @Builder.Default
+    @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)
+    private Set<OrgUnidad> unidades = new HashSet<>();
 }

@@ -38,8 +38,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         argumentResolver.setSortParameter("sort");
         PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver(argumentResolver);
         resolver.setFallbackPageable(defaultPageRequest());
-        resolver.setPageParameterName("offset");
-        resolver.setSizeParameterName("limit");
+        resolver.setPageParameterName("page");
+        resolver.setSizeParameterName("size");
         return resolver;
     }
 }

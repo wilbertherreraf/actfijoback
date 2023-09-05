@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import gob.gamo.activosf.app.config.BearerTokenSupplier;
+import gob.gamo.activosf.app.config.JwtTokenProvider;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
@@ -20,13 +19,12 @@ import gob.gamo.activosf.app.repository.sec.UserRepository;
 /**
  * UserService
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final BearerTokenSupplier bearerTokenSupplier;
+    private final JwtTokenProvider bearerTokenSupplier;
 
     @Transactional
     public User signUp(SignUpUserRequest request) {
@@ -50,7 +48,7 @@ public class UserService {
                     String token = bearerTokenSupplier.supply(user);
                     return new UserVO(user.possessToken(token));
                 })
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
     }
 
     @Transactional(readOnly = true)
@@ -60,10 +58,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserVO getuser(String username) {
-        log.info("en get user {}", username);
         UserVO userVO = userRepository
                 .findByUsername(username)
-                // .filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
                 .map(user -> {
                     String token = bearerTokenSupplier.supply(user);
                     return new UserVO(user.possessToken(token));
@@ -74,7 +70,6 @@ public class UserService {
 
     @Transactional
     public UserVO update(User user, UpdateUserRequest request) {
-        log.info("en update user {} , {} ", user.toString(), request.toString());
         String email = request.email();
         if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
@@ -88,14 +83,13 @@ public class UserService {
         user.updateEmail(email);
         user.updateUsername(username);
         user.updatePassword(passwordEncoder, request.password());
-        user.updateNombres(request.nombres());
-        /*  user.updateImage(request.image());
+        /*
+         * user.updateBio(request.bio());
+         * user.updateImage(request.image());
          */
 
         return new UserVO(user);
     }
-
-    public void refreshToken() {}
 
     private User createNewUser(SignUpUserRequest request) {
         return User.builder()

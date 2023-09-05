@@ -1,9 +1,14 @@
 package gob.gamo.activosf.app.domain.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Table(name = "sec_usuario")
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
@@ -60,6 +65,17 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
+    @JsonIgnore
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "sec_userrol", //
+            joinColumns = @JoinColumn(name = "uro_usrid") //
+            ,
+            inverseJoinColumns = @JoinColumn(name = "uro_rolid") //
+            )
+    private Set<Roles> roles = new HashSet<>();
+
     @Transient
     private String token;
 
@@ -77,11 +93,11 @@ public class User {
     }
 
     public void updateEmail(String email) {
-        log.info("XXX: ??? upd {}", email);
         if (email.isBlank() || this.email.equals(email)) {
             log.info("Email(`{}`) is blank or same as current email.", email);
             return;
         }
+
         // Note: Add email validation (ex. regex)
         this.email = email;
     }
@@ -104,10 +120,10 @@ public class User {
         this.password = passwordEncoder.encode(plaintext);
     }
 
-    public void updateNombres(String nombres) {
-        this.nombres = nombres;
+    /*     public void updateBio(String bio) {
+        this.bio = bio;
     }
-    /*
+
     public void updateImage(String imageUrl) {
         this.image = imageUrl;
     } */

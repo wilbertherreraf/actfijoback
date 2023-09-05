@@ -90,7 +90,7 @@ public class AfBajaMaterial implements Serializable {
     private AfRegistroKardexMaterial idRegistroKardexMaterial;
 
     @JoinColumn(name = "id_kardex_material", referencedColumnName = "id_kardex_material")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AfKardexMaterial idKardexMaterial;
 
     public AfBajaMaterial() {}

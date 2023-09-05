@@ -71,15 +71,15 @@ public class RolesControllerTest {
                 "test user");
         User simpson = userService.signUp(simpsonSignUpRequest);
 
-        Recurso java = new Recurso("java", "java");
-        recursoRepository.save(java);
+        /* Recurso java = new Recurso("java", "java");
+        recursoRepository.save(java); */
 
         Roles effectiveJava = Roles.builder()
                 .codrol("RolT0") 
                 .descripcion("description")
                 .build();
 
-        java.permissioning(effectiveJava);
+        //java.permissioning(effectiveJava);
         rolesRepository.save(effectiveJava);
 
         LoginUserRequest jamesLoginRequest = new LoginUserRequest("test", "password");

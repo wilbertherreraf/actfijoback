@@ -1,12 +1,15 @@
 package gob.gamo.activosf.app.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.errors.DataException;
@@ -27,79 +31,56 @@ import gob.gamo.activosf.app.repository.OrgUnidadRepository;
 import gob.gamo.activosf.app.services.UnidadService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
+import gob.gamo.activosf.app.utils.WebUtil;
 import io.swagger.v3.oas.annotations.Operation;
 
 @Slf4j
 @RestController
-@RequestMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION)
-// @RequiresPermissions("sys:manage:role")
-
+@RequestMapping(value = Constants.API_URL_ROOT + Constants.API_URL_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class UnidadController {
     private final UnidadService service;
     private final OrgUnidadRepository repository;
-    private static final String ENTITY_NAME = "Unidad";
+    private static final String ENTITY_NAME = "unidades";
 
-    @GetMapping(Constants.API_URL_CLASS_UNIDADES)
+    @GetMapping(Constants.API_UNIDS)
     public ResponseEntity<List<UnidadResponse>> getAll(Pageable pageable) {
-        log.info("rest unidad list {} query {}", this.getClass().getSimpleName(),
-                pageable != null ? pageable.toString() : "");
+        final Page<UnidadResponse> page = service.findAll(pageable);
 
-        Page<UnidadResponse> list = service.findAll(pageable);
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(list,
-                Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/unidades");
-        // return ResponseEntity.ok(list);
-        return new ResponseEntity<>(list.getContent(), headers, HttpStatus.OK);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
+        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(page.getContent()));
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @Operation(summary = "Crea un nuevo registro")
-    /*
-     * @ApiResponses({
-     *
-     * @ApiResponse(responseCode = "201", content = {
-     *
-     * @Content(schema = @Schema(implementation = UnidadResponse.class), mediaType =
-     * "application/json")
-     * }),
-     *
-     * @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema())
-     * })
-     * })
-     */
-    @PostMapping(value = Constants.API_URL_CLASS_UNIDADES)
+    @PostMapping(value = Constants.API_UNIDS)
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<UnidadResponse> create(@RequestBody UnidadResponse req) {
-        log.info("ingresando a Controller nuevo {}", req.toString());
-        // try {
         UnidadResponse result = service.crearNuevo(OrgUnidad.createOrgUnidad(req));
-        // return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(
                         ENTITY_NAME, result.id().toString()))
                 .body(result);
-        /*
-         * } catch (Exception e) {
-         * log.error("Error " + e.getMessage(), e);
-         * return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-         * }
-         */
     }
 
-    @GetMapping(Constants.API_URL_CLASS_UNIDADES + "/{id}")
-    public ResponseEntity<UnidadResponse> getById(@PathVariable Integer id) {
-        try {
-            log.info("en {} query {}", this.getClass().getSimpleName());
-            OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
-            return ResponseEntity.ok(new UnidadResponse(result));
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping(Constants.API_UNIDS + "/{slug}")
+    public ResponseEntity<UnidadResponse> getById(@PathVariable(value = "slug") Integer id) {
+        OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+        result.getEmpleados().forEach(r -> {
+            log.info("unida {} - {}", id, r.getCod_internoempl());
+        });
+        /* return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
+        .body(RestResponse.of(new UnidadResponse(result))); */
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
+                .body(new UnidadResponse(result));
     }
 
-    @PutMapping(value = Constants.API_URL_CLASS_UNIDADES + "/{id}")
-    // @ResponseBody
-    public ResponseEntity<UnidadResponse> updateRole(@PathVariable String id, @RequestBody UnidadResponse entityReq) {
-        log.info("REST request to update Post {}: {}", id, entityReq);
+    @PutMapping(value = Constants.API_UNIDS + "/{slug}")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<UnidadResponse> updateRole(
+            @PathVariable(value = "slug") String id, @RequestBody UnidadResponse entityReq) {
         if (entityReq.id() == null) {
             return create(entityReq);
         }
@@ -110,13 +91,31 @@ public class UnidadController {
                 .body(result);
     }
 
-    @DeleteMapping(Constants.API_URL_CLASS_UNIDADES + "/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
-        log.debug("REST request to delete : {}", id);
+    @DeleteMapping(Constants.API_UNIDS + "/{slug}")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<Void> deletePost(@PathVariable(value = "slug") Integer id) {
         repository.deleteById(id);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
                 .build();
+    }
+
+    @GetMapping(Constants.API_UNIDS + "/{slug}" + "/empleados")
+    public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
+            @PathVariable(value = "slug") Integer id, Pageable pageable) {
+        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
+
+        OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+        Set<OrgEmpleado> empl = result.getEmpleados();
+        Page<OrgEmpleado> pageRet = PaginationUtil.pageForList(
+                (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
+
+        log.info("request uni {}", WebUtil.getRequest().getRequestURI());
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
+        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
+        return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
     }
 
     /*

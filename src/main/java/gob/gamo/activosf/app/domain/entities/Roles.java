@@ -1,9 +1,9 @@
 package gob.gamo.activosf.app.domain.entities;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 
@@ -41,6 +41,16 @@ public class Roles {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Profile> includeRecursos = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "sec_profile",
+            joinColumns = @JoinColumn(name = "prr_rolid"),
+            inverseJoinColumns = @JoinColumn(name = "prr_resid"))
+    private Set<Recurso> recursos = new HashSet<>();
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> usuarios = new HashSet<>();
+
     @Builder
     private Roles(Integer id, String codrol, String descripcion) {
         this.id = id;
@@ -62,12 +72,13 @@ public class Roles {
         this.includeRecursos.add(profile);
     }
 
-    public List<Recurso> getRecursos() {
+    /*     public List<Recurso> getRecursos() {
         return this.includeRecursos.stream().map(Profile::getRecurso).toList();
-    }
+    } */
 
-    public String[] getCodrecursos() {
-        return this.getRecursos().stream().map(Recurso::getCodrec).sorted().toArray(String[]::new);
+    public Set<String> getCodrecursos() {
+        // return this.getRecursos().stream().map(Recurso::getCodrec).sorted().toArray(String[]::new);
+        return this.recursos.stream().map(Recurso::getCodrec).sorted().collect(Collectors.toSet());
     }
 
     @Override

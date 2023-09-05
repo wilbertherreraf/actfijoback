@@ -1,6 +1,9 @@
 package gob.gamo.activosf.app.handlers;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +25,9 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         return new ServletInputStreamWrapper(this.body);
     }
 
-    /*     @Override
+    @Override
     public BufferedReader getReader() {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.body);
         return new BufferedReader(new InputStreamReader(byteArrayInputStream));
-    } */
+    }
 }

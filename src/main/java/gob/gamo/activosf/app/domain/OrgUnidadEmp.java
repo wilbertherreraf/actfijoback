@@ -24,16 +24,16 @@ public class OrgUnidadEmp {
     private Integer idUnidEmpl;
 
     @Column(name = "id_unidad")
-    private String id_unidad;
+    private String idUnidad;
+
+    @Column(name = "id_empleado")
+    private String idEmpleado;
 
     @Column(name = "id_emplresponsable")
-    private String id_emplresponsable;
-
-    @Column(name = "id_emplsubordinado")
-    private String id_emplsubordinado;
+    private String idEmplresponsable;
 
     @Column(name = "fecha_reg")
-    private String fecha_reg;
+    private String fechaReg;
 
     @Column(name = "estado")
     private String estado;

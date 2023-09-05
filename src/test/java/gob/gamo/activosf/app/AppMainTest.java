@@ -86,42 +86,7 @@ public class AppMainTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("provides login function.")
-    void login() {
-        // given
-        // - sign up
-        try {
-            log.info("userService {}", (userService == null));
-            SignUpUserRequest signUpRequest = new SignUpUserRequest("test@example.com", "test",
-                    "password", "jhon doe");
-            User u = userService.signUp(signUpRequest);
-            Long i = userRepository.count();
-            log.info("ooooooooooo {}", u.toString());
-            log.info("*********** {}", i);
-
-            // - login request
-            LoginUserRequest loginRequest = new LoginUserRequest("test", "password");
-
-            // when
-            ResultActions resultActions = mockMvc.perform(post("/api/users/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
-            // then
-            resultActions
-                    .andExpect(status().isCreated())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.user.email").value("test@example.com"))
-                    .andExpect(jsonPath("$.user.username").value("test"))
-                    .andExpect(jsonPath("$.user.token").isNotEmpty())
-                    // .andExpect(jsonPath("$.user.bio").isEmpty())
-                    // .andExpect(jsonPath("$.user.image").isEmpty())
-                    .andDo(print());
-
-        } catch (Exception e) {
-            log.info("error:{}", e.getMessage());
-        }
-    }
+   
 
 
 

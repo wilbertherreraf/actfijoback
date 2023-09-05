@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class IPUtil {
     public static String getIpAddr(HttpServletRequest request) {
@@ -38,7 +38,7 @@ public class IPUtil {
     }
 
     private static boolean internalIp(byte[] addr) {
-        if (StringUtils.isEmpty(addr) || addr.length < 2) {
+        if (addr.length == 0 || addr.length < 2) {
             return true;
         }
         final byte b0 = addr[0];

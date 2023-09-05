@@ -1,6 +1,8 @@
 package gob.gamo.activosf.app.domain.entities;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -29,6 +31,9 @@ public class Recurso {
 
     /*     @Column(name = "res_url")
     private String url; */
+
+    @ManyToMany(mappedBy = "recursos")
+    private Set<Roles> roles = new HashSet<>();
 
     public Recurso(String codrec, String descripcion) {
         this.codrec = codrec;

@@ -26,3 +26,21 @@ INSERT INTO public.sec_userrol(	uro_usrid, uro_rolid)	VALUES (27, 1);
 INSERT INTO public.sec_userrol(	uro_usrid, uro_rolid)	VALUES (28, 1);
 INSERT INTO public.sec_userrol(	uro_usrid, uro_rolid)	VALUES (28, 2);
 INSERT INTO public.sec_userrol(	uro_usrid, uro_rolid)	VALUES (28, 3);
+
+
+
+INSERT INTO public.org_empleado(cod_internoempl, id_persona, id_cargo)	VALUES ('empl1', 0, 0);
+INSERT INTO public.org_empleado(cod_internoempl, id_persona, id_cargo)	VALUES ('empl2', 0, 0);
+INSERT INTO public.org_empleado(cod_internoempl, id_persona, id_cargo)	VALUES ('empl3', 0, 0);
+INSERT INTO public.org_empleado(cod_internoempl, id_persona, id_cargo)	VALUES ('empl55', 0, 0);
+INSERT INTO public.org_empleado(cod_internoempl, id_persona, id_cargo)	VALUES ('empl5', 0, 0);
+
+
+
+insert into org_unidad_emp(id_unidad, id_empleado) values (8, 1);
+insert into org_unidad_emp(id_unidad, id_empleado) values (8, 2);
+insert into org_unidad_emp(id_unidad, id_empleado) values (8, 3);
+
+insert into org_unidad_emp(id_unidad, id_empleado) values (9, 5);
+
+insert into org_unidad_emp(id_unidad, id_empleado) values (11, 5);
