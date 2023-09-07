@@ -6,11 +6,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
+import org.springframework.stereotype.Service;
+
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfTipoCambio;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class AfActivoFijoBlAsync {
 
     AfActivoFijoRepository afActivoFijoRepository;
@@ -18,9 +26,6 @@ public class AfActivoFijoBlAsync {
     AfTipoCambioBl afTipoCambioBl;
 
     // private SessionContext sctx;
-
-    public AfActivoFijoBlAsync() {}
-
     public Future<CalcContabService> realizarCalculosContablesIndividualAsync(
             int idActivoFijo, Integer gestion, Date fechaCalculo, BigDecimal tipoCambio) {
         AfActivoFijo afActivoFijo = afActivoFijoRepository.findByIdActivoFijoYGestion(idActivoFijo, gestion);

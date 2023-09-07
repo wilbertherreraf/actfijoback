@@ -1,13 +1,9 @@
 package gob.gamo.activosf.app.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,89 +14,83 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 
 import gob.gamo.activosf.app.commons.Constants;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
-import gob.gamo.activosf.app.domain.OrgUnidad;
-import gob.gamo.activosf.app.dto.UnidadResponse;
+import gob.gamo.activosf.app.domain.AfAlmacen;
 import gob.gamo.activosf.app.errors.DataException;
-import gob.gamo.activosf.app.repository.OrgUnidadRepository;
-import gob.gamo.activosf.app.services.UnidadService;
+import gob.gamo.activosf.app.repository.AfAlmacenRepository;
+import gob.gamo.activosf.app.services.AfAlmacenBl;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
-import gob.gamo.activosf.app.utils.WebUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping(value = Constants.API_URL_ROOT + Constants.API_URL_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-public class UnidadController {
-    private final UnidadService service;
-    private final OrgUnidadRepository repository;
-    private static final String ENTITY_NAME = "unidades";
+public class AlmacenesController {
+        private final AfAlmacenBl service;
 
-    @GetMapping(Constants.API_UNIDS)
-    public ResponseEntity<List<UnidadResponse>> getAll(Pageable pageable) {
-        final Page<UnidadResponse> page = service.findAll(pageable);
+    private final AfAlmacenRepository repository;
+    private static final String ENTITY_NAME = "almacenes";
+
+    @GetMapping(Constants.API_ALMACENES)
+    public ResponseEntity<List<AfAlmacen>> getAll(Pageable pageable) {
+        final Page<AfAlmacen> page = service.findAll(pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
-        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(page.getContent()));
+                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_ALMACENES);
+        // return
+        // ResponseEntity.ok().headers(headers).body(RestResponse.of(page.getContent()));
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @Operation(summary = "Crea un nuevo registro")
-    @PostMapping(value = Constants.API_UNIDS)
+    @PostMapping(value = Constants.API_ALMACENES)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<UnidadResponse> create(@RequestBody UnidadResponse req) {
-        UnidadResponse result = service.crearNuevo(OrgUnidad.createOrgUnidad(req));
+    public ResponseEntity<AfAlmacen> create(@RequestBody AfAlmacen req) {
+        AfAlmacen result = service.crearNuevo(req);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(
-                        ENTITY_NAME, result.id().toString()))
+                        ENTITY_NAME, result.getIdAlmacen().toString()))
                 .body(result);
     }
 
-    @GetMapping(Constants.API_UNIDS + "/{slug}")
-    public ResponseEntity<UnidadResponse> getById(@PathVariable(value = "slug") Integer id) {
-        OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        result.getEmpleados().forEach(r -> {
-            log.info("unida {} - {}", id, r.getCod_internoempl());
-        });
-        /* return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
-        .body(RestResponse.of(new UnidadResponse(result))); */
+    @GetMapping(Constants.API_ALMACENES + "/{slug}")
+    public ResponseEntity<AfAlmacen> getById(@PathVariable(value = "slug") Integer id) {
+        AfAlmacen result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
-                .body(new UnidadResponse(result));
-    }
-
-    @PutMapping(value = Constants.API_UNIDS + "/{slug}")
-    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<UnidadResponse> updateRole(
-            @PathVariable(value = "slug") String id, @RequestBody UnidadResponse entityReq) {
-        if (entityReq.id() == null) {
-            return create(entityReq);
-        }
-        UnidadResponse result = service.update(entityReq);
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(
-                        ENTITY_NAME, entityReq.id().toString()))
                 .body(result);
     }
 
-    @DeleteMapping(Constants.API_UNIDS + "/{slug}")
+    @PutMapping(value = Constants.API_ALMACENES + "/{slug}")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<AfAlmacen> updateRole(
+            @PathVariable(value = "slug") String id, @RequestBody AfAlmacen entityReq) {
+        if (entityReq.getIdAlmacen() == null) {
+            return create(entityReq);
+        }
+        AfAlmacen result = service.update(entityReq);
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(
+                        ENTITY_NAME, entityReq.getIdAlmacen().toString()))
+                .body(result);
+    }
+
+    @DeleteMapping(Constants.API_ALMACENES + "/{slug}")
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<Void> deletePost(@PathVariable(value = "slug") Integer id) {
-        repository.deleteById(id);
+        service.delete(id);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
                 .build();
     }
 
-    @GetMapping(Constants.API_UNIDS + "/{slug}" + "/empleados")
+/*     @GetMapping(Constants.API_ALMACENES + "/{slug}" + "/empleados")
     public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
             @PathVariable(value = "slug") Integer id, Pageable pageable) {
         log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
@@ -114,9 +104,9 @@ public class UnidadController {
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
+        // return
+        // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
-    }
-
+    } */
 
 }

@@ -7,21 +7,36 @@ package gob.gamo.activosf.app.services;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import gob.gamo.activosf.app.domain.AfCodigoContable;
 import gob.gamo.activosf.app.domain.AfComisionRecepcion;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.repository.AfComisionRecepcionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author wherrera
  */
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class AfComisionRecepcionBl {
 
     AfComisionRecepcionRepository afComisionRecepcionRepository;
 
     TxTransaccionBl txTransaccionBl;
-
+    @Transactional(readOnly = true)
+    public Page<AfComisionRecepcion> findAll(Pageable pageable) {
+        Page<AfComisionRecepcion> list = afComisionRecepcionRepository.findAll(pageable);
+        return list;
+    }
     public void mergeAfComisionRecepcion(AfComisionRecepcion afComisionRecepcion, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afComisionRecepcionRepository.save(afComisionRecepcion);

@@ -40,8 +40,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "acf_alta_material")
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class AfAltaMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

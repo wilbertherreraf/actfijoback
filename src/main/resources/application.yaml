@@ -53,3 +53,4 @@ activosf:
     prod-url: https://gob.gamo.org
   jwt:
     sessionTimeout: 900
+

@@ -13,4 +13,5 @@ import gob.gamo.activosf.app.domain.AfAlmacen;
  *
  * @author wherrera
  */
+
 public interface AfAlmacenRepository extends JpaRepository<AfAlmacen, Integer> {}

@@ -3,6 +3,8 @@ package gob.gamo.activosf.app.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import gob.gamo.activosf.app.domain.entities.User;
+
 public class UserRequestVo implements Serializable {
 
     private String userName;
@@ -52,5 +54,8 @@ public class UserRequestVo implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+    public static UserRequestVo convertUser(User user){
+        return new UserRequestVo();
     }
 }

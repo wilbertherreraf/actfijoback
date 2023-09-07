@@ -28,7 +28,10 @@ security:
   key:
     private: classpath:app.key
     public: classpath:app.pub
-
+  authentication:
+    jwt:
+      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+      base64-secret: NDJmOTVlZjI2NzhlZDRjNmVkNTM1NDE2NjkyNDljZDJiNzBlMjI5YmZjMjY3MzdjZmZlMjI3NjE4OTRkNzc5MWYzNDNlYWMzYmJjOWRmMjc5ZWQyZTZmOWZkOTMxZWZhNWE1MTVmM2U2NjFmYjhlNDc2Y2Q3NzliMGY0YzFkNmI=
 decorator:
   datasource:
     p6spy:
@@ -48,3 +51,6 @@ activosf:
   openapi:
     dev-url: http://localhost:3000
     prod-url: https://gob.gamo.org
+  jwt:
+    sessionTimeout: 900
+

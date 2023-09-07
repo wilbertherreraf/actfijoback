@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gob.gamo.activosf.app.services;
 
 import java.math.BigDecimal;
@@ -19,8 +14,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import gob.gamo.activosf.app.domain.AfAccesorioActivoFijo;
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAtributoActivoFijo;
@@ -39,6 +39,7 @@ import gob.gamo.activosf.app.dto.ItemReporteVo;
 import gob.gamo.activosf.app.dto.ReporteActivoFijoEnum;
 import gob.gamo.activosf.app.dto.ReporteContableEnum;
 import gob.gamo.activosf.app.dto.StatusEnum;
+import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
@@ -49,6 +50,8 @@ import gob.gamo.activosf.app.repository.GenDesctablaRespository;
  *
  * @author wherrera
  */
+@Slf4j
+@Service
 @RequiredArgsConstructor
 public class AfActivoFijoBl {
 
@@ -64,6 +67,11 @@ public class AfActivoFijoBl {
     private final AfSearchService afSearchService;
     private final GenDesctablaRespository genDesctablaRespository;
 
+    @Transactional(readOnly = true)
+    public Page<AfActivoFijo> findAll(Pageable pageable) {
+        Page<AfActivoFijo> list = afActivoFijoRepository.findAll(pageable);
+        return list;
+    }
     public Integer buscadorAvanzadoContar(HashMap<CriteriosBusquedaEnum, Object> criterios) {
         return afSearchService.buscadorAvanzadoContar(criterios);
     }

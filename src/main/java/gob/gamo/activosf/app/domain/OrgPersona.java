@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TxPersona {
+public class OrgPersona {
     @Id
     @Column(name = "id_persona")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -96,7 +96,7 @@ public class TxPersona {
         return sb.toString();
     }
 
-    public TxPersona(Integer idPersona) {
+    public OrgPersona(Integer idPersona) {
         this.idPersona = idPersona;
     }
 

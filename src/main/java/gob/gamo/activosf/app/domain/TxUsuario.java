@@ -52,7 +52,7 @@ public class TxUsuario {
 
     @JoinColumn(name = "id_persona", referencedColumnName = "id_persona")
     @ManyToOne(fetch = FetchType.EAGER)
-    private TxPersona idPersona;
+    private OrgPersona idPersona;
 
     public TxUsuario() {}
 
@@ -124,11 +124,11 @@ public class TxUsuario {
         this.contrasena = contrasena;
     }
 
-    public TxPersona getIdPersona() {
+    public OrgPersona getIdPersona() {
         return idPersona;
     }
 
-    public void setIdPersona(TxPersona idPersona) {
+    public void setIdPersona(OrgPersona idPersona) {
         this.idPersona = idPersona;
     }
 

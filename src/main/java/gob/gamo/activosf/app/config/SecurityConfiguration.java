@@ -148,7 +148,7 @@ public class SecurityConfiguration {
         cors.setAllowedHeaders(List.of("Authorization", "X-Activosf", "X-PINGOTHER", "Content-Type")); // orginal "*"
         // cors.setAllowedHeaders(List.of("*")); // orginal "*" "X-PINGOTHER",
         // "Content-Type"
-        cors.setExposedHeaders(List.of("X-Activosf", "Content-Type", "Link"));
+        cors.setExposedHeaders(List.of("X-Activosf", "Content-Type", "Link", "X-Total-Count"));
         cors.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -164,7 +164,7 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
-        log.info("XXX: en decoder...{}", rsaPublicKey);
+        log.info("XXX: en decoder!...{}", rsaPublicKey);
         
                NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build(); 
 n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(

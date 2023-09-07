@@ -13,6 +13,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import gob.gamo.activosf.app.domain.AfAltaMaterial;
 import gob.gamo.activosf.app.domain.AfBajaMaterial;
 import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfRegistroKardexMaterial;
@@ -22,17 +28,28 @@ import gob.gamo.activosf.app.dto.TupleVo;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfBajaMaterialRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author wherrera
  */
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class AfBajaMaterialBl {
     AfBajaMaterialRepository afBajaMaterialRepository;
     AfRegistroKardexMaterialBl afRegistroKardexMaterialBl;
     AfKardexMaterialBl afKardexMaterialBl;
 
     TxTransaccionBl txTransaccionBl;
+
+    @Transactional(readOnly = true)
+    public Page<AfBajaMaterial> findAll(Pageable pageable) {
+        Page<AfBajaMaterial> list = afBajaMaterialRepository.findAll(pageable);
+        return list;
+    }
 
     public void ingresarAfBajaMaterial(AfBajaMaterial afBajaMaterial, UserRequestVo userRequestVo) {
         AfKardexMaterial afKardexMaterial = afKardexMaterialBl

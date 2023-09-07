@@ -38,7 +38,6 @@ public class RolesController {
     }
 
     @PostMapping("/roles")
-    // @PreAuthorize("hasRole('rol:write')")
     public SingleRolResponse createRol(User me, @RequestBody RolesVO request) {
         RolesVO rol = rolesService.createRol(me, request);
         return new SingleRolResponse(rol);

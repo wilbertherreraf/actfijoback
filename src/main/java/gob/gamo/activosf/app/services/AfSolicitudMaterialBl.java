@@ -7,15 +7,22 @@ package gob.gamo.activosf.app.services;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import gob.gamo.activosf.app.domain.AfSolicitudMaterial;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.repository.AfSolicitudMaterialRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author wherrera
  */
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class AfSolicitudMaterialBl {
 
     AfSolicitudMaterialRepository afSolicitudMaterialRepository;
