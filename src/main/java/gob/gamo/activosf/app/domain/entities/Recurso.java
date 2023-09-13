@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +33,7 @@ public class Recurso {
 
     /*     @Column(name = "res_url")
     private String url; */
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "recursos")
     private Set<Roles> roles = new HashSet<>();
 

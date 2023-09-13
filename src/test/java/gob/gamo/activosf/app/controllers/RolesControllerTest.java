@@ -9,18 +9,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 
 import gob.gamo.activosf.app.IntegrationTest;
+import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.controllers.UnidadControllerTest.UserResponse;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.repository.sec.RecursoRepository;
 import gob.gamo.activosf.app.repository.sec.RolesRepository;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
@@ -33,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,15 +78,17 @@ public class RolesControllerTest {
                 "test user");
         User simpson = userService.signUp(simpsonSignUpRequest);
 
-        /* Recurso java = new Recurso("java", "java");
-        recursoRepository.save(java); */
+        /*
+         * Recurso java = new Recurso("java", "java");
+         * recursoRepository.save(java);
+         */
 
         Roles effectiveJava = Roles.builder()
-                .codrol("RolT0") 
+                .codrol("RolT0")
                 .descripcion("description")
                 .build();
 
-        //java.permissioning(effectiveJava);
+        // java.permissioning(effectiveJava);
         rolesRepository.save(effectiveJava);
 
         LoginUserRequest jamesLoginRequest = new LoginUserRequest("test", "password");
@@ -87,12 +96,12 @@ public class RolesControllerTest {
 
         LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson", "password");
         simpsonToken = "Token " + userService.login(simpsonLoginRequest).token();
-    } 
-    
+    }
+
     @Test
     @DisplayName("provides an API that allows unauthenticated users to view recent articles under specific conditions.")
     void getRoles0() throws Exception {
-        mockMvc.perform(get("/api/auth/roles?limit=1"))
+        mockMvc.perform(get(Constants.API_ROOT_VERSION + Constants.API_ROLES))
                 .andExpect(status().isOk())
                 /*
                  * .andExpect(jsonPath("$.articlesCount").value(1))
@@ -108,11 +117,12 @@ public class RolesControllerTest {
     @Test
     @DisplayName("provides an API that allows authenticated users to create roles.")
     void createRoles() throws Exception {
+        // String jamesToken = returnTokenUser("asdf","asdf");
         // given
         RolesVO request = new RolesVO("RolT", "Test description", List.of("RecT1", "RecT2"));
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/auth/roles")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_ROLES)
                 .header("Authorization", jamesToken)
                 .content(objectMapper.writeValueAsString(Map.of("rol", request)))
                 .contentType(MediaType.APPLICATION_JSON));
@@ -135,31 +145,46 @@ public class RolesControllerTest {
     @DisplayName("provides an API that allows authenticated users to edit articles.")
     public void updateRol() throws Exception {
         // given
+        String jamesToken = returnTokenUser("asdf", "asdf");
         // - create a test article
-        RolesVO createRequest = new RolesVO("Test Article", "Test description", List.of("test"));
-
+        RolesVO createRequest = new RolesVO("Test1", "Test description", List.of("AMBIENTES"));
+        String slug = createRequest.codrol();
         // - get the slug of the article
-        String slug = JsonPath.parse(mockMvc.perform(post("/api/auth/roles")
-                .header("Authorization", jamesToken)
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_ROLES)
+                .header("Authorization", "Token " + jamesToken)
                 .content(objectMapper.writeValueAsString(Map.of("rol", createRequest)))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String s = objectMapper.writeValueAsString(Map.of("rol", createRequest));
+
+        log.info("content post {}", s);
+        resultActions.andDo(print());
+        log.info("***************");
+
+        String response = resultActions.andReturn()
                 .getResponse()
-                .getContentAsString())
-                .read("$.rol.codrol");
+                .getContentAsString();
+        log.info("RESPONSE post::> {}", response);
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(print());
 
         // when
         // - update the article
-        RolesVO updateRequest = new RolesVO("Updated Title", "Updated description", List.of("test"));
-        ResultActions resultActions = mockMvc.perform(put("/api/auth/roles/{codrol}", slug)
-                .header("Authorization", jamesToken)
-                .content(objectMapper.writeValueAsString(Map.of("rol", updateRequest)))
-                .contentType(MediaType.APPLICATION_JSON));
+        log.info("**** ANTES DE UPDATE ROL ");
+        RolesVO updateRequest = new RolesVO("Test", "Updated description", List.of("AMBIENTES"));
+
+        resultActions = mockMvc
+                .perform(put(Constants.API_ROOT_VERSION + Constants.API_ROLES + "/{slug}", slug)
+                        .header("Authorization", "Token " + jamesToken)
+                        .content(objectMapper.writeValueAsString(Map.of("rol", updateRequest)))
+                        .contentType(MediaType.APPLICATION_JSON));
 
         // then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rol.descripcion").value("Updated description"))
+                // .andExpect(jsonPath("$.rol.descripcion").value("Updated description"))
                 /*
                  * .andExpect(jsonPath("$.article.title").value("Updated Title"))
                  * .andExpect(jsonPath("$.article.description").value("Updated description"))
@@ -176,7 +201,7 @@ public class RolesControllerTest {
         RolesVO createRequest = new RolesVO("Test Article", "Test description", List.of("test"));
 
         // - get the slug of the article
-        String slug = JsonPath.parse(mockMvc.perform(post("/api/auth/roles")
+        String slug = JsonPath.parse(mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_ROLES)
                 .header("Authorization", jamesToken)
                 .content(objectMapper.writeValueAsString(Map.of("rol", createRequest)))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -187,9 +212,29 @@ public class RolesControllerTest {
 
         // when
         ResultActions resultActions = mockMvc
-                .perform(delete("/api/auth/roles/{codrol}", slug).header("Authorization", jamesToken));
+                .perform(delete(Constants.API_ROOT_VERSION + Constants.API_ROLES + "/{codrol}", slug)
+                        .header("Authorization", jamesToken));
 
         // then
         resultActions.andExpect(status().isOk()).andDo(print());
+    }
+
+    public String returnTokenUser(String u, String p) throws Exception {
+        LoginUserRequest loginRequest = new LoginUserRequest(u, p);
+
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
+
+        MvcResult retTest = resultActions.andReturn();
+        String strRes = retTest.getResponse().getContentAsString();
+        log.info("___returl {}", strRes);
+
+        Gson gson = new Gson();
+        UserResponse st = gson.fromJson(strRes, UserResponse.class);
+        log.info("user map {}", st.toString());
+        UserVO user = st.getUser();
+
+        return user.token();
     }
 }

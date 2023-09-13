@@ -39,7 +39,7 @@ public class CodigoContablesController {
     private final AfCodigoContableBl service;
 
     private final AfCodigoContableRepository repository;
-    private static final String ENTITY_NAME = "codigosc";
+    private static final String ENTITY_NAME = Constants.REC_CODIGOSCONTABLES;
 
     @GetMapping(Constants.API_CODIGOSCONTABLES)
     public ResponseEntity<List<AfCodigoContable>> getAll(Pageable pageable) {

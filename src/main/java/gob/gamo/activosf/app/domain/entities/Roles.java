@@ -9,16 +9,21 @@ import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@Builder
 @Entity
 @Table(name = "sec_roles")
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Roles {
     @Id
     @Column(name = "rol_id")
@@ -41,6 +46,8 @@ public class Roles {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Profile> includeRecursos = new HashSet<>();
 
+    @Builder.Default
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "sec_profile",
@@ -70,6 +77,8 @@ public class Roles {
         }
 
         this.includeRecursos.add(profile);
+        String s = this.getIncludeRecursos().stream().map(x -> " :: "+x.getId().getRolId()+"-" + x.getId().getRecursoId()).collect(Collectors.toList()).toString();
+        log.info("XXXXXXX {}", s);
     }
 
     /*     public List<Recurso> getRecursos() {

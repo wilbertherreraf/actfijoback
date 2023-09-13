@@ -44,7 +44,7 @@ public class MaterialesController {
     private final AfMaterialBl service;
 
     private final AfMaterialRepository repository;
-    private static final String ENTITY_NAME = "materiales";
+    private static final String ENTITY_NAME = Constants.REC_MATERIALES;
 
     @GetMapping(Constants.API_MATERIALES)
     public ResponseEntity<List<AfMaterial>> getAll(Pageable pageable) {

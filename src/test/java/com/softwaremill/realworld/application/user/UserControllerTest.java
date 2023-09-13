@@ -8,6 +8,7 @@ import com.softwaremill.realworld.application.user.service.UserService;
 import com.softwaremill.realworld.domain.user.UserVO;
 
 import gob.gamo.activosf.app.IntegrationTest;
+import gob.gamo.activosf.app.commons.Constants;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,14 +43,14 @@ class UserControllerTest {
         SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/users")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_PUBLIC +"/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", signUpRequest))));
 
         // then
         resultActions
                 .andExpect(status().isTemporaryRedirect())
-                .andExpect(view().name("redirect:/api/users/login"))
+                .andExpect(view().name("redirect:" + Constants.API_ROOT_VERSION + Constants.API_LOGIN))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute(
                                 "user", Map.of("user", new LoginUserRequest("james@example.com", "password"))))
@@ -68,7 +69,7 @@ class UserControllerTest {
         LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 

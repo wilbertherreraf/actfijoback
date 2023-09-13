@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import gob.gamo.activosf.app.domain.entities.Profile;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
+import gob.gamo.activosf.app.repository.sec.ProfileRepository;
 import gob.gamo.activosf.app.repository.sec.RecursoRepository;
 import gob.gamo.activosf.app.repository.sec.RolesRepository;
 
@@ -25,7 +26,7 @@ import gob.gamo.activosf.app.repository.sec.RolesRepository;
 public class RolesService {
     private final RolesRepository rolesRepository;
     private final RecursoRepository resourceRepository;
-
+    private final ProfileRepository profileRepository;
     @Transactional(readOnly = true)
     public RolesVO getSingleRol(User me, String codrol) {
         Roles article = findByCodrol(codrol);
@@ -33,11 +34,9 @@ public class RolesService {
     }
 
     @Transactional(readOnly = true)
-    public List<RolesVO> getRoles(User me, Pageable pageable) {
-        log.info("en get roles-->");
+    public Page<Roles> getRoles(User me, Pageable pageable) {
         Page<Roles> list = rolesRepository.findAll(pageable);
-        log.info("en get roles size {}", list.getContent().size());
-        return list.getContent().stream().map(r -> new RolesVO(r)).toList();
+        return list;
     }
 
     /*
@@ -57,14 +56,16 @@ public class RolesService {
      */
     @Transactional
     public RolesVO createRol(User me, RolesVO request) {
+        log.info("new rol {}", request.toString());
         Roles newRol = Roles.builder()
                 .codrol(request.codrol())
                 .descripcion(request.descripcion())
                 .build();
-
-        for (Recurso invalidTag : request.permisos()) {
-            Optional<Recurso> optionalTag = resourceRepository.findByCodrec(invalidTag.getCodrec());
-            Recurso validTag = optionalTag.orElseGet(() -> resourceRepository.save(invalidTag));
+        log.info("new rol {} {}", newRol.getCodrol(), newRol.getDescripcion());
+        for (Recurso reg : request.permisos()) {
+            log.info("en update rec {}", reg.getCodrec(), reg.getDescrip());
+            Optional<Recurso> optionalTag = resourceRepository.findByCodrec(reg.getCodrec());
+            Recurso validTag = optionalTag.orElseGet(() -> resourceRepository.save(reg));
             validTag.permissioning(newRol);
         }
         log.info("rolnewwwww: {} {}", newRol.getCodrol(), newRol.getDescripcion());
@@ -77,8 +78,25 @@ public class RolesService {
         Roles rol = rolesRepository
                 .findByCodrol(codrol)
                 .orElseThrow(() -> new NoSuchElementException("Rol inexistente para codigo: `%s`".formatted(codrol)));
-
+        log.info("new rol {} {} {}",rol.getId(), rol.getCodrol(), request.descripcion());
         updateFromVO(rol, request);
+        for (Recurso reg : request.permisos()) {
+
+            Optional<Recurso> optionalTag = resourceRepository.findByCodrec(reg.getCodrec());
+            Recurso validTag = optionalTag.orElseGet(() -> resourceRepository.save(reg));
+            validTag.permissioning(rol);
+            
+            log.info("en update rec {} {} -> {} [{}]", reg.getId(),reg.getCodrec(), validTag.getId(), rol.getIncludeRecursos().size());            
+        }
+
+        for (Profile p : rol.getIncludeRecursos()){
+            Profile np = profileRepository.save(p);
+            log.info("profile {} {}", np.getId().getRolId(), np.getId().getRecursoId());
+        }
+            profileRepository.flush();
+        Optional<Roles> rol0 = rolesRepository.findByCodrol(codrol);
+        log.info("recusos new {}", rol0.get().getIncludeRecursos().size());
+         
         return new RolesVO(rol);
     }
 

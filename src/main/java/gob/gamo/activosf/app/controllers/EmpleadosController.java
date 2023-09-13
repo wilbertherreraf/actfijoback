@@ -36,7 +36,7 @@ public class EmpleadosController {
     private final EmpleadoService service;
 
     private final EmpleadoRepository repository;
-    private static final String ENTITY_NAME = "empleados";
+    private static final String ENTITY_NAME = Constants.REC_EMPLEADOS;
 
     @GetMapping(Constants.API_EMPLEADOS)
     public ResponseEntity<List<OrgEmpleado>> getAll(Pageable pageable) {

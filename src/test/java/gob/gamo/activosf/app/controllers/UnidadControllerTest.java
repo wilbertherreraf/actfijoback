@@ -144,7 +144,9 @@ public class UnidadControllerTest {
                 // .header("Authorization", jamesToken)
                 .content(objectMapper.writeValueAsString(Map.of("unidad", request)))
                 .contentType(MediaType.APPLICATION_JSON));
+
         String s = objectMapper.writeValueAsString(Map.of("unidad", request));
+        
         log.info("*************** {}", s);
         resultActions.andDo(print());
         log.info("***************");
@@ -180,7 +182,7 @@ public class UnidadControllerTest {
     public String returnTokenUser() throws Exception {
         LoginUserRequest loginRequest = new LoginUserRequest("asdf", "asdf");
 
-        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 

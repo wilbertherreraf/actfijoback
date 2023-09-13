@@ -1,6 +1,7 @@
 package gob.gamo.activosf.app.config;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
+import gob.gamo.activosf.app.handlers.RequestWrapper;
 import gob.gamo.activosf.app.security.SessionsSearcherService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,8 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         String authHdrToken = null;
+        String requestURL = request.getRequestURL().toString();
+        RequestWrapper cachedHttpServletRequest = null;
         try {
             log.info(
                     "XXX:**=>DoFilter Inicio: ({}) {}-> {} rsaPublicKey null? {} jwtDecoder null? {}",
@@ -60,59 +65,57 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
             request.getParameterMap().entrySet().forEach(entry -> {
                 log.info("parameter {} -> {}", entry.getKey(), entry.getValue());
             });
-            // RequestWrapper cachedHttpServletRequest = new RequestWrapper(request);
-            /*
-             * log.info("REQUEST DATA: "
-             * + IOUtils.toString(cachedHttpServletRequest.getInputStream(),
-             * StandardCharsets.UTF_8));
-             */
+            cachedHttpServletRequest = new RequestWrapper(request);
 
-            authHdrToken = resolveFromAuthorizationHeader(request);
+            log.info("REQUEST DATA: " + IOUtils.toString(cachedHttpServletRequest.getInputStream(),
+                    StandardCharsets.UTF_8));
+
+            authHdrToken = resolveFromAuthorizationHeader(cachedHttpServletRequest);
             if (authHdrToken != null) {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 JwtAuthenticationToken authToken = (JwtAuthenticationToken) jwtTokenProvider
                         .getAuthenticationJwt(authHdrToken);
-                //boolean validTk = jwtTokenProvider.validateToken(authHdrToken);
-                if ( authToken != null && securityContext.getAuthentication() == null) {
+                // boolean validTk = jwtTokenProvider.validateToken(authHdrToken);
+                if (authToken != null && securityContext.getAuthentication() == null) {
 
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(cachedHttpServletRequest));
                     securityContext.setAuthentication(authToken);
                     log.info("XXX:=>Authenticated user " + authToken.getName() + ", setting security context!"
                             + " sixe grantes: ");
-                } 
+                }
             }
             log.info(
                     "XXX:=>DoFilter FINNNNN: ({}) {}-> {}",
-                    request.getMethod(),
-                    request.getRequestURL().toString(),
-                    request.getContentType());
+                    cachedHttpServletRequest.getMethod(),
+                    cachedHttpServletRequest.getRequestURL().toString(),
+                    cachedHttpServletRequest.getContentType());
 
         } catch (JwtValidationException e) {
             log.error("Error en filter JwtValidationException " + e.getMessage(), e);
-            //String isRefreshToken = request.getHeader("isRefreshToken");
-            String requestURL = request.getRequestURL().toString();
+            // String isRefreshToken = request.getHeader("isRefreshToken");
+            
             String refreshTk = jwtTokenProvider.getRefreshToken(authHdrToken);
             boolean existTk = sessionsSearcherService.existsSession(refreshTk);
             // allow for Refresh Token creation if following conditions are true.
             if (existTk && requestURL.toLowerCase().contains("refreshtoken")) {
-                allowForRefreshToken(e, request,refreshTk);
+                allowForRefreshToken(e, cachedHttpServletRequest, refreshTk);
             } else {
                 // PROXY_AUTHENTICATION_REQUIRED
-                if (existTk){
-                    request.setAttribute(Constants.SEC_HEADER_TOKEN_REFRESH, existTk);
-                    request.setAttribute("exception", new NotHavePermissionException("Require Refresh"));
-                } else 
-                    request.setAttribute("exception", e);
+                if (existTk) {
+                    cachedHttpServletRequest.setAttribute(Constants.SEC_HEADER_TOKEN_REFRESH, existTk);
+                    cachedHttpServletRequest.setAttribute("exception", new NotHavePermissionException("Require Refresh"));
+                } else
+                    cachedHttpServletRequest.setAttribute("exception", e);
             }
-            //exceptionHandler.handle(e);
+            // exceptionHandler.handle(e);
         } finally {
 
             log.info(
                     "Finally filter ... {} Uri: {}",
                     response.getStatus(),
-                    request.getRequestURL().toString());
+                    cachedHttpServletRequest.getRequestURL().toString());
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(cachedHttpServletRequest, response);
     }
 
     private void allowForRefreshToken(JwtValidationException ex, HttpServletRequest request, String tkRefresh) {

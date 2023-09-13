@@ -62,52 +62,6 @@ public class SecurityConfiguration {
      */
     private final AuthEntryPointJwt authEntryPointJwt;
 
-    // @Bean
-    public SecurityFilterChain securityFilterChain00(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
-            throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .cors(SecurityConfigurerAdapter::and)
-                .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**")
-                        .permitAll()
-                        .anyRequest()
-                        .permitAll())
-                .build();
-    }
-
-    // @Bean
-    public SecurityFilterChain securityFilterChain000(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
-            throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                // .cors(SecurityConfigurerAdapter::and)
-                .authorizeHttpRequests(requests -> requests.requestMatchers(
-                        HttpMethod.POST,
-                        "/api/users",
-                        "/api/users/login",
-                        Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/**")
-                        .permitAll()
-                        .anyRequest()
-                        .permitAll())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .exceptionHandling(handler -> {
-                    log.info("Error Sec... {}", handler.getClass());
-                    handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                            .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
@@ -117,7 +71,9 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // .cors( SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(
-                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
+                        requests -> requests
+                                .requestMatchers(HttpMethod.POST, Constants.API_ROOT_VERSION + Constants.API_LOGIN,
+                                        Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
@@ -165,11 +121,11 @@ public class SecurityConfiguration {
     @Bean
     public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
         log.info("XXX: en decoder!...{}", rsaPublicKey);
-        
-               NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build(); 
-n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+
+        NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+        n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 Arrays.asList(new JwtTimestampValidator(Duration.of(-1, ChronoUnit.SECONDS)))));
-        return n;//NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+        return n;// NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
     @Bean

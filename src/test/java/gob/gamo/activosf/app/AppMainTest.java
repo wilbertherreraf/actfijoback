@@ -6,12 +6,15 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
@@ -71,14 +74,14 @@ public class AppMainTest {
                 "test test");
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/users")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_PUBLIC +"/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", signUpRequest))));
 
         // then
         resultActions
                 .andExpect(status().isTemporaryRedirect())
-                .andExpect(view().name("redirect:/api/users/login"))
+                .andExpect(view().name("redirect:" + Constants.API_ROOT_VERSION + Constants.API_LOGIN))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute(
                         "user",
@@ -98,8 +101,8 @@ public class AppMainTest {
             log.info("en get roles test {}", i);
             List<User> lu = userRepository.findAll();
             log.info("en get users {}", lu.size()); */
-            List<RolesVO> l = rolesService.getRoles(null, null);
-            log.info("en get roles test {}", l.size());
+            Page<Roles> l = rolesService.getRoles(null, null);
+            log.info("en get roles test {}", l.getContent().size());
             l.forEach(r -> {
                 log.info("rol {}", r.toString());
             });

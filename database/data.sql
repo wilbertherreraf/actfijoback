@@ -2,9 +2,12 @@ INSERT INTO public.sec_roles( rol_codrol, rol_descrip)	VALUES ('ROL1', 'ROLE ONE
 INSERT INTO public.sec_roles( rol_codrol, rol_descrip)	VALUES ('ROL2', 'ROLE TWO');
 INSERT INTO public.sec_roles( rol_codrol, rol_descrip)	VALUES ('ROL3', 'ROLE THREE');
 
+
+
 INSERT INTO public.sec_recurso(	res_codrec, res_descrip) VALUES ('REC1', 'RECURSO 1');
 INSERT INTO public.sec_recurso(	res_codrec, res_descrip) VALUES ('REC2', 'RECURSO 2');
 INSERT INTO public.sec_recurso(	res_codrec, res_descrip) VALUES ('REC3', 'RECURSO 3');
+
 
 
 INSERT INTO public.sec_usuario (usr_id, usr_login, usr_nombres, usr_email, usr_codemp, usr_password, usr_tabtipousr, usr_tipousr, usr_tabstatuser, usr_statuser, usr_auditusr, usr_auditfho, usr_auditwst) VALUES (2, 'james@example.com', 'james doe', 'james@example.com', NULL, 'password', 10, 1, 20, 1, NULL, NULL, NULL);

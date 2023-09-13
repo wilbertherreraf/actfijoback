@@ -35,7 +35,7 @@ public class AlmacenesController {
         private final AfAlmacenBl service;
 
     private final AfAlmacenRepository repository;
-    private static final String ENTITY_NAME = "almacenes";
+    private static final String ENTITY_NAME = Constants.REC_ALMACENES;
 
     @GetMapping(Constants.API_ALMACENES)
     public ResponseEntity<List<AfAlmacen>> getAll(Pageable pageable) {

@@ -41,7 +41,7 @@ public class ProveedoresController {
   private final AfProveedorBl service;
 
     private final AfProveedorRepository repository;
-    private static final String ENTITY_NAME = "proveedores";
+    private static final String ENTITY_NAME = Constants.REC_PROVEEDORES;
 
     @GetMapping(Constants.API_PROVEEDORES)
     public ResponseEntity<List<AfProveedor>> getAll(Pageable pageable) {

@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "sec_profile")
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Profile {
 
     @EmbeddedId

@@ -38,7 +38,7 @@ public class PersonasController {
  private final PersonaService service;
 
     private final PersonaRepository repository;
-    private static final String ENTITY_NAME = "personas";
+    private static final String ENTITY_NAME = Constants.REC_PERSONAS;
 
     @GetMapping(Constants.API_PERSONAS)
     public ResponseEntity<List<OrgPersona>> getAll(Pageable pageable) {

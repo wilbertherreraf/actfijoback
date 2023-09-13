@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @EqualsAndHashCode
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ProfileId implements Serializable {
     @Column(name = "prr_rolid")
     private Integer rolId;

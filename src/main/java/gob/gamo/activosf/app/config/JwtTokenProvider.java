@@ -63,7 +63,6 @@ public class JwtTokenProvider {
 
     public String supply(User user) {
 
-
         Collection<? extends GrantedAuthority> grantedAuthorities = authoritiesUser(user);
         String tk = generateToken(user.getUsername(), grantedAuthorities);
 
@@ -83,7 +82,6 @@ public class JwtTokenProvider {
         String idSession = UUID.randomUUID().toString().replace("-", "");
         UserVO userVO = new UserVO(userId, "", idSession, "", "", new ArrayList<>());
 
-        log.info("vooooooooooo {}", userVO.toString());
         Gson gson = new Gson();
         sessionsSearcherService.createSession(idSession, gson.toJson(userVO));
 
@@ -101,7 +99,8 @@ public class JwtTokenProvider {
         Date exp = expirationDate();
         JwtEncoderParameters parameters = JwtEncoderParameters.from(claimsSet);
         String token = jwtEncoder.encode(parameters).getTokenValue();
-        log.info("Generated bearer token with user id `{}`: expire: [{}] {}", userId, UtilsDate.stringFromDate(exp, "H:mm:ss:SSS"), token );
+        log.info("Generated bearer token with user id `{}`: expire: [{}] ", userId,
+                UtilsDate.stringFromDate(exp, "H:mm:ss:SSS"));
         return token;
     }
 
@@ -132,17 +131,21 @@ public class JwtTokenProvider {
 
         try {
             JWT parse = JWTParser.parse(token);
-            if (parse.getJWTClaimsSet() != null && parse.getJWTClaimsSet().getClaims() != null  ) {
-                String refTk = parse.getJWTClaimsSet().getClaims().getOrDefault(Constants.SEC_HEADER_TOKEN_REFRESH, "").toString();
-                //boolean existTk = sessionsSearcherService.existsSession(refTk);
-                return  refTk;
+            if (parse.getJWTClaimsSet() != null && parse.getJWTClaimsSet().getClaims() != null) {
+                String refTk = parse.getJWTClaimsSet().getClaims().getOrDefault(Constants.SEC_HEADER_TOKEN_REFRESH, "")
+                        .toString();
+                // boolean existTk = sessionsSearcherService.existsSession(refTk);
+                return refTk;
             }
-/*             parse.getJWTClaimsSet().getClaims().get(Constants.SEC_HEADER_TOKEN_REFRESH);
-            for (Entry<String, Object> entry : parse.getJWTClaimsSet().getClaims().entrySet()) {
-                if (entry.getKey().equalsIgnoreCase(Constants.SEC_HEADER_TOKEN_REFRESH)) {
-                    return entry.getValue().toString();
-                }
-            } */
+            /*
+             * parse.getJWTClaimsSet().getClaims().get(Constants.SEC_HEADER_TOKEN_REFRESH);
+             * for (Entry<String, Object> entry :
+             * parse.getJWTClaimsSet().getClaims().entrySet()) {
+             * if (entry.getKey().equalsIgnoreCase(Constants.SEC_HEADER_TOKEN_REFRESH)) {
+             * return entry.getValue().toString();
+             * }
+             * }
+             */
         } catch (ParseException e) {
             throw new UnsupportedJwtException(e.getMessage());
         }
@@ -156,25 +159,30 @@ public class JwtTokenProvider {
 
         try {
             JWT parse = JWTParser.parse(token);
-            if (parse.getJWTClaimsSet() != null && parse.getJWTClaimsSet().getClaims() != null  ) {
+            if (parse.getJWTClaimsSet() != null && parse.getJWTClaimsSet().getClaims() != null) {
                 String refTk = parse.getJWTClaimsSet().getClaims().getOrDefault(idClaim, "").toString();
-                //boolean existTk = sessionsSearcherService.existsSession(refTk);
-                return  refTk;
+                // boolean existTk = sessionsSearcherService.existsSession(refTk);
+                return refTk;
             }
-/*             parse.getJWTClaimsSet().getClaims().get(Constants.SEC_HEADER_TOKEN_REFRESH);
-            for (Entry<String, Object> entry : parse.getJWTClaimsSet().getClaims().entrySet()) {
-                if (entry.getKey().equalsIgnoreCase(Constants.SEC_HEADER_TOKEN_REFRESH)) {
-                    return entry.getValue().toString();
-                }
-            } */
+            /*
+             * parse.getJWTClaimsSet().getClaims().get(Constants.SEC_HEADER_TOKEN_REFRESH);
+             * for (Entry<String, Object> entry :
+             * parse.getJWTClaimsSet().getClaims().entrySet()) {
+             * if (entry.getKey().equalsIgnoreCase(Constants.SEC_HEADER_TOKEN_REFRESH)) {
+             * return entry.getValue().toString();
+             * }
+             * }
+             */
         } catch (ParseException e) {
             throw new UnsupportedJwtException(e.getMessage());
         }
         return null;
-    }    
+    }
+
     private Date expirationDate() {
-        //UtilsDate.addTime(new Date(), 0, 0, false);
-        final var expirationDate = System.currentTimeMillis() + (appProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds() * 1000L);
+        // UtilsDate.addTime(new Date(), 0, 0, false);
+        final var expirationDate = System.currentTimeMillis()
+                + (appProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds() * 1000L);
         return new Date(expirationDate);
     }
 
@@ -198,13 +206,14 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            try {
+/*             try {
                 Date e = JWTParser.parse(authToken).getJWTClaimsSet().getExpirationTime();
-                log.info("expiraaaaaaaaaaaaa exp: {} now: {}", UtilsDate.stringFromDate(e, "H:mm:ss:SSS"), UtilsDate.stringFromDate(new Date(), "H:mm:ss:SSS"));                
+                log.info("expiraaaaaaaaaaaaa exp: {} now: {}", UtilsDate.stringFromDate(e, "H:mm:ss:SSS"),
+                        UtilsDate.stringFromDate(new Date(), "H:mm:ss:SSS"));
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }
+            } */
 
             Jwt tokenJwt = jwtDecoder.decode(authToken);
             return true;
@@ -225,9 +234,14 @@ public class JwtTokenProvider {
         grantedAuthorities.addAll(RoleMapper.toRoleDtos(user.getRoles()).stream()
                 .map(p -> {
                     List<SimpleGrantedAuthority> grantedAuthorities1 = new ArrayList<>();
+                    grantedAuthorities1.add(new SimpleGrantedAuthority(p.codrol().toUpperCase()));
                     for (Recurso permiso : p.permisos()) {
                         // log.info("privileg {}", p.codrol() + "." + permiso.getCodrec());
-                        grantedAuthorities1.add(new SimpleGrantedAuthority(p.codrol() + "." + permiso.getCodrec()));
+                        grantedAuthorities1.add(new SimpleGrantedAuthority((p.codrol() + "." + permiso.getCodrec()).toUpperCase()));
+                        SimpleGrantedAuthority grantP = new SimpleGrantedAuthority((permiso.getCodrec()).toUpperCase());
+                        if (!grantedAuthorities1.contains(grantP)) {
+                            grantedAuthorities1.add(grantP);
+                        }
                     }
                     return grantedAuthorities1;
                 })

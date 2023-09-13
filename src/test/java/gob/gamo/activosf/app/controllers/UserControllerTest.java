@@ -118,7 +118,7 @@ public class UserControllerTest {
         LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 
@@ -175,10 +175,11 @@ public class UserControllerTest {
     @DisplayName("provides logged-in user information.")
     void getCurrentUser() throws Exception {
         // given
-        String jamesToken = returnTokenUser();
+        String username = "asdf";
+        String jamesToken = returnTokenUser(username,"asdf");
         // when
         ResultActions resultActions = mockMvc.perform(
-                get("/api/user").param("pageCode", "USR_ALMACENES").header("Authorization", "Token " + jamesToken));
+                get(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/" + username ).param("pageCode", "USR_ALMACENES").header("Authorization", "Token " + jamesToken));
         String strRet = resultActions.andReturn().getResponse().getContentAsString();
         log.info("return rest {}", strRet);
         // then
@@ -197,7 +198,7 @@ public class UserControllerTest {
     @DisplayName("provides logged-in user information.")
     void getRefreshToken() throws Exception {
         // given
-        String jamesToken = returnTokenUser();
+        String jamesToken = returnTokenUser("asdf","asdf");
         //String jamesToken = tkTest;
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -219,7 +220,7 @@ public class UserControllerTest {
         appProperties.getSecurity().getAuthentication().getJwt().setTokenValidityInSeconds(3);
         sessionsSearcherService.initCache(5, TimeUnit.SECONDS);
         // given
-        String jamesToken = returnTokenUser();
+        String jamesToken = returnTokenUser("asdf","asdf");
         //String jamesToken = tkTest;
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -309,7 +310,7 @@ public class UserControllerTest {
             LoginUserRequest loginRequest = new LoginUserRequest("asdf", "asdf");
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+            ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
             // then
@@ -369,7 +370,7 @@ public class UserControllerTest {
             LoginUserRequest loginRequest = new LoginUserRequest("test", "password");
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+            ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
             // then
@@ -395,7 +396,7 @@ public class UserControllerTest {
 
         LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
 
-        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 
@@ -411,10 +412,10 @@ public class UserControllerTest {
         return user.token();
     }
 
-    public String returnTokenUser() throws Exception {
-        LoginUserRequest loginRequest = new LoginUserRequest("asdf", "asdf");
+    public String returnTokenUser(String u, String p) throws Exception {
+        LoginUserRequest loginRequest = new LoginUserRequest(u, p);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 

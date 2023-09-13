@@ -14,13 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.jwt.BadJwtException;
-import org.springframework.security.oauth2.jwt.JwtValidationException;
-import org.springframework.security.oauth2.server.resource.BearerTokenError;
-import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -46,6 +42,7 @@ import gob.gamo.activosf.app.utils.HeaderUtil;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = Constants.API_ROOT_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 // @RequestMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION)
 public class UserController {
     private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$",
@@ -53,21 +50,11 @@ public class UserController {
     private final UserService userService;
     private final SessionsSearcherService sessionsSearcherService;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final String ENTITY_NAME = "User";
-
-    @PostMapping("/api/users")
-    public ModelAndView signUp(@RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
-        log.info("inicio signup {} {}", request.email(), request.nombres());
-        userService.signUp(request);
-
-        // Redirect to login API to automatically login when signup is complete
-        LoginUserRequest loginRequest = new LoginUserRequest(request.email(), request.password());
-        httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
-        return new ModelAndView("redirect:/api/users/login", "user", Map.of("user", loginRequest));
-    }
+    private static final String ENTITY_NAME = Constants.REC_USUARIOS;
 
     @ResponseStatus(CREATED)
-    @PostMapping("/api/users/login")
+    //@PostMapping("/api/users/login")
+    @PostMapping(Constants.API_LOGIN)
     public UserResponse login(@RequestBody LoginUserRequest request) {
         /* LoginUserRequest loginRequest = new LoginUserRequest("asdf", "asdf"); */
         log.info("inicio a login {}", request.toString());
@@ -76,39 +63,20 @@ public class UserController {
         return new UserResponse(userVO);
     }
 
-    @GetMapping("/api/user")
-    // @PreAuthorize(value = "hasAuthority('USR_ALMACENES.ASIGNACIONES')")
-    // @PreAuthorize(value = "@roleChecker.check(authentication)")
-    public UserResponse getCurrentUser(User me) {
-        log.info("inicio a get user {}", me.toString());
-        UserVO userVO = userService.getuser(me.getUsername());
+    //@PostMapping("/api/users")
+    @PostMapping(Constants.API_PUBLIC + "/register")
+    public ModelAndView registroUsuario(@RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
+        log.info("inicio signup {} {}", request.email(), request.nombres());
+        userService.signUp(request);
 
-        return new UserResponse(userVO);
+        LoginUserRequest loginRequest = new LoginUserRequest(request.email(), request.password());
+        httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
+        return new ModelAndView("redirect:" + Constants.API_ROOT_VERSION + Constants.API_LOGIN, "user", Map.of("user", loginRequest));
     }
 
-    @GetMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/users")
-    public ResponseEntity<List<UserVO>> getAll(Pageable pageable) {
-        log.info("en {} query u {}", this.getClass().getSimpleName(), pageable != null ? pageable.toString() : "");
-        // List<UserResponse> list = userService.getusers().stream().map(r -> new
-        // UserVO(r)).map(r -> new
-        // UserResponse(r)).collect(Collectors.toList());
-        List<UserVO> list = userService.getusers().stream().map(r -> new UserVO(r)).collect(Collectors.toList());
-        return ResponseEntity.ok(list);
-    }
-
-    @PutMapping("/api/user")
-    public ResponseEntity<UserResponse> updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
-        log.info("en update user meeeeeeeeeeeeee");
-        log.info("en update user me: {}, req: {}", me.getUsername(), request.toString());
-        UserVO userVO = userService.update(me, request);
-        UserResponse result = new UserResponse(userVO);
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, result.toString()))
-                .body(result);
-        // return new UserResponse(userVO);
-    }
-
-    @PostMapping("/api/user/refreshtoken")
+    /********************************************** */
+    //@PostMapping("/api/user/refreshtoken")
+    @PostMapping(Constants.API_USUARIOS + "/refreshtoken")
     public ResponseEntity<UserResponse> refreshToken(HttpServletRequest request) {
         String username = resolveRefreshTokenHeader(request);
         if (StringUtils.isBlank(username)) {
@@ -119,19 +87,59 @@ public class UserController {
         UserVO userVO = userService.getuser(username);
         UserResponse result = new UserResponse(userVO);
 
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, result.toString()))
-                .body(result);
+        return ResponseEntity.ok().body(result);
         // return new UserResponse(userVO);
     }
-    /*
-     * @PutMapping("/api/user")
-     * public UserResponse updateCurrentUser(User me, @RequestBody UpdateUserRequest
-     * request) {
-     * UserVO userVO = userService.update(me, request);
-     * return new UserResponse(userVO);
-     * }
-     */
+
+    //@GetMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION + "/users")
+    @GetMapping(Constants.API_USUARIOS)
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<List<UserVO>> getAll(Pageable pageable) {
+        log.info("en {} query u {}", this.getClass().getSimpleName(), pageable != null ? pageable.toString() : "");
+        List<UserVO> list = userService.getusers().stream().map(r -> new UserVO(r)).collect(Collectors.toList());
+        return ResponseEntity.ok(list);
+    }
+
+    @PostMapping(Constants.API_USUARIOS)
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<UserResponse> nuevoUsuario(@RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
+        log.info("inicio nuevo user {} {}", request.email(), request.nombres());
+        User newuser = userService.signUp(request);
+        UserVO userVO = userService.getuser(newuser.getUsername());
+        UserResponse result = new UserResponse(userVO);
+        return ResponseEntity.ok().body(result);
+    }
+    
+    @GetMapping(Constants.API_USUARIOS + "/{slug}")
+    // @PreAuthorize(value = "hasAuthority('USR_ALMACENES.ASIGNACIONES')")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")    
+    public UserResponse getUsuario(User me, @PathVariable(value = "slug") String id) {
+        log.info("inicio a get user {} slug: {}", me.toString(), id);
+        UserVO userVO = userService.getuser(id);
+
+        return new UserResponse(userVO);
+    }
+
+    //@PutMapping("/api/user")
+    @PutMapping(Constants.API_USUARIOS + "/{slug}")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<UserResponse> updateUser(User me, @PathVariable(value = "slug") String id, @RequestBody UpdateUserRequest request) {
+        log.info("en update user me: {}, req: {}", me.getUsername(), id);
+        UserVO userVO = userService.update(me, request);
+        UserResponse result = new UserResponse(userVO);
+        return ResponseEntity.ok()
+                .body(result);
+    }
+
+    // update for owner account
+    @PutMapping(Constants.API_USUARIOS)
+    public ResponseEntity<UserResponse> updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
+        log.info("en update user me: {}, req: {}", me.getUsername());
+        UserVO userVO = userService.update(me, request);
+        UserResponse result = new UserResponse(userVO);
+        return ResponseEntity.ok()
+                .body(result);
+    }
 
     private String resolveRefreshTokenHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);

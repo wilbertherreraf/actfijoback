@@ -41,7 +41,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class UnidadController {
     private final UnidadService service;
     private final OrgUnidadRepository repository;
-    private static final String ENTITY_NAME = "unidades";
+    private static final String ENTITY_NAME = Constants.REC_UNIDS;
 
     @GetMapping(Constants.API_UNIDS)
     public ResponseEntity<List<UnidadResponse>> getAll(Pageable pageable) {
