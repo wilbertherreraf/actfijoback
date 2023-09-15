@@ -1,5 +1,6 @@
 package gob.gamo.activosf.app.config;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -20,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
+import gob.gamo.activosf.app.errors.ResourceNotFoundException;
 import gob.gamo.activosf.app.errors.TokenRefreshException;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,6 +43,12 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
      * validationErrors));
      * }
      */
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public void springHandleNotFound(HttpServletResponse response) throws IOException {
+        log.error("Error Interceptor:> " + response.getStatus());
+        response.sendError(HttpStatus.NOT_FOUND.value());
+    }
 
     @ExceptionHandler(SQLException.class)
     public ProblemDetail handle(SQLException e) {
@@ -121,7 +130,7 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
                 SQLException ex = (SQLException) cause;
                 pd.setDetail(cause.getMessage());
                 pd.setProperty("Error Code", ex.getErrorCode());
-                pd.setProperty("StackTrace", ex.getStackTrace());
+                //pd.setProperty("StackTrace", ex.getStackTrace());
             }
         }
         return pd;
@@ -137,7 +146,7 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
                 SQLException ex = (SQLException) cause;
                 pd.setDetail(cause.getMessage());
                 pd.setProperty("Error Code", ex.getErrorCode());
-                pd.setProperty("StackTrace", ex.getStackTrace());
+                //pd.setProperty("StackTrace", ex.getStackTrace());
             }
         }
         return pd;

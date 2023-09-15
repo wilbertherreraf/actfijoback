@@ -7,9 +7,13 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,8 +21,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "idRol")
 @Slf4j
-@Builder
+//@Builder
 @Entity
 @Table(name = "sec_roles")
 @Getter
@@ -36,24 +41,22 @@ public class Roles {
     @Column(name = "rol_descrip")
     private String descripcion;
 
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumns({
-        @JoinColumn(name = "rol_tabstatreg", referencedColumnName = "des_codtab"),
-        @JoinColumn(name = "rol_statreg", referencedColumnName = "des_codigo")
+            @JoinColumn(name = "rol_tabstatreg", referencedColumnName = "des_codtab"),
+            @JoinColumn(name = "rol_statreg", referencedColumnName = "des_codigo")
     })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Profile> includeRecursos = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rol")
+    private Set<Profile> includeRecursos = new HashSet<>(); 
 
-    @Builder.Default
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "sec_profile",
-            joinColumns = @JoinColumn(name = "prr_rolid"),
-            inverseJoinColumns = @JoinColumn(name = "prr_resid"))
-    private Set<Recurso> recursos = new HashSet<>();
+    //@Builder.Default
+    // @JsonIgnore
+    /* @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "sec_profile", joinColumns = @JoinColumn(name = "prr_rolid"), inverseJoinColumns = @JoinColumn(name = "prr_resid"))
+    private Set<Recurso> recursos = new HashSet<>(); */
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> usuarios = new HashSet<>();
@@ -75,20 +78,29 @@ public class Roles {
         if (this.includeRecursos.stream().anyMatch(profile::equals)) {
             return;
         }
-
+        
         this.includeRecursos.add(profile);
-        String s = this.getIncludeRecursos().stream().map(x -> " :: "+x.getId().getRolId()+"-" + x.getId().getRecursoId()).collect(Collectors.toList()).toString();
+        //this.recursos.add(recurso);
+        String s = this.getIncludeRecursos().stream()
+                .map(x -> " :: " + x.getId().getRolId() + "-" + x.getId().getRecursoId()).collect(Collectors.toList())
+                .toString();
         log.info("XXXXXXX {}", s);
     }
 
-    /*     public List<Recurso> getRecursos() {
-        return this.includeRecursos.stream().map(Profile::getRecurso).toList();
-    } */
-
+    /*
+     * public List<Recurso> getRecursos() {
+     * return this.includeRecursos.stream().map(Profile::getRecurso).toList();
+     * }
+     */
+/* 
     public Set<String> getCodrecursos() {
-        // return this.getRecursos().stream().map(Recurso::getCodrec).sorted().toArray(String[]::new);
-        return this.recursos.stream().map(Recurso::getCodrec).sorted().collect(Collectors.toSet());
-    }
+        // return
+        // this.getRecursos().stream().map(Recurso::getCodrec).sorted().toArray(String[]::new);
+        if (this.recursos != null)
+            return this.recursos.stream().map(Recurso::getCodrec).sorted().collect(Collectors.toSet());
+        else
+            return new HashSet<>();
+    } */
 
     @Override
     public boolean equals(Object o) {

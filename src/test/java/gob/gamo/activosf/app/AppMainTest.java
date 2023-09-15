@@ -88,27 +88,4 @@ public class AppMainTest {
                         Map.of("user", new LoginUserRequest("test@example.com", "password"))))
                 .andDo(print());
     }
-
-   
-
-
-
-    @Test
-    void getRolesServ() {
-        try {
-            log.info("en get roles test");
-/*             Integer i = userRepository.count();
-            log.info("en get roles test {}", i);
-            List<User> lu = userRepository.findAll();
-            log.info("en get users {}", lu.size()); */
-            Page<Roles> l = rolesService.getRoles(null, null);
-            log.info("en get roles test {}", l.getContent().size());
-            l.forEach(r -> {
-                log.info("rol {}", r.toString());
-            });
-        } catch (Exception e) {
-            log.error("error :: " + e.getMessage(), e);
-        }
-
-    }
 }

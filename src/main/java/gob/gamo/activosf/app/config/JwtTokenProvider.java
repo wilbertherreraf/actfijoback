@@ -235,10 +235,10 @@ public class JwtTokenProvider {
                 .map(p -> {
                     List<SimpleGrantedAuthority> grantedAuthorities1 = new ArrayList<>();
                     grantedAuthorities1.add(new SimpleGrantedAuthority(p.codrol().toUpperCase()));
-                    for (Recurso permiso : p.permisos()) {
+                    for (String codRecurso : p.permisosList()) {
                         // log.info("privileg {}", p.codrol() + "." + permiso.getCodrec());
-                        grantedAuthorities1.add(new SimpleGrantedAuthority((p.codrol() + "." + permiso.getCodrec()).toUpperCase()));
-                        SimpleGrantedAuthority grantP = new SimpleGrantedAuthority((permiso.getCodrec()).toUpperCase());
+                        grantedAuthorities1.add(new SimpleGrantedAuthority((p.codrol() + "." + codRecurso).toUpperCase()));
+                        SimpleGrantedAuthority grantP = new SimpleGrantedAuthority(codRecurso.toUpperCase());
                         if (!grantedAuthorities1.contains(grantP)) {
                             grantedAuthorities1.add(grantP);
                         }

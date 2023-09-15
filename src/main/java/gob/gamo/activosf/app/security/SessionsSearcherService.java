@@ -58,7 +58,7 @@ public class SessionsSearcherService {
             throw new RuntimeException("Valor sesión nulo, no se puede crear");
         }
         sessionsCache.put(idsession, valorCache);
-        log.info("Session creada {} con valor {} size {}", idsession, valorCache, sessionsCache.size());
+        //log.info("Session creada {} con valor {} size {}", idsession, valorCache, sessionsCache.size());
     }
 
     public void closeSession(String idsession) {
@@ -66,7 +66,7 @@ public class SessionsSearcherService {
             return;
         }
         sessionsCache.invalidate(idsession);
-        log.info("Session cerrada {} size {}", idsession, sessionsCache.size());
+        //log.info("Session cerrada {} size {}", idsession, sessionsCache.size());
     }
 
     public void revalidateSession(String idsession, String valorSession) {
@@ -76,13 +76,13 @@ public class SessionsSearcherService {
         String valorSessionOld = sessionsCache.getIfPresent(idsession);
         if (valorSessionOld != null) {
             sessionsCache.refresh(idsession);
-            log.info("Session revalidada {} para {},  size {}", idsession, valorSession, sessionsCache.size());            
+            //log.info("Session revalidada {} para {},  size {}", idsession, valorSession, sessionsCache.size());            
         }
         // sessionsCache.put(idsession, valorSession);
     }
 
     public void validateSession(String idsession, String valorCache) {
-        log.info("validateSession {} para valorCache {} ", idsession, valorCache);
+        //log.info("validateSession {} para valorCache {} ", idsession, valorCache);
         if (StringUtils.isBlank(idsession)) {
             throw new RuntimeException("Codigo de sesión nulo");
         }
@@ -104,7 +104,7 @@ public class SessionsSearcherService {
             return false;
         }
         String valorSession = sessionsCache.getIfPresent(idsession);
-        log.info("valorSessionvalorSession " + valorSession);
+        //log.info("valorSessionvalorSession " + valorSession);
 
         return !StringUtils.isBlank(valorSession); // valorSession.equals(valorCache);
     }

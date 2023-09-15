@@ -8,7 +8,9 @@ import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.StringIdGenerator.class,
+        property="id")
 @Slf4j
 @Entity
 @Getter
@@ -65,7 +70,7 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

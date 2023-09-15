@@ -17,7 +17,9 @@ import jakarta.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,9 @@ import lombok.NoArgsConstructor;
 
 import gob.gamo.activosf.app.dto.UnidadResponse;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.StringIdGenerator.class,
+        property="idUnidad")
 @Entity
 @Getter
 @Builder
@@ -62,7 +67,7 @@ public class OrgUnidad {
     @Column(name = "estado")
     private String estado;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

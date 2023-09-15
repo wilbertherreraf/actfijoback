@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,23 +28,25 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     public void commence(
             HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
-        log.error("Unauthorized error: {}", authException.getMessage());
+
+        log.error("Unauthorized error: {} url: {}", authException.getMessage(), request.getRequestURL());
         final Map<String, Object> body = new HashMap<>();
-        body.put("path", request.getRequestURL());
+        body.put("path", request.getRequestURL());        
+        if (request.getRequestURL().toString().endsWith("/error")) {
+            body.put("path", Constants.API_ROOT_VERSION + "/error");
+        }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         Exception exception = (Exception) request.getAttribute("exception");
-        String messageErr = "";
         String message = "";
         if (exception != null) {
-            messageErr = exception.toString();
             if (exception instanceof NotHavePermissionException) {
                 response.setStatus(HttpServletResponse.SC_PROXY_AUTHENTICATION_REQUIRED);
-                body.put("path", "/api/user/refreshtoken");
+                body.put("path", Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/refreshtoken");
             } else {
-                body.put("path", "/api/user/loggout");
+                body.put("path", Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/loggout");
             }
             body.put("message", exception.getMessage());
         } else {

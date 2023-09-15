@@ -25,6 +25,7 @@ import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
+import gob.gamo.activosf.app.dto.sec.SingleRolResponse;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.repository.sec.RecursoRepository;
 import gob.gamo.activosf.app.repository.sec.RolesRepository;
@@ -41,8 +42,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @IntegrationTest
@@ -158,22 +157,39 @@ public class RolesControllerTest {
         String s = objectMapper.writeValueAsString(Map.of("rol", createRequest));
 
         log.info("content post {}", s);
-        resultActions.andDo(print());
-        log.info("***************");
+        // resultActions.andDo(print());
 
         String response = resultActions.andReturn()
                 .getResponse()
                 .getContentAsString();
         log.info("RESPONSE post::> {}", response);
 
+        RolesVO rol = rolesService.getSingleRol("Test1");
+        SingleRolResponse srol = new SingleRolResponse(rol);
+        String json = new ObjectMapper().writeValueAsString(srol);
+        log.info("json post create {}", json);
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
+        log.info("ANTES DE GET 1 ROL ");
+        resultActions = mockMvc.perform(get(Constants.API_ROOT_VERSION + Constants.API_ROLES + "/{slug}", slug)
+                .header("Authorization", "Token " + jamesToken));
+
+        response = resultActions.andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        log.info("RESPONSE GET 1::> {}", response);
+
+        resultActions.andExpect(status().isOk());
+
         // when
         // - update the article
         log.info("**** ANTES DE UPDATE ROL ");
-        RolesVO updateRequest = new RolesVO("Test", "Updated description", List.of("AMBIENTES"));
+        RolesVO updateRequest = new RolesVO("Test1", "Updated description",
+                List.of("AMBIENTES", "PROVEEDORES", "ASIGNACIONES", "SOLICITUD DE MATERIALES"));
 
         resultActions = mockMvc
                 .perform(put(Constants.API_ROOT_VERSION + Constants.API_ROLES + "/{slug}", slug)
@@ -191,6 +207,18 @@ public class RolesControllerTest {
                  * .andExpect(jsonPath("$.article.body").value("Updated body"))
                  */
                 .andDo(print());
+        log.info("ANTES DE GET ROL ");
+
+        resultActions = mockMvc.perform(get(Constants.API_ROOT_VERSION + Constants.API_ROLES + "/{slug}", slug)
+                .header("Authorization", "Token " + jamesToken));
+
+        response = resultActions.andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        log.info("RESPONSE GET::> {}", response);
+
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
