@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
@@ -17,9 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.StringIdGenerator.class,
-        property="id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "id")
 @Entity
 @Getter
 @Builder
@@ -52,8 +49,11 @@ public class OrgEmpleado {
     @Column(name = "estado")
     private String estado;
 
-    //@JsonIgnore
     @Builder.Default
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)
     private Set<OrgUnidad> unidades = new HashSet<>();
+
+    // @OneToOne
+    /* @JoinColumn(name = "id_persona")
+    private OrgPersona persona; */
 }

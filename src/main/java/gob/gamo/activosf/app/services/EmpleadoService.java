@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.OrgEmpleado;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.EmpleadoRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -38,7 +38,8 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado update(OrgEmpleado entityReq) {
-        if (entityReq.getId() == null || entityReq.getId().compareTo(0) == 0) new DataException("Entidad con id, debe nulo");
+        if (entityReq.getId() == null || entityReq.getId().compareTo(0) == 0)
+            new DataException("Entidad con id, debe nulo");
 
         OrgEmpleado newEntity = repositoryEntity.save(entityReq);
         return newEntity;
@@ -47,8 +48,8 @@ public class EmpleadoService {
     @Transactional
     public void delete(Integer id) {
         repositoryEntity.deleteById(id);
-    }    
-        
+    }
+
     private OrgEmpleado findById(Integer id) {
         return repositoryEntity
                 .findById(id)

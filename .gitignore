@@ -30,3 +30,4 @@ bin/**/*
 *.bin
 .gradle\*
 .gradle/
+*.lock

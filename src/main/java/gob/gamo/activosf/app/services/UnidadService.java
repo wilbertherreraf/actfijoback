@@ -50,8 +50,8 @@ public class UnidadService {
     @Transactional
     public void delete(Integer id) {
         repositoryEntity.deleteById(id);
-    }    
-        
+    }
+
     private OrgUnidad findById(String id) {
         return repositoryEntity
                 .findBySigla(id)
@@ -63,6 +63,4 @@ public class UnidadService {
                 .findBySigla(id)
                 .orElseThrow(() -> new NoSuchElementException("Article not found : `%s`".formatted(id)));
     }
-
-    
 }

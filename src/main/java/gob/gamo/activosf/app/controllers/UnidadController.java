@@ -44,12 +44,12 @@ public class UnidadController {
     private static final String ENTITY_NAME = Constants.REC_UNIDS;
 
     @GetMapping(Constants.API_UNIDS)
+    // @PostMapping(value = Constants.API_UNIDS)
     public ResponseEntity<List<UnidadResponse>> getAll(Pageable pageable) {
         final Page<UnidadResponse> page = service.findAll(pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
-        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(page.getContent()));
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -70,8 +70,6 @@ public class UnidadController {
         result.getEmpleados().forEach(r -> {
             log.info("unida {} - {}", id, r.getCod_internoempl());
         });
-        /* return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
-        .body(RestResponse.of(new UnidadResponse(result))); */
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
                 .body(new UnidadResponse(result));
@@ -100,23 +98,16 @@ public class UnidadController {
                 .build();
     }
 
-    @GetMapping(Constants.API_UNIDS + "/{slug}" + "/empleados")
+    @GetMapping(Constants.API_UNIDS + "/{slug}" + Constants.API_EMPLEADOS)
     public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
             @PathVariable(value = "slug") Integer id, Pageable pageable) {
-        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
-
         OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
         Set<OrgEmpleado> empl = result.getEmpleados();
         Page<OrgEmpleado> pageRet = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 
-        log.info("request uni {}", WebUtil.getRequest().getRequestURI());
-
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
     }
-
-
 }

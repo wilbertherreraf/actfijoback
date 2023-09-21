@@ -11,17 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import gob.gamo.activosf.app.commons.Constants;
-
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.commons.Constants;
 
 @Slf4j
 @Configuration
-// @ComponentScan
 @EnableAutoConfiguration
 @PropertySource(value = "file:" + Constants.BASE_DIR_APP + Constants.FILE_APPLICATION)
-// @EnableConfigurationProperties({ AppProperties.class,
-// LavadoProperties.class})
 @EnableConfigurationProperties({AppProperties.class})
 public class ConfigApp {
     @Autowired

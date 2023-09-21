@@ -13,13 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfBajaMaterial;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfCodigoContable;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.repository.AfCodigoContableRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -33,11 +33,13 @@ public class AfCodigoContableBl {
     AfCodigoContableRepository afCodigoContableRepository;
 
     TxTransaccionBl txTransaccionBl;
+
     @Transactional(readOnly = true)
     public Page<AfCodigoContable> findAll(Pageable pageable) {
         Page<AfCodigoContable> list = afCodigoContableRepository.findAll(pageable);
         return list;
     }
+
     public AfCodigoContable mergeAfCodigoContable(AfCodigoContable afCodigoContable, UserRequestVo userRequestVo) {
         // TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         // afCodigoContableRepository.save(afCodigoContable);
@@ -55,11 +57,13 @@ public class AfCodigoContableBl {
         // afCodigoContableRepository.delete(afCodigoContable);
         afCodigoContableRepository.delete(afCodigoContable);
     }
+
     public void delete(Integer id, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         // afCodigoContableRepository.delete(afCodigoContable);
         afCodigoContableRepository.deleteById(id);
     }
+
     public Optional<AfCodigoContable> findByPkAfCodigoContable(Integer pk) {
         return afCodigoContableRepository.findById(pk);
     }

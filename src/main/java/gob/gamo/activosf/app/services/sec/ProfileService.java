@@ -6,10 +6,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.entities.Profile;
-import gob.gamo.activosf.app.repository.sec.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.domain.entities.Profile;
+import gob.gamo.activosf.app.repository.sec.ProfileRepository;
 
 @Slf4j
 @Service
@@ -21,15 +22,15 @@ public class ProfileService {
     public void deleteRolRecurso(Integer codrol, Integer codrecurso) {
         Optional<Profile> profile = repository.findByRolIdRecursoId(codrol, codrecurso);
         repository.delete(profile.get());
-    }    
+    }
 
     @Transactional
     public void deleteByRol(Integer codrol) {
         List<Profile> profiles = repository.findByIdRolId(codrol);
         int c = profiles.size();
-        for(Profile p : profiles) {
+        for (Profile p : profiles) {
             repository.delete(p);
         }
         log.info("Profiles Eliminados {}", c);
-    }        
+    }
 }

@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.AfCodigoContable;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.UserRequestVo;
-import gob.gamo.activosf.app.domain.AfCodigoContable;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfCodigoContableRepository;
 import gob.gamo.activosf.app.services.AfCodigoContableBl;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -73,8 +73,8 @@ public class CodigoContablesController {
 
     @PutMapping(value = Constants.API_CODIGOSCONTABLES + "/{slug}")
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<AfCodigoContable> updateRole(User me,
-            @PathVariable(value = "slug") String id, @RequestBody AfCodigoContable entityReq) {
+    public ResponseEntity<AfCodigoContable> updateRole(
+            User me, @PathVariable(value = "slug") String id, @RequestBody AfCodigoContable entityReq) {
 
         if (entityReq.getIdCodigoContable() == null) {
             return create(me, entityReq);
@@ -95,7 +95,7 @@ public class CodigoContablesController {
                 .build();
     }
 
-/*     @GetMapping(Constants.API_CODIGOSCONTABLES + "/{slug}" + "/empleados")
+    /*     @GetMapping(Constants.API_CODIGOSCONTABLES + "/{slug}" + "/empleados")
     public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
             @PathVariable(value = "slug") Integer id, Pageable pageable) {
         log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);

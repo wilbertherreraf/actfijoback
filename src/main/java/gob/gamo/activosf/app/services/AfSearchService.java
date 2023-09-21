@@ -9,11 +9,12 @@ import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.dto.CriteriosBusquedaEnum;

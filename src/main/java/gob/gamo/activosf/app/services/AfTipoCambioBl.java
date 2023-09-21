@@ -13,14 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfSubFamiliaActivo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfTipoCambio;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -34,11 +34,13 @@ public class AfTipoCambioBl {
     AfTipoCambioRepository afTipoCambioRepository;
 
     TxTransaccionBl txTransaccionBl;
+
     @Transactional(readOnly = true)
     public Page<AfTipoCambio> findAll(Pageable pageable) {
         Page<AfTipoCambio> list = afTipoCambioRepository.findAll(pageable);
         return list;
     }
+
     public void mergeAfTipoCambio(AfTipoCambio afTipoCambio, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         // afTipoCambioRepository.save(afTipoCambio);

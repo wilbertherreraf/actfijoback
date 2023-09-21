@@ -8,12 +8,11 @@ import jakarta.annotation.PostConstruct;
 
 import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.hibernate.engine.jdbc.internal.Formatter;
-import org.springframework.context.annotation.Configuration;
 
 import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 
-@Configuration
+// @Configuration
 public class QueryFormattingConfiguration {
     @PostConstruct
     public void setLogMessageFormat() {
@@ -51,11 +50,7 @@ public class QueryFormattingConfiguration {
         }
 
         private String summary(String query, Integer connectionId, long elapsed, StringBuilder callstack) {
-            return """
-                                                                   QUERY
-                    \t%s
-                    """
-                    .formatted(query, connectionId, elapsed, callstack);
+            return "%s".formatted(query, connectionId, elapsed, callstack);
         }
 
         private String summaryOrig0(String query, Integer connectionId, long elapsed, StringBuilder callstack) {

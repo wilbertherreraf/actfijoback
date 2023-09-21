@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
@@ -19,9 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.StringIdGenerator.class,
-        property="id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "id")
 @Slf4j
 @Entity
 @Getter
@@ -70,7 +67,6 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
-    //@JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -125,11 +121,13 @@ public class User {
         this.password = passwordEncoder.encode(plaintext);
     }
 
-    /*     public void updateBio(String bio) {
-        this.bio = bio;
-    }
-
-    public void updateImage(String imageUrl) {
-        this.image = imageUrl;
-    } */
+    /*
+     * public void updateBio(String bio) {
+     * this.bio = bio;
+     * }
+     *
+     * public void updateImage(String imageUrl) {
+     * this.image = imageUrl;
+     * }
+     */
 }

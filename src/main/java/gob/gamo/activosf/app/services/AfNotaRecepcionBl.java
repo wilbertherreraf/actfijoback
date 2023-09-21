@@ -21,12 +21,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAtributoActivoFijo;
 import gob.gamo.activosf.app.domain.AfComisionRecepcion;
 import gob.gamo.activosf.app.domain.AfComponenteActivoFijo;
 import gob.gamo.activosf.app.domain.AfImagenActivoFijo;
-import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfNotaRecepcion;
 import gob.gamo.activosf.app.domain.AfTransferenciaAsignacion;
 import gob.gamo.activosf.app.domain.TxTransaccion;
@@ -40,8 +42,6 @@ import gob.gamo.activosf.app.repository.AfNotaRecepcionRepository;
 import gob.gamo.activosf.app.repository.AfTipoCambioRepository;
 import gob.gamo.activosf.app.repository.AfTransferenciaAsignacionRepository;
 import gob.gamo.activosf.app.utils.LazyLoadingUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -73,11 +73,13 @@ public class AfNotaRecepcionBl {
     AfActivoFijoBl afActivoFijoBl;
 
     AfTransferenciaAsignacionRepository afTransferenciaAsignacionRepository;
+
     @Transactional(readOnly = true)
     public Page<AfNotaRecepcion> findAll(Pageable pageable) {
         Page<AfNotaRecepcion> list = afNotaRecepcionRepository.findAll(pageable);
         return list;
     }
+
     private String generateCodeForAfActivoFijo(AfActivoFijo afActivoFijo, CodeType codeType) {
         // Luego de coordinar con RFID colocar aqui la codificación adecuada.
         String result = null;

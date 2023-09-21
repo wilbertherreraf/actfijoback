@@ -13,16 +13,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfAtributoSubFamilia;
 import gob.gamo.activosf.app.domain.AfFamiliaActivo;
-import gob.gamo.activosf.app.domain.AfSolicitud;
 import gob.gamo.activosf.app.domain.AfSubFamiliaActivo;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.StatusEnum;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.repository.AfSubFamiliaActivoRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -36,11 +36,13 @@ public class AfSubFamiliaActivoBl {
     AfSubFamiliaActivoRepository afSubFamiliaActivoRepository;
 
     TxTransaccionBl txTransaccionBl;
+
     @Transactional(readOnly = true)
     public Page<AfSubFamiliaActivo> findAll(Pageable pageable) {
         Page<AfSubFamiliaActivo> list = afSubFamiliaActivoRepository.findAll(pageable);
         return list;
     }
+
     public void mergeAfSubFamiliaActivo(AfSubFamiliaActivo afSubFamiliaActivo, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         List<AfAtributoSubFamilia> afAtributoSubFamiliaList = afSubFamiliaActivo.getAfAtributoSubFamiliaList();

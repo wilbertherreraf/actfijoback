@@ -14,11 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -27,9 +26,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
@@ -61,6 +60,7 @@ public class SecurityConfiguration {
      * RSAPublicKey rsaPublicKey;
      */
     private final AuthEntryPointJwt authEntryPointJwt;
+    private List<HttpStatus> errorCodes;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
@@ -70,13 +70,13 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 // .cors( SecurityConfigurerAdapter::and)
-                .authorizeHttpRequests(
-                        requests -> requests
-                                .requestMatchers(HttpMethod.POST, Constants.API_ROOT_VERSION + Constants.API_LOGIN,
-                                        Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+                .authorizeHttpRequests(requests -> requests.requestMatchers(
+                                HttpMethod.POST,
+                                Constants.API_ROOT_VERSION + Constants.API_LOGIN,
+                                Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 // .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .oauth2ResourceServer(s -> s.jwt(withDefaults()))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
@@ -87,6 +87,8 @@ public class SecurityConfiguration {
                             .accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                 })
                 .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
+                // .addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
+                .addFilterAfter(new ClientErrorLoggingFilter(errorCodes), AuthorizationFilter.class)
                 .build();
     }
 
@@ -125,7 +127,7 @@ public class SecurityConfiguration {
         NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
         n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 Arrays.asList(new JwtTimestampValidator(Duration.of(-1, ChronoUnit.SECONDS)))));
-        return n;// NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+        return n; // NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
     @Bean

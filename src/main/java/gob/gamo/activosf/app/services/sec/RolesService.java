@@ -1,6 +1,5 @@
 package gob.gamo.activosf.app.services.sec;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -9,13 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.entities.Profile;
-import gob.gamo.activosf.app.domain.entities.ProfileId;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
@@ -53,16 +49,18 @@ public class RolesService {
                 .codrol(request.codrol())
                 .descripcion(request.descripcion())
                 .build();
-        Roles newRol = rolesRepository.save(nRol);        
+        Roles newRol = rolesRepository.save(nRol);
 
         for (String codRecurso : request.permisosList()) {
-            Recurso recurso = resourceRepository.findByCodrec(codRecurso)
+            Recurso recurso = resourceRepository
+                    .findByCodrec(codRecurso)
                     .orElseThrow(() -> new DataException("Registro inexistente " + codRecurso));
             recurso.permissioning(newRol);
             profileRepository.save(new Profile(nRol, recurso));
         }
 
-        newRol = rolesRepository.findByCodrol(newRol.getCodrol())
+        newRol = rolesRepository
+                .findByCodrol(newRol.getCodrol())
                 .orElseThrow(() -> new DataException("registro no fue creado"));
         RolesVO rolesVO = new RolesVO(newRol);
         return rolesVO;
@@ -74,24 +72,25 @@ public class RolesService {
                 .findByCodrol(codrol)
                 .orElseThrow(() -> new NoSuchElementException("Rol inexistente para codigo: `%s`".formatted(codrol)));
 
-        profileService.deleteByRol(rol.getId());        
+        profileService.deleteByRol(rol.getId());
 
         updateFromVO(rol, request);
         for (String codRecurso : request.permisosList()) {
-            Recurso recurso = resourceRepository.findByCodrec(codRecurso)
+            Recurso recurso = resourceRepository
+                    .findByCodrec(codRecurso)
                     .orElseThrow(() -> new DataException("Registro inexistente " + codRecurso));
             Optional<Profile> profile = profileRepository.findByRolIdRecursoId(rol.getId(), recurso.getId());
 
             if (!profile.isPresent()) {
                 recurso.permissioning(rol);
-                profileRepository.save(new Profile(rol, recurso));                
+                profileRepository.save(new Profile(rol, recurso));
             }
         }
-        
+
         Optional<Roles> rol0 = rolesRepository.findByCodrol(codrol);
-        
+
         rol0.get().getIncludeRecursos().clear();
-        
+
         rol0.get().getIncludeRecursos().addAll(profileRepository.findByIdRolId(rol.getId()));
 
         return new RolesVO(rol0.get());

@@ -13,12 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AccessLevel;
@@ -29,9 +31,7 @@ import lombok.NoArgsConstructor;
 
 import gob.gamo.activosf.app.dto.UnidadResponse;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.StringIdGenerator.class,
-        property="idUnidad")
+@JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "idUnd")
 @Entity
 @Getter
 @Builder
@@ -64,10 +64,20 @@ public class OrgUnidad {
     @Column(name = "id_unidad_padre")
     private Integer idUnidadPadre;
 
+    @NotFound(action = NotFoundAction.IGNORE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            updatable = false,
+            insertable = false,
+            name = "id_unidad_padre",
+            referencedColumnName = "id_unidad",
+            nullable = true)
+    private OrgUnidad unidadPadre;
+
     @Column(name = "estado")
     private String estado;
 
-    //@JsonIgnore
+    // @JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

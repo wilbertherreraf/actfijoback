@@ -2,6 +2,8 @@ package gob.gamo.activosf.app.services.sec;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,12 @@ public class UserService {
                     return new UserVO(user.possessToken(token));
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserVO> findAll(Pageable pageable) {
+        Page<UserVO> list = userRepository.findAll(pageable).map(r -> new UserVO(r));
+        return list;
     }
 
     @Transactional(readOnly = true)

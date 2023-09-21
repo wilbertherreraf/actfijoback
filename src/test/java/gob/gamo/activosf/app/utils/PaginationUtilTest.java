@@ -3,15 +3,8 @@ package gob.gamo.activosf.app.utils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import com.google.gson.Gson;
-
-import gob.gamo.activosf.app.utils.JsonUtilsTest.Usuario1;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

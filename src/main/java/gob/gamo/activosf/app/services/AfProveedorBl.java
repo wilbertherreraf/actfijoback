@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfPartidaPresupuestaria;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfProveedor;
 import gob.gamo.activosf.app.domain.AfProveedorActEco;
 import gob.gamo.activosf.app.domain.TxTransaccion;
@@ -20,8 +22,6 @@ import gob.gamo.activosf.app.dto.StatusEnum;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfProveedorRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -40,6 +40,7 @@ public class AfProveedorBl {
         Page<AfProveedor> list = afProveedorRepository.findAll(pageable);
         return list;
     }
+
     public AfProveedor mergeAfProveedor(AfProveedor afProveedor, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         List<AfProveedorActEco> afProveedorActEcoList = afProveedor.getAfProveedorActEcoList();
@@ -66,10 +67,12 @@ public class AfProveedorBl {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afProveedorRepository.delete(afProveedor);
     }
+
     public void delete(Integer id, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afProveedorRepository.deleteById(id);
     }
+
     public AfProveedor findByPkAfProveedor(Integer pk) {
         return afProveedorRepository.findById(pk).orElseThrow(() -> new DataException("id inexistente"));
     }

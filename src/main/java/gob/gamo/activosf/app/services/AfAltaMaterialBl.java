@@ -15,7 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfAlmacen;
+import lombok.RequiredArgsConstructor;
+
 import gob.gamo.activosf.app.domain.AfAltaMaterial;
 import gob.gamo.activosf.app.domain.AfAltaMaterialDetalle;
 import gob.gamo.activosf.app.domain.AfFactura;
@@ -27,7 +28,6 @@ import gob.gamo.activosf.app.dto.StatusEnum;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfAltaMaterialRepository;
-import lombok.RequiredArgsConstructor;
 
 /**
  *
@@ -44,12 +44,13 @@ public class AfAltaMaterialBl {
     AfRegistroKardexMaterialBl afRegistroKardexMaterialBl;
 
     TxTransaccionBl txTransaccionBl;
-    
+
     @Transactional(readOnly = true)
     public Page<AfAltaMaterial> findAll(Pageable pageable) {
         Page<AfAltaMaterial> list = afAltaMaterialRepository.findAll(pageable);
         return list;
     }
+
     public void mergeAfAltaMaterial(AfAltaMaterial afAltaMaterial, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         afAltaMaterialRepository.save(afAltaMaterial);

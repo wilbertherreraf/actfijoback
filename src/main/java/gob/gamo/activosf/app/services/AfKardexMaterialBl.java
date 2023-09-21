@@ -18,8 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfAlmacen;
-import gob.gamo.activosf.app.domain.AfGestion;
 import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfMaterial;
 import gob.gamo.activosf.app.domain.AfRegistroKardexMaterial;
@@ -35,8 +37,6 @@ import gob.gamo.activosf.app.repository.AfKardexMaterialRepository;
 import gob.gamo.activosf.app.repository.AfRegistroKardexMaterialRepository;
 import gob.gamo.activosf.app.repository.AfSolicitudMaterialRepository;
 import gob.gamo.activosf.app.repository.AfSolicitudRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -56,11 +56,13 @@ public class AfKardexMaterialBl {
     AfSolicitudRepository afSolicitudRepository;
 
     TxTransaccionBl txTransaccionBl;
+
     @Transactional(readOnly = true)
     public Page<AfKardexMaterial> findAll(Pageable pageable) {
         Page<AfKardexMaterial> list = afKardexMaterialRepository.findAll(pageable);
         return list;
     }
+
     public AfKardexMaterial getAfKardexMaterialByGestionAndMaterialAndAlmacen(
             Integer gestion, AfMaterial idMaterial, AfAlmacen idAlmacen, boolean detalle) {
         AfKardexMaterial afKardexMaterial = afKardexMaterialRepository

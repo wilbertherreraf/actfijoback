@@ -18,7 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfAltaMaterial;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfBajaMaterial;
 import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfRegistroKardexMaterial;
@@ -28,8 +30,6 @@ import gob.gamo.activosf.app.dto.TupleVo;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfBajaMaterialRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *

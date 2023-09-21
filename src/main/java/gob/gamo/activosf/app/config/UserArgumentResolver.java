@@ -53,10 +53,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
                 .orElseThrow(() -> new InvalidBearerTokenException("`%s` is invalid token".formatted(token)));
 
         log.info(
-                "in resolveArgument req auth:{} id: [{}] TK: {}",
-                user.getUsername(),
-                authentication.isAuthenticated());
+                "in resolveArgument req auth:{} id: [{}] TK: {}", user.getUsername(), authentication.isAuthenticated());
         return user;
     }
 }
-   

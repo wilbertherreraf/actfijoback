@@ -1,43 +1,6 @@
 package gob.gamo.activosf.app.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import gob.gamo.activosf.app.commons.Constants;
-import gob.gamo.activosf.app.domain.AfActivoFijo;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
-import gob.gamo.activosf.app.domain.OrgUnidad;
-import gob.gamo.activosf.app.domain.entities.User;
-//import gob.gamo.activosf.app.dto.AfActivoFijo;
-import gob.gamo.activosf.app.dto.UserRequestVo;
-import gob.gamo.activosf.app.dto.sec.UserVO;
-import gob.gamo.activosf.app.errors.DataException;
-import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
-import gob.gamo.activosf.app.repository.OrgUnidadRepository;
-import gob.gamo.activosf.app.services.AfActivoFijoBl;
-import gob.gamo.activosf.app.services.UnidadService;
-import gob.gamo.activosf.app.utils.HeaderUtil;
-import gob.gamo.activosf.app.utils.PaginationUtil;
-import gob.gamo.activosf.app.utils.WebUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+// import gob.gamo.activosf.app.dto.AfActivoFijo;
 
 /* @Slf4j
 @RestController
@@ -61,17 +24,17 @@ public class ActivoFijoController {
     } */
 
     /* @Operation(summary = "Crea un nuevo registro")
-    @PostMapping(value = Constants.API_ACTIVOSF)
-    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<AfActivoFijo> create(User me, @RequestBody AfActivoFijo req) {
-        service.mergeAfActivoFijo(req, UserRequestVo.convertUser(me));
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(
-                        ENTITY_NAME, req.getIdActivoFijo().toString()))
-                .body(respon);
-    }
- */
-/*     @GetMapping(Constants.API_ACTIVOSF + "/{slug}")
+       @PostMapping(value = Constants.API_ACTIVOSF)
+       @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+       public ResponseEntity<AfActivoFijo> create(User me, @RequestBody AfActivoFijo req) {
+           service.mergeAfActivoFijo(req, UserRequestVo.convertUser(me));
+           return ResponseEntity.ok()
+                   .headers(HeaderUtil.createEntityUpdateAlert(
+                           ENTITY_NAME, req.getIdActivoFijo().toString()))
+                   .body(respon);
+       }
+    */
+    /*     @GetMapping(Constants.API_ACTIVOSF + "/{slug}")
     public ResponseEntity<AfActivoFijo> getById(@PathVariable(value = "slug") Integer id) {
         OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
         result.getEmpleados().forEach(r -> {

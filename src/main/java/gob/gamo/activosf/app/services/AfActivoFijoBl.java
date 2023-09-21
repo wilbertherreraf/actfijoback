@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfAccesorioActivoFijo;
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAtributoActivoFijo;
@@ -39,7 +40,6 @@ import gob.gamo.activosf.app.dto.ItemReporteVo;
 import gob.gamo.activosf.app.dto.ReporteActivoFijoEnum;
 import gob.gamo.activosf.app.dto.ReporteContableEnum;
 import gob.gamo.activosf.app.dto.StatusEnum;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfActivoFijoRepository;
@@ -72,6 +72,7 @@ public class AfActivoFijoBl {
         Page<AfActivoFijo> list = afActivoFijoRepository.findAll(pageable);
         return list;
     }
+
     public Integer buscadorAvanzadoContar(HashMap<CriteriosBusquedaEnum, Object> criterios) {
         return afSearchService.buscadorAvanzadoContar(criterios);
     }
@@ -550,7 +551,7 @@ public class AfActivoFijoBl {
         // itemReporteVo.setPiso(getDescCatalogo(catalogo, "CAT_PISO", afActivoFijo.getIdAmbiente().getCatPiso()));
         itemReporteVo.setAmbiente(afActivoFijo.getIdAmbiente().getNombre());
         itemReporteVo.setResponsable(
-                afActivoFijo.getIdUsuarioAsignado().getIdPersona().getNombreCompleto());
+                afActivoFijo.getIdUsuarioAsignado().getIdPersona().getNombre());
         itemReporteVo.setObservaciones(afActivoFijo.getObservaciones());
         itemReporteVo.setOrganismoFinanciador("Fuente: "
                 + getDescCatalogo(afActivoFijo.getTabFenteFinanciamiento(), afActivoFijo.getFuenteFinanciamiento())

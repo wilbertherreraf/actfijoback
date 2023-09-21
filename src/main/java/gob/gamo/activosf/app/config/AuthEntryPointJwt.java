@@ -1,24 +1,25 @@
 package gob.gamo.activosf.app.config;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
+import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.errors.ApiErrorResponse;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -30,41 +31,40 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
             throws IOException, ServletException {
 
         log.error("Unauthorized error: {} url: {}", authException.getMessage(), request.getRequestURL());
-        final Map<String, Object> body = new HashMap<>();
-        body.put("path", request.getRequestURL());        
+
+        final ApiErrorResponse apiError =
+                new ApiErrorResponse(HttpStatus.UNAUTHORIZED, authException.getLocalizedMessage(), "error occurred");
+
+        apiError.setPath(request.getRequestURL().toString());
+
         if (request.getRequestURL().toString().endsWith("/error")) {
-            body.put("path", Constants.API_ROOT_VERSION + "/error");
+            apiError.setPath(Constants.API_ROOT_VERSION + "/error");
         }
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         Exception exception = (Exception) request.getAttribute("exception");
-        String message = "";
         if (exception != null) {
             if (exception instanceof NotHavePermissionException) {
-                response.setStatus(HttpServletResponse.SC_PROXY_AUTHENTICATION_REQUIRED);
-                body.put("path", Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/refreshtoken");
+                apiError.setPath(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/refreshtoken");
+                apiError.setStatus(HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+                apiError.setMessage(exception.getLocalizedMessage());
             } else {
-                body.put("path", Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/loggout");
+                apiError.setErrorCode(String.valueOf(HttpStatus.UNAUTHORIZED));
+                apiError.setPath(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/loggout");
+                apiError.setMessage(exception.getLocalizedMessage());
             }
-            body.put("message", exception.getMessage());
         } else {
-            body.put("message", authException.getMessage());
             if (authException.getCause() != null) {
-                message = authException.getCause().toString() + " " + authException.getMessage();
-            } else {
-                message = authException.getMessage();
+                apiError.setError(authException.getCause().toString());
             }
         }
-
-        body.put("status", response.getStatus());
-        body.put("error", "Unauthorized");
-        body.put("cause", message);
-
-        log.info("commmence {}", body.toString());
+        Gson gson = new Gson();
+        String body = gson.toJson(apiError);
+        log.info("commmence {}", body);
+        response.setStatus(apiError.getStatus());
 
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(), body);
+        mapper.writeValue(response.getOutputStream(), apiError);
     }
 }

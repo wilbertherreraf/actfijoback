@@ -17,28 +17,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.AfProveedor;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.UserRequestVo;
-import gob.gamo.activosf.app.domain.AfProveedor;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfProveedorRepository;
-import gob.gamo.activosf.app.repository.EmpleadoRepository;
 import gob.gamo.activosf.app.services.AfProveedorBl;
-import gob.gamo.activosf.app.services.EmpleadoService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping(value = Constants.API_URL_ROOT + Constants.API_URL_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class ProveedoresController {
-  private final AfProveedorBl service;
+    private final AfProveedorBl service;
 
     private final AfProveedorRepository repository;
     private static final String ENTITY_NAME = Constants.REC_PROVEEDORES;
@@ -56,7 +54,7 @@ public class ProveedoresController {
     @PostMapping(value = Constants.API_PROVEEDORES)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<AfProveedor> create(User me, @RequestBody AfProveedor req) {
-        AfProveedor result = service.mergeAfProveedor(req, UserRequestVo.convertUser(me) );
+        AfProveedor result = service.mergeAfProveedor(req, UserRequestVo.convertUser(me));
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(
                         ENTITY_NAME, result.getIdProveedor().toString()))
@@ -73,10 +71,10 @@ public class ProveedoresController {
 
     @PutMapping(value = Constants.API_PROVEEDORES + "/{slug}")
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<AfProveedor> updateRole(User me,
-            @PathVariable(value = "slug") String id, @RequestBody AfProveedor entityReq) {
+    public ResponseEntity<AfProveedor> updateRole(
+            User me, @PathVariable(value = "slug") String id, @RequestBody AfProveedor entityReq) {
         if (entityReq.getIdProveedor() == null) {
-            return create(me ,entityReq);
+            return create(me, entityReq);
         }
         AfProveedor result = service.mergeAfProveedor(entityReq, UserRequestVo.convertUser(me));
         return ResponseEntity.ok()
@@ -94,7 +92,7 @@ public class ProveedoresController {
                 .build();
     }
 
-/*     @GetMapping(Constants.API_PROVEEDORES + "/{slug}" + "/empleados")
+    /*     @GetMapping(Constants.API_PROVEEDORES + "/{slug}" + "/empleados")
     public ResponseEntity<List<AfProveedor>> unidadEmpleados(
             @PathVariable(value = "slug") Integer id, Pageable pageable) {
         log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
@@ -111,5 +109,5 @@ public class ProveedoresController {
         // return
         // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
-    } */   
+    } */
 }

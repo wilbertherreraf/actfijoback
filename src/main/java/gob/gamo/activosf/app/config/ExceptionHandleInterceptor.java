@@ -2,10 +2,10 @@ package gob.gamo.activosf.app.config;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.NoSuchElementException;
 
-import org.springdoc.api.ErrorMessage;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,8 +13,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +21,9 @@ import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
 import gob.gamo.activosf.app.errors.ResourceNotFoundException;
 import gob.gamo.activosf.app.errors.TokenRefreshException;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Slf4j
-@RestControllerAdvice
+// @RestControllerAdvice
 public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
 
     /*
@@ -43,7 +40,7 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
      * validationErrors));
      * }
      */
-    
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public void springHandleNotFound(HttpServletResponse response) throws IOException {
         log.error("Error Interceptor:> " + response.getStatus());
@@ -53,8 +50,8 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SQLException.class)
     public ProblemDetail handle(SQLException e) {
         log.error("Error Interceptor:> " + e.getMessage());
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
-                "Error de Base de datos: " + e.getMessage());
+        ProblemDetail pd =
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Error de Base de datos: " + e.getMessage());
         return pd;
     }
 
@@ -108,12 +105,13 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
         log.error("Error Interceptor:> " + e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
+
     @ExceptionHandler(TokenRefreshException.class)
     public ProblemDetail handle(TokenRefreshException e) {
         log.error("Error Interceptor:> " + e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
-    
+
     @ExceptionHandler(DataException.class)
     protected ProblemDetail handleCustomError(RuntimeException e) {
         log.error("Error Interceptor:> " + e.getMessage());
@@ -123,14 +121,14 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ProblemDetail handle(Exception e) {
         log.error("Error Interceptor:> Error interno: " + e.getMessage());
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Error interno: " + e.getMessage());
+        ProblemDetail pd =
+                ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno: " + e.getMessage());
         for (Throwable cause = e; (cause != null && cause != cause.getCause()); cause = cause.getCause()) {
             if (cause instanceof SQLException) {
                 SQLException ex = (SQLException) cause;
                 pd.setDetail(cause.getMessage());
                 pd.setProperty("Error Code", ex.getErrorCode());
-                //pd.setProperty("StackTrace", ex.getStackTrace());
+                // pd.setProperty("StackTrace", ex.getStackTrace());
             }
         }
         return pd;
@@ -139,14 +137,14 @@ public class ExceptionHandleInterceptor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Throwable.class)
     public ProblemDetail handleCustomError(Throwable e) {
         log.error("Error Interceptor:> Error interno: " + e.getMessage());
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Error interno: " + e.getMessage());
+        ProblemDetail pd =
+                ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno: " + e.getMessage());
         for (Throwable cause = e; (cause != null && cause != cause.getCause()); cause = cause.getCause()) {
             if (cause instanceof SQLException) {
                 SQLException ex = (SQLException) cause;
                 pd.setDetail(cause.getMessage());
                 pd.setProperty("Error Code", ex.getErrorCode());
-                //pd.setProperty("StackTrace", ex.getStackTrace());
+                // pd.setProperty("StackTrace", ex.getStackTrace());
             }
         }
         return pd;

@@ -1,8 +1,6 @@
 package gob.gamo.activosf.app.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,22 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gob.gamo.activosf.app.commons.Constants;
-import gob.gamo.activosf.app.domain.AfMaterial;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
-import gob.gamo.activosf.app.domain.OrgUnidad;
-import gob.gamo.activosf.app.dto.UnidadResponse;
-import gob.gamo.activosf.app.errors.DataException;
-import gob.gamo.activosf.app.repository.AfMaterialRepository;
-import gob.gamo.activosf.app.repository.OrgUnidadRepository;
-import gob.gamo.activosf.app.services.AfMaterialBl;
-import gob.gamo.activosf.app.services.UnidadService;
-import gob.gamo.activosf.app.utils.HeaderUtil;
-import gob.gamo.activosf.app.utils.PaginationUtil;
-import gob.gamo.activosf.app.utils.WebUtil;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.AfMaterial;
+import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfMaterialRepository;
+import gob.gamo.activosf.app.services.AfMaterialBl;
+import gob.gamo.activosf.app.utils.HeaderUtil;
+import gob.gamo.activosf.app.utils.PaginationUtil;
+import io.swagger.v3.oas.annotations.Operation;
 
 @Slf4j
 @RestController
@@ -97,27 +90,27 @@ public class MaterialesController {
                 .build();
     }
 
-/*     
+    /*
 
-@GetMapping(Constants.API_MATERIALES + "/{slug}" + "/empleados")
-    public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
-            @PathVariable(value = "slug") Integer id, Pageable pageable) {
-        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
+    @GetMapping(Constants.API_MATERIALES + "/{slug}" + "/empleados")
+        public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
+                @PathVariable(value = "slug") Integer id, Pageable pageable) {
+            log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
 
-        OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<OrgEmpleado> empl = result.getEmpleados();
-        Page<OrgEmpleado> pageRet = PaginationUtil.pageForList(
-                (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
+            OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+            Set<OrgEmpleado> empl = result.getEmpleados();
+            Page<OrgEmpleado> pageRet = PaginationUtil.pageForList(
+                    (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 
-        log.info("request uni {}", WebUtil.getRequest().getRequestURI());
+            log.info("request uni {}", WebUtil.getRequest().getRequestURI());
 
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return
-        // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
-        return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
-    } 
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                    pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
+            // return
+            // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
+            return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
+        }
 
-*/
+    */
 
 }

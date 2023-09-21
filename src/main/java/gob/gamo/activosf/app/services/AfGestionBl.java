@@ -16,9 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfActivoFijo;
 import gob.gamo.activosf.app.domain.AfAlmacen;
-import gob.gamo.activosf.app.domain.AfFamiliaActivo;
 import gob.gamo.activosf.app.domain.AfGestion;
 import gob.gamo.activosf.app.domain.AfKardexMaterial;
 import gob.gamo.activosf.app.domain.AfMaterial;
@@ -30,8 +32,6 @@ import gob.gamo.activosf.app.repository.AfGestionRepository;
 import gob.gamo.activosf.app.repository.AfKardexMaterialRepository;
 import gob.gamo.activosf.app.repository.AfMaterialRepository;
 import gob.gamo.activosf.app.utils.UtilsDate;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -50,11 +50,13 @@ public class AfGestionBl {
     AfAlmacenRepository afAlmacenRepository;
     AfMaterialRepository afMaterialRepository;
     AfKardexMaterialRepository afKardexMaterialRepository;
+
     @Transactional(readOnly = true)
     public Page<AfGestion> findAll(Pageable pageable) {
         Page<AfGestion> list = afGestionRepository.findAll(pageable);
         return list;
     }
+
     public void cerrarGestion(AfGestion afGestion, UserRequestVo userRequestVo) {
         List<AfActivoFijo> afActivoFijoList;
         afGestion.setCatEstadoGestion("CERRADA");

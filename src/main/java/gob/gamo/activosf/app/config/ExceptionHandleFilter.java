@@ -2,7 +2,6 @@ package gob.gamo.activosf.app.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
@@ -28,22 +26,21 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.errors.NotHavePermissionException;
 import gob.gamo.activosf.app.handlers.RequestWrapper;
 import gob.gamo.activosf.app.security.SessionsSearcherService;
-import io.jsonwebtoken.ExpiredJwtException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ExceptionHandleFilter extends OncePerRequestFilter {
-    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern AUTHORIZATION_PATTERN =
+            Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 
-    private final ExceptionHandleInterceptor exceptionHandler;
     private final JwtDecoder jwtDecoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final SessionsSearcherService sessionsSearcherService;
@@ -52,6 +49,7 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         String authHdrToken = null;
+        String refreshTk = null;
         String requestURL = request.getRequestURL().toString();
         RequestWrapper cachedHttpServletRequest = null;
         try {
@@ -67,21 +65,24 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
             });
             cachedHttpServletRequest = new RequestWrapper(request);
 
-            log.info("REQUEST DATA: " + IOUtils.toString(cachedHttpServletRequest.getInputStream(),
-                    StandardCharsets.UTF_8));
+            log.info("REQUEST DATA: "
+                    + IOUtils.toString(cachedHttpServletRequest.getInputStream(), StandardCharsets.UTF_8));
 
             authHdrToken = resolveFromAuthorizationHeader(cachedHttpServletRequest);
             if (authHdrToken != null) {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
-                JwtAuthenticationToken authToken = (JwtAuthenticationToken) jwtTokenProvider
-                        .getAuthenticationJwt(authHdrToken);
+                JwtAuthenticationToken authToken =
+                        (JwtAuthenticationToken) jwtTokenProvider.getAuthenticationJwt(authHdrToken);
                 // boolean validTk = jwtTokenProvider.validateToken(authHdrToken);
                 if (authToken != null && securityContext.getAuthentication() == null) {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(cachedHttpServletRequest));
                     securityContext.setAuthentication(authToken);
+                    refreshTk = jwtTokenProvider.getRefreshToken(authHdrToken);
+                    response.setHeader("X-Activosf", refreshTk);
+                    cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
                     log.info("XXX:=>Authenticated user " + authToken.getName() + ", setting security context!"
-                            + " sixe grantes: ");
+                            + " session: " + refreshTk);
                 }
             }
             log.info(
@@ -92,20 +93,23 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
 
         } catch (JwtValidationException e) {
             log.error("Error en filter JwtValidationException " + e.getMessage(), e);
-            // String isRefreshToken = request.getHeader("isRefreshToken");
-            
-            String refreshTk = jwtTokenProvider.getRefreshToken(authHdrToken);
+
+            refreshTk = jwtTokenProvider.getRefreshToken(authHdrToken);
             boolean existTk = sessionsSearcherService.existsSession(refreshTk);
             // allow for Refresh Token creation if following conditions are true.
             if (existTk && requestURL.toLowerCase().contains("refreshtoken")) {
-                allowForRefreshToken(e, cachedHttpServletRequest, refreshTk);
+                cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
+                response.setHeader("X-Activosf", refreshTk);
+                allowForRefreshToken(cachedHttpServletRequest, refreshTk);
             } else {
                 // PROXY_AUTHENTICATION_REQUIRED
                 if (existTk) {
                     cachedHttpServletRequest.setAttribute(Constants.SEC_HEADER_TOKEN_REFRESH, existTk);
-                    cachedHttpServletRequest.setAttribute("exception", new NotHavePermissionException("Require Refresh"));
-                } else
-                    cachedHttpServletRequest.setAttribute("exception", e);
+                    cachedHttpServletRequest.setAttribute(
+                            "exception", new NotHavePermissionException("Require Refresh"));
+                    cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
+                    response.setHeader("X-Activosf", refreshTk);
+                } else cachedHttpServletRequest.setAttribute("exception", e);
             }
             // exceptionHandler.handle(e);
         } finally {
@@ -118,25 +122,19 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
         filterChain.doFilter(cachedHttpServletRequest, response);
     }
 
-    private void allowForRefreshToken(JwtValidationException ex, HttpServletRequest request, String tkRefresh) {
-        // create a UsernamePasswordAuthenticationToken with null values.
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                null, null, null);
-        // After setting the Authentication in the context, we specify
-        // that the current user is authenticated. So it passes the
-        // Spring Security Configurations successfully.
+    private void allowForRefreshToken(HttpServletRequest request, String tkRefresh) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(null, null, null);
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         // Set the claims so that in controller we will be using it to create
         // new JWT
 
         request.setAttribute(Constants.SEC_HEADER_TOKEN_REFRESH, tkRefresh);
-
     }
 
     private String resolveFromAuthorizationHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.startsWithIgnoreCase(authorization, "token"))
-            return null;
+        if (!StringUtils.startsWithIgnoreCase(authorization, "token")) return null;
 
         Matcher matcher = AUTHORIZATION_PATTERN.matcher(authorization);
         if (!matcher.matches()) {

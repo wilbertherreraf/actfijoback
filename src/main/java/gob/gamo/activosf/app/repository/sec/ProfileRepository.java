@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import gob.gamo.activosf.app.domain.entities.Profile;
 import gob.gamo.activosf.app.domain.entities.ProfileId;
 
-public interface ProfileRepository extends JpaRepository<Profile, ProfileId>{
+public interface ProfileRepository extends JpaRepository<Profile, ProfileId> {
     @Query("select b from Profile b where b.id.rolId = :rolId and b.id.recursoId = :recursoId  ")
     Optional<Profile> findByRolIdRecursoId(@Param("rolId") Integer rolId, @Param("recursoId") Integer recursoId);
 

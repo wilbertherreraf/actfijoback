@@ -1,6 +1,5 @@
 server:
   port: 3000
-
 spring:
 #  config:
 #    activate:
@@ -23,6 +22,8 @@ spring:
         default_batch_fetch_size: 500
         #format_sql: true
         #use_sql_comments: true
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 security:
   key:
@@ -35,7 +36,7 @@ security:
 decorator:
   datasource:
     p6spy:
-      enable-logging: true
+      enable-logging: false
 
 # swagger
 

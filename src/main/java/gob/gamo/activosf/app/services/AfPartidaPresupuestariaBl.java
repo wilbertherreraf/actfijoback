@@ -13,13 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gob.gamo.activosf.app.domain.AfNotaRecepcion;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfPartidaPresupuestaria;
 import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.repository.AfPartidaPresupuestariaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -33,11 +33,13 @@ public class AfPartidaPresupuestariaBl {
     AfPartidaPresupuestariaRepository afPartidaPresupuestariaRepository;
 
     TxTransaccionBl txTransaccionBl;
+
     @Transactional(readOnly = true)
     public Page<AfPartidaPresupuestaria> findAll(Pageable pageable) {
         Page<AfPartidaPresupuestaria> list = afPartidaPresupuestariaRepository.findAll(pageable);
         return list;
     }
+
     public void mergeAfPartidaPresupuestaria(
             AfPartidaPresupuestaria afPartidaPresupuestaria, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);

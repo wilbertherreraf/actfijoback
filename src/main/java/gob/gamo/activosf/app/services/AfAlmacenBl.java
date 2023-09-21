@@ -14,9 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfAlmacen;
-import gob.gamo.activosf.app.domain.AfMaterial;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfAlmacenRepository;
@@ -36,7 +35,7 @@ public class AfAlmacenBl {
         Page<AfAlmacen> list = repositoryEntity.findAll(pageable);
         return list;
     }
-    
+
     @Transactional
     public AfAlmacen crearNuevo(AfAlmacen entity) {
         if (entity.getIdAlmacen() != null && entity.getIdAlmacen().compareTo(0) > 0)
@@ -48,7 +47,8 @@ public class AfAlmacenBl {
 
     @Transactional
     public AfAlmacen update(AfAlmacen entityReq) {
-        if (entityReq.getIdAlmacen() == null || entityReq.getIdAlmacen().compareTo(0) == 0) new DataException("Entidad con id, debe nulo");
+        if (entityReq.getIdAlmacen() == null || entityReq.getIdAlmacen().compareTo(0) == 0)
+            new DataException("Entidad con id, debe nulo");
 
         AfAlmacen newEntity = repositoryEntity.save(entityReq);
         return newEntity;
@@ -57,7 +57,8 @@ public class AfAlmacenBl {
     @Transactional
     public void delete(Integer id) {
         repositoryEntity.deleteById(id);
-    }    
+    }
+
     public void mergeAfAlmacen(AfAlmacen afAlmacen, UserRequestVo userRequestVo) {
         //  TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);
         repositoryEntity.save(afAlmacen);

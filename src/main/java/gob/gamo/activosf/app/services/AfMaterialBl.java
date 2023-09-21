@@ -13,16 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.AfAlmacen;
 import gob.gamo.activosf.app.domain.AfMaterial;
-import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.TxTransaccion;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.AfMaterialRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -54,12 +53,12 @@ public class AfMaterialBl {
 
     @Transactional
     public AfMaterial update(AfMaterial entityReq) {
-        if (entityReq.getIdMaterial() == null || entityReq.getIdMaterial().compareTo(0) == 0) new DataException("Entidad con id, debe nulo");
+        if (entityReq.getIdMaterial() == null || entityReq.getIdMaterial().compareTo(0) == 0)
+            new DataException("Entidad con id, debe nulo");
 
         AfMaterial newEntity = repositoryEntity.save(entityReq);
         return newEntity;
     }
-
 
     public void mergeAfMaterial(AfMaterial afMaterial, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);

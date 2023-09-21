@@ -55,7 +55,8 @@ public class UserRequestVo implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
-    public static UserRequestVo convertUser(User user){
+
+    public static UserRequestVo convertUser(User user) {
         return new UserRequestVo();
     }
 }

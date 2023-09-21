@@ -24,13 +24,11 @@ import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
-import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SingleRolResponse;
 import gob.gamo.activosf.app.errors.DataException;
@@ -43,7 +41,6 @@ import gob.gamo.activosf.app.utils.WebUtil;
 @Slf4j
 @RestController
 @RequestMapping(value = Constants.API_URL_ROOT + Constants.API_URL_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
-// @RequiresPermissions("sys:manage:role")
 @RequiredArgsConstructor
 public class RolesController {
     private final RolesService rolesService;
@@ -51,12 +48,15 @@ public class RolesController {
     private static final String ENTITY_NAME = Constants.REC_ROLES;
 
     @GetMapping(Constants.API_ROLES)
+    // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<List<RolesVO>> getRolePresentationList(Pageable pageable) {
         Page<Roles> page = rolesService.getRoles(pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_ROLES);
-        return ResponseEntity.ok().headers(headers).body(page.getContent().stream().map(r -> new RolesVO(r)).toList());
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(page.getContent().stream().map(r -> new RolesVO(r)).toList());
     }
 
     @PostMapping(Constants.API_ROLES)
@@ -79,8 +79,7 @@ public class RolesController {
 
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     @PutMapping(Constants.API_ROLES + "/{slug}")
-    public SingleRolResponse updateRol(@PathVariable(value = "slug") String codrol,
-            @RequestBody RolesVO request) {
+    public SingleRolResponse updateRol(@PathVariable(value = "slug") String codrol, @RequestBody RolesVO request) {
         log.info("En updates rol {} {}", codrol, request);
         RolesVO rol = rolesService.updateRol(null, codrol, request);
         return new SingleRolResponse(rol);
@@ -93,12 +92,10 @@ public class RolesController {
     }
 
     @GetMapping(Constants.API_ROLES + "/{slug}" + Constants.API_PERMISOS)
-    public ResponseEntity<List<Recurso>> rolesPermisos(
-            @PathVariable(value = "slug") String id, Pageable pageable) {
-        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
-
+    public ResponseEntity<List<Recurso>> rolesPermisos(@PathVariable(value = "slug") String id, Pageable pageable) {
         Roles result = repository.findByCodrol(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<Recurso> empl = result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
+        Set<Recurso> empl =
+                result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
         Page<Recurso> pageRet = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 
@@ -106,19 +103,16 @@ public class RolesController {
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return
-        // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
     }
 
     // @PostMapping(Constants.API_ROLES + "/{slug}" + Constants.API_PERMISOS)
     public ResponseEntity<List<Recurso>> updatePermisos(
             @PathVariable(value = "slug") String id, @RequestBody RolesVO request, Pageable pageable) {
-        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
-        log.info("roles {}", request);
 
         Roles result = repository.findByCodrol(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<Recurso> empl = result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
+        Set<Recurso> empl =
+                result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
         Page<Recurso> pageRet = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 
@@ -126,8 +120,6 @@ public class RolesController {
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return
-        // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
     }
 }

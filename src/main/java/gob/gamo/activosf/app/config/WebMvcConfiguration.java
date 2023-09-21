@@ -23,7 +23,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public PageRequest defaultPageRequest() {
-        return PageRequest.of(0, 20);
+        return PageRequest.of(0, 100);
     }
 
     @Override

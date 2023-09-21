@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.errors.DataException;
@@ -25,8 +28,6 @@ import gob.gamo.activosf.app.services.EmpleadoService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -91,7 +92,7 @@ public class EmpleadosController {
                 .build();
     }
 
-/*     @GetMapping(Constants.API_EMPLEADOS + "/{slug}" + "/empleados")
+    /*     @GetMapping(Constants.API_EMPLEADOS + "/{slug}" + "/empleados")
     public ResponseEntity<List<OrgEmpleado>> unidadEmpleados(
             @PathVariable(value = "slug") Integer id, Pageable pageable) {
         log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);

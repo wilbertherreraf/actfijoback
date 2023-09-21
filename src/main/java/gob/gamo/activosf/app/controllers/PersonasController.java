@@ -17,30 +17,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgPersona;
+import gob.gamo.activosf.app.dto.PersonaVO;
 import gob.gamo.activosf.app.errors.DataException;
-import gob.gamo.activosf.app.repository.EmpleadoRepository;
 import gob.gamo.activosf.app.repository.PersonaRepository;
-import gob.gamo.activosf.app.services.EmpleadoService;
 import gob.gamo.activosf.app.services.PersonaService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping(value = Constants.API_URL_ROOT + Constants.API_URL_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class PersonasController {
- private final PersonaService service;
+    private final PersonaService service;
 
     private final PersonaRepository repository;
     private static final String ENTITY_NAME = Constants.REC_PERSONAS;
 
     @GetMapping(Constants.API_PERSONAS)
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    // #username == authentication.name or
     public ResponseEntity<List<OrgPersona>> getAll(Pageable pageable) {
         final Page<OrgPersona> page = service.findAll(pageable);
 
@@ -54,7 +56,7 @@ public class PersonasController {
     @Operation(summary = "Crea un nuevo registro")
     @PostMapping(value = Constants.API_PERSONAS)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<OrgPersona> create(@RequestBody OrgPersona req) {
+    public ResponseEntity<OrgPersona> create(@RequestBody PersonaVO req) {
         OrgPersona result = service.crearNuevo(req);
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(
@@ -73,14 +75,14 @@ public class PersonasController {
     @PutMapping(value = Constants.API_PERSONAS + "/{slug}")
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<OrgPersona> updateRole(
-            @PathVariable(value = "slug") String id, @RequestBody OrgPersona entityReq) {
-        if (entityReq.getIdPersona() == null) {
+            @PathVariable(value = "slug") String id, @RequestBody PersonaVO entityReq) {
+        if (entityReq.idPersona() == null) {
             return create(entityReq);
         }
-        OrgPersona result = service.update(entityReq);
+        OrgPersona result = service.update(entityReq.persona());
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(
-                        ENTITY_NAME, entityReq.getIdPersona().toString()))
+                        ENTITY_NAME, entityReq.idPersona().toString()))
                 .body(result);
     }
 
@@ -93,22 +95,30 @@ public class PersonasController {
                 .build();
     }
 
-/*     @GetMapping(Constants.API_PERSONAS + "/{slug}" + "/empleados")
-    public ResponseEntity<List<OrgPersona>> unidadEmpleados(
-            @PathVariable(value = "slug") Integer id, Pageable pageable) {
-        log.info("Pageable {} {} -> {}", pageable.getPageSize(), pageable.getPageNumber(), pageable);
-
-        OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<OrgPersona> empl = result.getEmpleados();
-        Page<OrgPersona> pageRet = PaginationUtil.pageForList(
-                (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
-
-        log.info("request uni {}", WebUtil.getRequest().getRequestURI());
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        // return
-        // ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent()));
-        return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
-    } */    
+    /*
+     * @GetMapping(Constants.API_PERSONAS + "/{slug}" + "/empleados")
+     * public ResponseEntity<List<OrgPersona>> unidadEmpleados(
+     *
+     * @PathVariable(value = "slug") Integer id, Pageable pageable) {
+     * log.info("Pageable {} {} -> {}", pageable.getPageSize(),
+     * pageable.getPageNumber(), pageable);
+     *
+     * OrgUnidad result = repository.findById(id).orElseThrow(() -> new
+     * DataException("Registro inexistente"));
+     * Set<OrgPersona> empl = result.getEmpleados();
+     * Page<OrgPersona> pageRet = PaginationUtil.pageForList(
+     * (int) pageable.getPageNumber(), pageable.getPageSize(), new
+     * ArrayList<>(empl));
+     *
+     * log.info("request uni {}", WebUtil.getRequest().getRequestURI());
+     *
+     * HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+     * pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
+     * // return
+     * //
+     * ResponseEntity.ok().headers(headers).body(RestResponse.of(pageRet.getContent(
+     * )));
+     * return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
+     * }
+     */
 }
