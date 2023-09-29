@@ -71,9 +71,9 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // .cors( SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
-                                HttpMethod.POST,
-                                Constants.API_ROOT_VERSION + Constants.API_LOGIN,
-                                Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
+                        HttpMethod.POST,
+                        Constants.API_ROOT_VERSION + Constants.API_LOGIN,
+                        Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
@@ -126,7 +126,8 @@ public class SecurityConfiguration {
 
         NimbusJwtDecoder n = NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
         n.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
-                Arrays.asList(new JwtTimestampValidator(Duration.of(-1, ChronoUnit.SECONDS)))));
+                Arrays.asList(new JwtTimestampValidator(Duration.of(120, ChronoUnit.SECONDS)))));
+
         return n; // NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 

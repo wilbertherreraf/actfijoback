@@ -107,8 +107,10 @@ create table org_persona (
 );
 create table org_empleado (
     id_empleado serial not null,
-    cod_internoempl varchar(100),
+    id_unidad integer,
     id_persona integer,
+    cod_persona varchar(100),
+    cod_internoempl varchar(100),    
     id_cargo integer,
     fecha_ingreso date,
     fecha_baja date,
@@ -130,6 +132,8 @@ create table sec_usuario (
     usr_nombres varchar(200) not null,
     usr_email varchar(100),
     usr_password varchar(250),
+    id_persona integer,
+    cod_persona varchar(100),
     id_unid_empl integer,
     usr_tabtipousr integer default 10,
     usr_tipousr integer default 1,

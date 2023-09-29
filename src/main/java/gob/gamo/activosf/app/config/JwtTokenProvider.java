@@ -106,9 +106,9 @@ public class JwtTokenProvider {
 
         Jwt tokenJwt = jwtDecoder.decode(token);
 
-        tokenJwt.getClaims().entrySet().forEach(t -> {
+/*         tokenJwt.getClaims().entrySet().forEach(t -> {
             log.info("::Claims entry {} -> {}", t.getKey(), t.getValue());
-        });
+        }); */
 
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(
                         tokenJwt.getClaim(AUTHORITIES_KEY).toString().split(","))
@@ -242,7 +242,7 @@ public class JwtTokenProvider {
                 .stream()
                 .flatMap(List::stream)
                 .toList());
-        log.info("XXX: permissions added {}", grantedAuthorities.size());
+        //log.info("XXX: permissions added {}", grantedAuthorities.size());
         return grantedAuthorities;
     }
 }

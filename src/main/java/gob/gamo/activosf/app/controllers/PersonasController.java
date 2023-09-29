@@ -1,6 +1,9 @@
 package gob.gamo.activosf.app.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,19 +18,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.dto.PersonaVO;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.PersonaRepository;
+import gob.gamo.activosf.app.search.SearchCriteria;
 import gob.gamo.activosf.app.services.PersonaService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
+import gob.gamo.activosf.app.utils.WebUtil;
 import io.swagger.v3.oas.annotations.Operation;
 
 @Slf4j
@@ -93,6 +100,18 @@ public class PersonasController {
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
                 .build();
+    }
+
+    @GetMapping(Constants.API_PERSONAS + "/search")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<List<OrgPersona>> search(@RequestParam(value = "q", required = false) String search, Pageable pageable) {
+        Page<OrgPersona> page = service.search(search, pageable);
+/*         Page<OrgPersona> page = PaginationUtil.pageForList(
+                (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(list)); */
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                page, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /*

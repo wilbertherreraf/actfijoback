@@ -3,6 +3,7 @@ package gob.gamo.activosf.app.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -45,8 +47,8 @@ public class UnidadController {
 
     @GetMapping(Constants.API_UNIDS)
     // @PostMapping(value = Constants.API_UNIDS)
-    public ResponseEntity<List<UnidadResponse>> getAll(Pageable pageable) {
-        final Page<UnidadResponse> page = service.findAll(pageable);
+    public ResponseEntity<List<UnidadResponse>> getAll(@RequestParam(value = "q", required = false) String search,Pageable pageable) {
+        final Page<UnidadResponse> page = service.findAll(search, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
@@ -67,9 +69,7 @@ public class UnidadController {
     @GetMapping(Constants.API_UNIDS + "/{slug}")
     public ResponseEntity<UnidadResponse> getById(@PathVariable(value = "slug") Integer id) {
         OrgUnidad result = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        result.getEmpleados().forEach(r -> {
-            log.info("unida {} - {}", id, r.getCod_internoempl());
-        });
+
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
                 .body(new UnidadResponse(result));
@@ -109,5 +109,45 @@ public class UnidadController {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
         return ResponseEntity.ok().headers(headers).body(pageRet.getContent());
+    }
+    //pitfalls y jpa interesting
+    //https://github.com/eugene-khyst/spring-data-examples
+    @GetMapping(Constants.API_UNIDS + "/{slug}" + "/dependientes")
+    public ResponseEntity<List<UnidadResponse>> unidadesHijo(
+            @PathVariable(value = "slug") Integer id) {
+
+        OrgUnidad entity = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+
+        List<OrgUnidad> hijos = service.getHijosN1(entity);
+        List<UnidadResponse> result = hijos.stream().filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
+                .map(x -> new UnidadResponse(x)).toList();
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping(Constants.API_UNIDS + "/{slug}" + "/padres")
+    public ResponseEntity<List<UnidadResponse>> unidadesPadreEleg(
+            @PathVariable(value = "slug") Integer id) {
+
+        OrgUnidad entity = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+        List<OrgUnidad> hijos = service.getHijos(entity);
+        List<OrgUnidad> padres = repository.findAll().stream().filter(x -> x.getIdUnidad().compareTo(id) != 0)//
+                .filter(x -> !hijos.stream().filter(y -> y.getIdUnidad().compareTo(x.getIdUnidad()) == 0).findFirst()
+                        .isPresent()).collect(Collectors.toList());
+
+        List<UnidadResponse> result = padres.stream().filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
+                .map(x -> new UnidadResponse(x)).toList();
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PutMapping(Constants.API_UNIDS + "/{slug}" + "/dependientes/{id}")
+    public ResponseEntity<UnidadResponse> unidadesHijoActPadre(
+            @PathVariable(value = "slug") Integer id, @PathVariable(value = "id") Integer idNewPadre) {
+
+        service.updatePadre(id, idNewPadre);
+        OrgUnidad entity = repository.findById(id).orElseThrow(() -> new DataException("Registro inexistente"));
+
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
+                .body(new UnidadResponse(entity));
     }
 }

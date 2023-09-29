@@ -37,9 +37,9 @@ public class User {
     @Column(name = "usr_login")
     private String username;
 
-    // @Column(name = "usr_codemp")
+/*     // @Column(name = "usr_codemp")
     @Transient
-    private String codEmpleado;
+    private String codEmpleado; */
 
     @Column(name = "usr_nombres")
     private String nombres;
@@ -52,6 +52,9 @@ public class User {
 
     @Column(name = "id_unid_empl")
     private Integer idUnidEmpl;
+
+    @Column(name = "cod_persona")
+    private String codPersona;
 
     @JoinColumns({
         @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),

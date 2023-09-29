@@ -50,29 +50,29 @@ public class Tester {
 
         // insert employees
         try {
-            org.hireEmployee(3, 1);
+            org.addNewChild(3, 1);
             // log.info("Hired employee successfully with id = 3");
-            org.hireEmployee(2, 1);
+            org.addNewChild(2, 1);
             // log.info("Hired employee successfully with id = 2");
-            org.hireEmployee(12, 1);
+            org.addNewChild(12, 1);
             // log.info("Hired employee successfully with id = 12");
-            org.hireEmployee(8, 3);
+            org.addNewChild(8, 3);
             // log.info("Hired employee successfully with id = 8");
-            org.hireEmployee(4, 3);
+            org.addNewChild(4, 3);
             // log.info("Hired employee successfully with id = 4");
-            org.hireEmployee(7, 2);
+            org.addNewChild(7, 2);
             // log.info("Hired employee successfully with id = 7");
-            org.hireEmployee(10, 12);
+            org.addNewChild(10, 12);
             // log.info("Hired employee successfully with id = 10");
-            org.hireEmployee(16, 8);
+            org.addNewChild(16, 8);
             // log.info("Hired employee successfully with id = 16");
-            org.hireEmployee(5, 8);
+            org.addNewChild(5, 8);
             // log.info("Hired employee successfully with id = 5");
-            org.hireEmployee(55, 4);
-            org.hireEmployee(25, 4);
-            org.hireEmployee(18, 4);
-            org.hireEmployee(21, 10);
-            org.hireEmployee(11, 10);
+            org.addNewChild(55, 4);
+            org.addNewChild(25, 4);
+            org.addNewChild(18, 4);
+            org.addNewChild(21, 10);
+            org.addNewChild(11, 10);
         } catch (IllegalIDException e) {
             log.info(e.getMessage());
         }
@@ -145,7 +145,7 @@ public class Tester {
         // check fireEmployee
         try {
             log.info("--Trying to fire employee with id = 7--");
-            org.fireEmployee(7);
+            org.deleteNode(7);
             size1 = org.size();
             log.info("--Employee fired successfully--");
             log.info("Size: " + size1);
@@ -167,7 +167,7 @@ public class Tester {
             log.info("-- fire employee with id = 8 and make id = 4 new boss of its children--");
             rootid.print(5);
             log.info("Despuesta post 8 con c =======>");
-            org.fireEmployee(8, 4);
+            org.replaceWithOtherNode(8, 4);
             rootid.print(5);
             size1 = org.size();
 

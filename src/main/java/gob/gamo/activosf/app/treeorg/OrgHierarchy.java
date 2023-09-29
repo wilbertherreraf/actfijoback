@@ -14,7 +14,8 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public boolean isEmpty() {
         if (this.root == null) {
             return true;
-        } else return false;
+        } else
+            return false;
     }
 
     public int size() {
@@ -24,8 +25,9 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public int level(int id) throws IllegalIDException {
         Node<T> requiredEmployee = search(id);
         if (requiredEmployee == null) {
-            throw new IllegalIDException("No Employee with given ID : " + id + "!");
-        } else return requiredEmployee.getLevel();
+            throw new IllegalIDException("No existe registro con  ID : " + id + "!");
+        } else
+            return requiredEmployee.getLevel();
     }
 
     public int maxLevel() {
@@ -34,7 +36,8 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
 
         for (Node<T> child : nRoot.childArray) {
             int lvl = maxLevel(1, child);
-            if (lvl > nlvl) nlvl = lvl;
+            if (lvl > nlvl)
+                nlvl = lvl;
         }
 
         return nlvl;
@@ -44,18 +47,26 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         int nlvl = lvl;
         for (Node<T> child : n.childArray) {
             int lch = maxLevel(lvl + 1, child);
-            if (lch >= nlvl) nlvl = lch;
+            if (lch >= nlvl)
+                nlvl = lch;
         }
-        if (lvl == nlvl) nlvl = lvl + 1;
+        if (lvl == nlvl)
+            nlvl = lvl + 1;
         // log.info("malevel {} -> {}",lvl, nlvl);
         return nlvl;
     }
 
     public Node<T> searchNode(int id) throws IllegalIDException {
-        Node<T> requiredEmployee = search(id);
+        Node<T> requiredEmployee = searchInTree(id);
         if (requiredEmployee == null) {
-            throw new IllegalIDException("No Employee with given ID : " + id + "!");
-        } else return requiredEmployee;
+            throw new IllegalIDException("No existe registro con  ID : " + id + "!");
+        } else
+            return requiredEmployee;
+    }
+
+    public Node<T> searchInTree(int id) {
+        Node<T> requiredEmployee = search(id);
+        return requiredEmployee;
     }
 
     public void hireOwner(int id) throws NotEmptyException {
@@ -77,18 +88,18 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         // log.info("root {}", root.nodeID());
     }
 
-    public void hireEmployee(int id, int bossid) throws IllegalIDException {
+    public void addNewChild(int id, int bossid) throws IllegalIDException {
         Node<T> subNode = new Node<T>(id);
-        hireEmployee(subNode, bossid);
+        addNewChild(subNode, bossid);
     }
 
-    public void hireEmployee(Node<T> subNode, int bossid) throws IllegalIDException {
+    public void addNewChild(Node<T> subNode, int bossid) throws IllegalIDException {
         int id = subNode.getKey();
 
         // log.info("insertando {} con boss {}", id, bossid);
         Node<T> theBoss = search(bossid);
         if (theBoss == null) {
-            throw new IllegalIDException("No Employee with given Boss ID : " + bossid + "!");
+            throw new IllegalIDException("No existe registro con  Boss ID : " + bossid + "!");
         }
         try {
             insertKey(subNode);
@@ -99,14 +110,15 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         theNewEmployee.setLevel(theBoss.getLevel() + 1);
         theNewEmployee.parent = theBoss;
         theBoss.getChildArray().add(theNewEmployee);
-        // log.info("level {} newid: {} :> {}", maxLevel(), id, theNewEmployee.nodeID());
+        // log.info("level {} newid: {} :> {}", maxLevel(), id,
+        // theNewEmployee.nodeID());
     }
 
-    public void fireEmployee(int id) throws IllegalIDException {
+    public void deleteNode(int id) throws IllegalIDException {
         Node<T> theEmployee = search(id);
 
         if (theEmployee == null) {
-            throw new IllegalIDException("No Employee with given ID : " + id + " to be deleted!");
+            throw new IllegalIDException("No existe registro con  ID : " + id + " to be deleted!");
         }
         if (theEmployee.getChildArray().size() != 0) {
             throw new IllegalIDException("Could NOT delete the Employee with given ID : " + id
@@ -121,14 +133,15 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         // handled above
     }
 
-    public void fireEmployee(int id, int manageid) throws IllegalIDException {
+    public void replaceWithOtherNode(int id, int manageid) throws IllegalIDException {
+
         Node<T> theOldManager = search(id);
         if (theOldManager == null) {
-            throw new IllegalIDException("No Employee with given ID : " + id + " to be deleted!");
+            throw new IllegalIDException("No existe registro con  ID : " + id + " to be deleted!");
         }
         Node<T> theNewManager = search(manageid);
         if (theNewManager == null) {
-            throw new IllegalIDException("No Employee with given ID : " + manageid + " for new manager!");
+            throw new IllegalIDException("No existe registro con  ID : " + manageid + " para nuevo padre!");
         }
         if (theNewManager.getLevel() != theOldManager.getLevel()) {
             throw new IllegalIDException(
@@ -144,7 +157,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
 
         theOldManager.getChildArray().removeFirst();
         Node<T> hisBoss = theOldManager.parent;
-        if (hisBoss != null) {
+        if (hisBoss != null && hisBoss.childArray != null) {
             hisBoss.childArray.remove(theOldManager);
         }
         theOldManager.parent = null;
@@ -152,15 +165,42 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         deleteKey(id);
     }
 
-    public void fireWithNew(int id, Node<T> manage, int bossid) throws IllegalIDException {
-        hireEmployee(manage, bossid);
-        fireEmployee(id, manage.getKey());
+    public void deleteWithNewBoss(int id, Node<T> manage, int bossid) throws IllegalIDException {
+        addNewChild(manage, bossid);
+        replaceWithOtherNode(id, manage.getKey());
+    }
+
+    public void updateParent(int id, int bossid) {
+        Node<T> theOldManager = search(id);
+        if (theOldManager == null) {
+            throw new IllegalIDException("No existe registro con  ID : " + id + " to be deleted!");
+        }
+
+        Node<T> theNewManager = search(bossid);
+        if (theNewManager == null) {
+            throw new IllegalIDException("No existe registro con  ID : " + bossid + " para nuevo padre!");
+        }
+        // Node<T> hisBoss = theOldManager.parent;
+        LinkedHashMap<Integer, Node<T>> mapa = returnChildrens(theOldManager);
+        if (mapa.containsKey(bossid)) {
+            throw new IllegalIDException("El nuevo padre " + bossid + " registrado como hijo de " + id);
+        }
+
+        Node<T> hisBoss = search(theOldManager.parent.getKey());
+
+        theOldManager.setLevel(theNewManager.getLevel() + 1);
+        theOldManager.parent = theNewManager;
+        theNewManager.getChildArray().add(theOldManager);
+
+        if (hisBoss != null) {
+            hisBoss.childArray.remove(theOldManager);
+        }
     }
 
     public int boss(int id) throws IllegalIDException {
         Node<T> theEmployee = search(id);
         if (theEmployee == null) {
-            throw new IllegalIDException("No Employee with given ID : " + id + "!");
+            throw new IllegalIDException("No existe registro con  ID : " + id + "!");
         }
         Node<T> theBoss = theEmployee.parent;
         if (theBoss == null) {
@@ -189,7 +229,8 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
             }
             if (commonpointer != null) {
                 break;
-            } else pointer1 = pointer1.parent;
+            } else
+                pointer1 = pointer1.parent;
         }
         return commonpointer.getKey();
     }
@@ -197,7 +238,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public String toStringNode(int id) throws IllegalIDException {
         Node<T> rootid = search(id < 0 ? root.getKey() : id);
         if (rootid == null) {
-            throw new IllegalIDException("No Employee with given Boss ID : " + id + "!");
+            throw new IllegalIDException("No existe registro con  Boss ID : " + id + "!");
         }
         String res = "";
         Queue<T> queue = new Queue<T>();
@@ -236,7 +277,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         return res;
     }
 
-    public LinkedHashMap<Integer, Node<T>> recuperarSwfCampos(Node<T> root) {
+    public LinkedHashMap<Integer, Node<T>> returnChildrens(Node<T> root) {
         LinkedHashMap<Integer, Node<T>> treeCampos = new LinkedHashMap<Integer, Node<T>>();
         recTreeCampos(root, treeCampos);
         return treeCampos;
@@ -250,7 +291,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     }
 
     public LinkedList<Node<T>> getbylevel(Node<T> root, int level) {
-        LinkedHashMap<Integer, Node<T>> mapa = recuperarSwfCampos(root);
+        LinkedHashMap<Integer, Node<T>> mapa = returnChildrens(root);
         LinkedList<Node<T>> employessUnderIt = new LinkedList<Node<T>>();
         for (Entry<Integer, Node<T>> entry : mapa.entrySet()) {
             if (entry.getValue().getLevel() == level) {
@@ -269,9 +310,11 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
                     .map(nodo -> nodo.getKey() + " ["
                             + nodo.childArray.stream()
                                     .map(no -> no.getKey() + "")
-                                    .collect(Collectors.joining(";")) + "]")
+                                    .collect(Collectors.joining(";"))
+                            + "]")
                     .collect(Collectors.joining("   "));
-            if (e1.size() > 0) strl.add(sn2);
+            if (e1.size() > 0)
+                strl.add(sn2);
         }
         return strl;
     }

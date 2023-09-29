@@ -31,11 +31,17 @@ public class OrgEmpleado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "id_unidad")
+    private Integer idUnidad;
+
     @Column(name = "cod_internoempl")
     private String cod_internoempl;
 
     @Column(name = "id_persona")
     private String id_persona;
+
+    @Column(name = "cod_persona")
+    private String codPersona;
 
     @Column(name = "id_cargo")
     private String id_cargo;

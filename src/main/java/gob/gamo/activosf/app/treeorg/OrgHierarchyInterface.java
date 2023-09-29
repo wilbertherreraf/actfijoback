@@ -21,9 +21,9 @@ public interface OrgHierarchyInterface<T> {
                                                              * cannot be deleted.
                                                              */
 
-    public void hireEmployee(Node<T> suNode, int bossid) throws IllegalIDException;
+    public void addNewChild(Node<T> suNode, int bossid) throws IllegalIDException;
 
-    public void hireEmployee(int id, int bossid) throws IllegalIDException; /*
+    public void addNewChild(int id, int bossid) throws IllegalIDException; /*
                                                                              * Adds a new employee whose ID is id. This
                                                                              * employee will work under an existing
                                                                              * employee whose ID is bossid (note that
@@ -31,15 +31,15 @@ public interface OrgHierarchyInterface<T> {
                                                                              * id, it is one more than that of bossid).
                                                                              */
 
-    public void fireWithNew(int id, Node<T> manage, int bossid) throws IllegalIDException;
+    public void deleteWithNewBoss(int id, Node<T> manage, int bossid) throws IllegalIDException;
 
-    public void fireEmployee(int id) throws IllegalIDException; /*
+    public void deleteNode(int id) throws IllegalIDException; /*
                                                                  * Deletes an employee who does not manage any other
                                                                  * employees. Note that this can not be the owner. If it
                                                                  * is the owner, throw the IllegalIDException.
                                                                  */
 
-    public void fireEmployee(int id, int manageid) throws IllegalIDException; /*
+    public void replaceWithOtherNode(int id, int manageid) throws IllegalIDException; /*
                                                                                * Deletes an employee (id) who might
                                                                                * manage other employees. Manageid is
                                                                                * another employee who works at the same
@@ -49,7 +49,7 @@ public interface OrgHierarchyInterface<T> {
                                                                                * it is the owner, throw the
                                                                                * IllegalIDException.
                                                                                */
-
+    public void updateParent(int id, int bossid);
     public int boss(int id) throws IllegalIDException; /*
                                                         * Returns the id of the immediate boss, the employee. Output -1
                                                         * if id is the owner’s ID
@@ -88,8 +88,8 @@ public interface OrgHierarchyInterface<T> {
     public Node<T> getRoot();
 
     public Node<T> searchNode(int id) throws IllegalIDException;
-
-    public LinkedHashMap<Integer, Node<T>> recuperarSwfCampos(Node<T> root);
+    public Node<T> searchInTree(int id) ;
+    public LinkedHashMap<Integer, Node<T>> returnChildrens(Node<T> root);
 
     public LinkedList<Node<T>> getbylevel(Node<T> root, int level);
 

@@ -180,7 +180,7 @@ public class UserController {
 
     private String resolveRefreshTokenHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("XXX: authorization {}", authorization);
+        //log.info("XXX: authorization {}", authorization);
         if (StringUtils.isBlank(authorization)) {
             throw new IllegalArgumentException("Token Auth inexistente");
         }
