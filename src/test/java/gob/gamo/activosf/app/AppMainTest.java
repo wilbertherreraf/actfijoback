@@ -55,8 +55,8 @@ public class AppMainTest {
     @DisplayName("spring container of Realworld Application is loaded.")
     void contextLoads() {
         log.info("en tests...");
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("test@example.com", "test",
-                "password", "jhon doe test");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest(null,"test@example.com", "test",
+                "password", "jhon doe test",null,null);
         User u = userService.signUp(signUpRequest);
         Long i = userRepository.count();
         System.out.println("aaaaaaaaaaaaaaaaaa: " + i);
@@ -70,8 +70,8 @@ public class AppMainTest {
         int i = afAlmacenRepository.findAll().size();
         afAlmacenBl.findByPkAfAlmacen(0);
         log.info("aaaaaaaaaaaaa {}", i);
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("test@example.com", "test", "password",
-                "test test");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest(null,"test@example.com", "test", "password",
+                "test test",null,null);
 
         // when
         ResultActions resultActions = mockMvc.perform(post(Constants.API_ROOT_VERSION + Constants.API_PUBLIC +"/register")

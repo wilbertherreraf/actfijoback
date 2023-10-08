@@ -73,7 +73,7 @@ public class JwtTokenProvider {
 
     public String generateToken(final String userId, Collection<? extends GrantedAuthority> grantedAuthorities) {
         String idSession = UUID.randomUUID().toString().replace("-", "");
-        UserVO userVO = new UserVO(userId, "", idSession, "", "", new ArrayList<>());
+        UserVO userVO = new UserVO(null,userId, "", idSession, "", "", null, new ArrayList<>());
 
         Gson gson = new Gson();
         sessionsSearcherService.createSession(idSession, gson.toJson(userVO));

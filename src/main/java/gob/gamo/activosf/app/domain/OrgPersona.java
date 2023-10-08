@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -27,8 +28,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 
 /**
  *
@@ -36,6 +38,7 @@ import gob.gamo.activosf.app.domain.entities.GenDesctabla;
  */
 @Entity
 @Getter
+@Setter
 @Builder
 @Table(name = "org_persona")
 @EntityListeners(AuditingEntityListener.class)
@@ -117,4 +120,7 @@ public class OrgPersona {
         @JoinColumn(updatable = false, insertable = false, name = "tipopers", referencedColumnName = "des_codigo")
     })
     private GenDesctabla tipopersdesc;
+
+    @Transient
+    private UserVO user;
 }

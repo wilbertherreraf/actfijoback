@@ -1,6 +1,7 @@
 package gob.gamo.activosf.app.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import gob.gamo.activosf.app.IntegrationTest;
 import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
+import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
+import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
 import gob.gamo.activosf.app.security.SessionsSearcherService;
@@ -48,6 +52,7 @@ import gob.gamo.activosf.app.config.JwtTokenProvider;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @IntegrationTest
@@ -72,6 +77,7 @@ public class UserControllerTest {
     private ObjectMapper mapper;
     @Autowired
     private AppProperties appProperties;
+
     @BeforeEach
     void setup() {
         mapper = new ObjectMapper();
@@ -110,8 +116,9 @@ public class UserControllerTest {
     void login() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james@example.com", "password",
-                "james");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest(null, "james@example.com", "james@example.com",
+                "password",
+                "james", null, null);
         userService.signUp(signUpRequest);
 
         // - login request
@@ -176,10 +183,11 @@ public class UserControllerTest {
     void getCurrentUser() throws Exception {
         // given
         String username = "asdf";
-        String jamesToken = returnTokenUser(username,"asdf");
+        String jamesToken = returnTokenUser(username, "asdf");
         // when
         ResultActions resultActions = mockMvc.perform(
-                get(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/" + username ).param("pageCode", "USR_ALMACENES").header("Authorization", "Token " + jamesToken));
+                get(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/" + username)
+                        .param("pageCode", "USR_ALMACENES").header("Authorization", "Token " + jamesToken));
         String strRet = resultActions.andReturn().getResponse().getContentAsString();
         log.info("return rest {}", strRet);
         // then
@@ -198,8 +206,8 @@ public class UserControllerTest {
     @DisplayName("provides logged-in user information.")
     void getRefreshToken() throws Exception {
         // given
-        String jamesToken = returnTokenUser("asdf","asdf");
-        //String jamesToken = tkTest;
+        String jamesToken = returnTokenUser("asdf", "asdf");
+        // String jamesToken = tkTest;
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/api/user/refreshtoken").header("Authorization", "Token " + jamesToken));
@@ -213,15 +221,14 @@ public class UserControllerTest {
                 .andDo(print());
     }
 
-
     @Test
     @DisplayName("provides logged-in user information.")
     void refreshTokenExpiredInvalid() throws Exception {
         appProperties.getSecurity().getAuthentication().getJwt().setTokenValidityInSeconds(3);
         sessionsSearcherService.initCache(5, TimeUnit.SECONDS);
         // given
-        String jamesToken = returnTokenUser("asdf","asdf");
-        //String jamesToken = tkTest;
+        String jamesToken = returnTokenUser("asdf", "asdf");
+        // String jamesToken = tkTest;
         // when
         ResultActions resultActions = mockMvc.perform(
                 get(urlReq + Constants.API_UNIDS).header("Authorization", "Token " + jamesToken));
@@ -238,7 +245,7 @@ public class UserControllerTest {
                 .andExpect(status().isProxyAuthenticationRequired())
                 .andDo(print());
 
-        log.info("antes de refresh *****************");                
+        log.info("antes de refresh *****************");
         resultActions = mockMvc.perform(
                 post("/api/user/refreshtoken").header("Authorization", "Token " + jamesToken));
         String strRet = resultActions.andReturn().getResponse().getContentAsString();
@@ -247,20 +254,20 @@ public class UserControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                //.andExpect(jsonPath("$.user.token").isNotEmpty())
+                // .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andDo(print());
     }
 
     @Test
     @DisplayName("provides logged-in user information.")
     void revalidRefreshTokenInvalid() throws Exception {
-        String jamesToken = tkTest;        
+        String jamesToken = tkTest;
         sessionsSearcherService.initCache(120, TimeUnit.HOURS);
         String refreshToken = JwtTokenProvider.getClaim(jamesToken, Constants.SEC_HEADER_TOKEN_REFRESH);
         String subject = JwtTokenProvider.getClaim(jamesToken, "sub");
-        UserVO userVO = new UserVO(subject, "", refreshToken, "", "", new ArrayList<>());
+        UserVO userVO = new UserVO(null, subject, "", refreshToken, "", "", null, new ArrayList<>());
 
-        log.info("vooooooooooo refreshToken{} subject {} userVO {}", refreshToken, subject,userVO.toString());
+        log.info("vooooooooooo refreshToken{} subject {} userVO {}", refreshToken, subject, userVO.toString());
         Gson gson = new Gson();
         sessionsSearcherService.createSession(refreshToken, gson.toJson(userVO));
 
@@ -359,8 +366,8 @@ public class UserControllerTest {
         // - sign up
         try {
             log.info("userService {}", (userService == null));
-            SignUpUserRequest signUpRequest = new SignUpUserRequest("test@example.com", "test",
-                    "password", "jhon doe");
+            SignUpUserRequest signUpRequest = new SignUpUserRequest(null, "test@example.com", "test",
+                    "password", "jhon doe", null, null);
             User u = userService.signUp(signUpRequest);
             Long i = userRepository.count();
             log.info("ooooooooooo {}", u.toString());
@@ -389,9 +396,63 @@ public class UserControllerTest {
         }
     }
 
+    @Test
+    @DisplayName("provides user information update API.")
+    void update() throws Exception {
+        // given
+        // - sign up
+        SignUpUserRequest signUpRequest = new SignUpUserRequest(null, "test@example.com", "test",
+                "password", "jhon doe", null, null);
+        ;
+        User u = userService.signUp(signUpRequest);
+        log.info("User new [{}] {} roles :> {}", u.getId(), u.getUsername(), u.getRoles());
+        // - login and get authorization token
+        String tokenLogin = returnTokenUser("asdf", "asdf");
+        Optional<User> userReq = userRepository.findByUsername("asdf");
+        log.info("User REQUEST [{}] {} roles :> {}", userReq.get().getId(), userReq.get().getUsername(),
+                userReq.get().getRoles().stream()
+                .map(Roles::getCodrol).collect(Collectors.toList()).toString()
+                );
+        // - update request
+        String email = u.getEmail();
+        String username = u.getUsername();
+        String password = signUpRequest.password();
+
+        List<RolesVO> roles = Arrays.asList(new RolesVO("RESPONSABLE", "ASIGNACIONESXXX", new ArrayList<>()));
+        UpdateUserRequest updateRequest = new UpdateUserRequest(email, username, password, "", "", null, roles);
+        // when
+        ResultActions resultActions = mockMvc
+                .perform(put(Constants.API_ROOT_VERSION + Constants.API_USUARIOS + "/" + username + "/"
+                        + Constants.API_ROLES)
+                        .header("Authorization", "Token " + tokenLogin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("user", updateRequest))));
+
+        // then
+        MvcResult retTest = resultActions.andReturn();
+        String strRes = retTest.getResponse().getContentAsString();
+        log.info("___returl {}", strRes);
+
+        Optional<User> user = userRepository.findById(u.getId());
+        log.info("Roles user {} {}", user.get().getId(), user.get().getRoles());
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.user.email").value(u.getEmail()))
+                .andExpect(jsonPath("$.user.username").value(u.getUsername()))
+                .andDo(print());
+
+        Gson gson = new Gson();
+        UserResponse st = gson.fromJson(strRes, UserResponse.class);
+        log.info("user response {}", st.getUser().roles());
+        assertThat(st.getUser().roles().size()).isEqualTo(roles.size());
+    }
+
     public String returnToken() throws Exception {
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james@example.com", "password",
-                "james");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest(null, "james@example.com", "james@example.com",
+                "password",
+                "james", null, null);
         userService.signUp(signUpRequest);
 
         LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");

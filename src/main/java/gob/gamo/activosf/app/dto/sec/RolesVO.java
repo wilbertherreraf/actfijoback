@@ -9,10 +9,6 @@ import gob.gamo.activosf.app.domain.entities.Roles;
 
 @JsonRootName("rol")
 public record RolesVO(String codrol, String descripcion, List<String> permisosList) {
-    /*     public Set<Recurso> permisos() {
-        return permisosList.stream().map(p -> new Recurso(p, p)).collect(toSet());
-    } */
-
     public RolesVO(Roles rol) {
         this(
                 rol.getCodrol(),

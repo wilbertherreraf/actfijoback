@@ -61,4 +61,6 @@ public interface Constants {
     public static final String SEC_HEADER_TOKEN_REFRESH = "artaf";
 
     String HEADER_X_ACTIVOS = "X-Activosf";
+
+    static Integer TAB_TIPOPERS_NATURAL = 1;
 }

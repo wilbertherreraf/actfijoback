@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -49,8 +50,8 @@ public class RolesController {
 
     @GetMapping(Constants.API_ROLES)
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<RolesVO>> getRolePresentationList(Pageable pageable) {
-        Page<Roles> page = rolesService.getRoles(pageable);
+    public ResponseEntity<List<RolesVO>> getRolePresentationList(@RequestParam(value = "q", required = false) String search,Pageable pageable) {
+        Page<Roles> page = rolesService.getRoles(search, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_ROLES);

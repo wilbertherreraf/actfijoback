@@ -79,8 +79,8 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(cachedHttpServletRequest));
                     securityContext.setAuthentication(authToken);
                     refreshTk = jwtTokenProvider.getRefreshToken(authHdrToken);
-                    response.setHeader("X-Activosf", refreshTk);
-                    cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
+                    response.setHeader(Constants.HEADER_X_ACTIVOS, refreshTk);
+                    cachedHttpServletRequest.setAttribute(Constants.HEADER_X_ACTIVOS, refreshTk);
                     log.info("XXX:=>Authenticated user " + authToken.getName() + ", setting security context!"
                             + " session: " + refreshTk);
                 }
@@ -98,8 +98,8 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
             boolean existTk = sessionsSearcherService.existsSession(refreshTk);
             // allow for Refresh Token creation if following conditions are true.
             if (existTk && requestURL.toLowerCase().contains("refreshtoken")) {
-                cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
-                response.setHeader("X-Activosf", refreshTk);
+                cachedHttpServletRequest.setAttribute(Constants.HEADER_X_ACTIVOS, refreshTk);
+                response.setHeader(Constants.HEADER_X_ACTIVOS, refreshTk);
                 allowForRefreshToken(cachedHttpServletRequest, refreshTk);
             } else {
                 // PROXY_AUTHENTICATION_REQUIRED
@@ -107,18 +107,12 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
                     cachedHttpServletRequest.setAttribute(Constants.SEC_HEADER_TOKEN_REFRESH, existTk);
                     cachedHttpServletRequest.setAttribute(
                             "exception", new NotHavePermissionException("Require Refresh"));
-                    cachedHttpServletRequest.setAttribute("X-Activosf", refreshTk);
-                    response.setHeader("X-Activosf", refreshTk);
+                    cachedHttpServletRequest.setAttribute(Constants.HEADER_X_ACTIVOS, refreshTk);
+                    response.setHeader(Constants.HEADER_X_ACTIVOS, refreshTk);
                 } else cachedHttpServletRequest.setAttribute("exception", e);
             }
             // exceptionHandler.handle(e);
-        } finally {
-
-            log.info(
-                    "Finally filter ... {} Uri: {}",
-                    response.getStatus(),
-                    cachedHttpServletRequest.getRequestURL().toString());
-        }
+        } 
         filterChain.doFilter(cachedHttpServletRequest, response);
     }
 

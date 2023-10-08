@@ -213,7 +213,7 @@ public class RolesServiceTest {
              */
 
             PageRequest pageable = PageRequest.of(0, 20);
-            Page<Roles> list = rolesService.getRoles(pageable);
+            Page<Roles> list = rolesService.getRoles(null,pageable);
             log.info("roles {}", list.getContent().size());
             list.forEach(r -> {
                 String listid = r.getIncludeRecursos().stream().map(rr -> rr.getId().toString())
@@ -230,7 +230,7 @@ public class RolesServiceTest {
 
             log.info("resp rol {} -> {}", resp.get().getIncludeRecursos().size(),
                     resp.get().getIncludeRecursos().size());
-            list = rolesService.getRoles(pageable);
+            list = rolesService.getRoles(null,pageable);
             list.forEach(r -> {
                 String listid = r.getIncludeRecursos().stream().map(rr -> rr.getId().toString())
                         .collect(Collectors.toList())

@@ -2,6 +2,8 @@ package gob.gamo.activosf.app.domain.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 
@@ -11,17 +13,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "id")
 @Slf4j
 @Entity
 @Getter
+@Setter
 @Builder
 @Table(name = "sec_usuario")
 @EntityListeners(AuditingEntityListener.class)
@@ -36,10 +42,6 @@ public class User {
 
     @Column(name = "usr_login")
     private String username;
-
-/*     // @Column(name = "usr_codemp")
-    @Transient
-    private String codEmpleado; */
 
     @Column(name = "usr_nombres")
     private String nombres;
@@ -57,27 +59,25 @@ public class User {
     private String codPersona;
 
     @JoinColumns({
-        @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
-        @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo")
+            @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
+            @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo")
     })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla tipoUsuario;
 
     @JoinColumns({
-        @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
-        @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo")
+            @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
+            @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo")
     })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "sec_userrol", //
+    @JoinTable(name = "sec_userrol", //
             joinColumns = @JoinColumn(name = "uro_usrid") //
-            ,
-            inverseJoinColumns = @JoinColumn(name = "uro_rolid") //
-            )
+            , inverseJoinColumns = @JoinColumn(name = "uro_rolid") //
+    )
     private Set<Roles> roles = new HashSet<>();
 
     @Transient
@@ -122,6 +122,19 @@ public class User {
         }
 
         this.password = passwordEncoder.encode(plaintext);
+    }
+
+    public static User createUser(UserVO upd) {
+        return User.builder().username(upd.username()).nombres(upd.nombres()).email(upd.email())
+                .codPersona(upd.codpersona()).build();
+    }
+
+    public static User createUser(UpdateUserRequest upd) {
+        return User.builder().username(upd.username()).nombres(upd.nombres()).email(upd.email())
+                .codPersona(upd.codpersona())
+                .roles(upd.roles().stream().map(x -> Roles.builder().codrol(x.codrol()).build())
+                        .collect(Collectors.toSet()))
+                .build();
     }
 
     /*

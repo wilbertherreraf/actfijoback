@@ -1,25 +1,31 @@
 package gob.gamo.activosf.app.services.sec;
 
+import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.entities.Profile;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
+import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.sec.ProfileRepository;
 import gob.gamo.activosf.app.repository.sec.RecursoRepository;
 import gob.gamo.activosf.app.repository.sec.RolesRepository;
+import gob.gamo.activosf.app.search.CriteriaParser;
+import gob.gamo.activosf.app.search.GenericSpecificationsBuilder;
+import gob.gamo.activosf.app.search.UserSpecification;
 
 @Slf4j
 @Service
@@ -37,7 +43,15 @@ public class RolesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Roles> getRoles(Pageable pageable) {
+    public Page<Roles> getRoles(String searchTxt, Pageable pageable) {
+        CriteriaParser parser = new CriteriaParser();
+        Deque<?> deque = parser.parse(searchTxt);
+        if (deque.size() > 0) {
+            GenericSpecificationsBuilder<Roles> specBuilder = new GenericSpecificationsBuilder<>();
+            Specification<Roles> spec = specBuilder.build(deque, UserSpecification::new);
+            Page<Roles> list0 = rolesRepository.findAll(spec,pageable);
+            return list0;
+        }        
         Page<Roles> list = rolesRepository.findAll(pageable);
         return list;
     }

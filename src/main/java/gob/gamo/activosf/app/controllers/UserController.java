@@ -53,8 +53,8 @@ import gob.gamo.activosf.app.utils.WebUtil;
 @RequestMapping(value = Constants.API_ROOT_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 // @RequestMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION)
 public class UserController {
-    private static final Pattern AUTHORIZATION_PATTERN =
-            Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$",
+            Pattern.CASE_INSENSITIVE);
     private final UserRepository userRepository;
     private final UserService userService;
     private final SessionsSearcherService sessionsSearcherService;
@@ -69,8 +69,7 @@ public class UserController {
         UserVO userVO = userService.login(request);
         UserResponse userResponse = new UserResponse(userVO);
         HttpHeaders headers = new HttpHeaders();
-        String tokenRefresh =
-                jwtTokenProvider.getRefreshToken(userResponse.user().token());
+        String tokenRefresh = jwtTokenProvider.getRefreshToken(userResponse.user().token());
         headers.add(Constants.HEADER_X_ACTIVOS, tokenRefresh);
         return ResponseEntity.ok().headers(headers).body(userResponse);
     }
@@ -100,17 +99,17 @@ public class UserController {
         UserVO userVO = userService.getuser(username);
         UserResponse userResponse = new UserResponse(userVO);
         HttpHeaders headers = new HttpHeaders();
-        String tokenRefresh =
-                jwtTokenProvider.getRefreshToken(userResponse.user().token());
-        headers.add("X-Activosf", tokenRefresh);
+        String tokenRefresh = jwtTokenProvider.getRefreshToken(userResponse.user().token());
+        headers.add(Constants.HEADER_X_ACTIVOS, tokenRefresh);
         return ResponseEntity.ok().headers(headers).body(userResponse);
         // return new UserResponse(userVO);
     }
 
     @GetMapping(Constants.API_USUARIOS)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<UserVO>> getAll(Pageable pageable) {
-        final Page<UserVO> page = userService.findAll(pageable);
+    public ResponseEntity<List<UserVO>> getAll(@RequestParam(value = "q", required = false) String search,
+            Pageable pageable) {
+        final Page<UserVO> page = userService.findAll(search, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
@@ -121,7 +120,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<UserResponse> nuevoUsuario(
             @RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
-        log.info("inicio nuevo user {} {}", request.email(), request.nombres());
         User newuser = userService.signUp(request);
         UserVO userVO = userService.getuser(newuser.getUsername());
         UserResponse result = new UserResponse(userVO);
@@ -131,7 +129,6 @@ public class UserController {
     @GetMapping(Constants.API_USUARIOS + "/{username}")
     @PreAuthorize("#username == authentication.name or hasAuthority('" + ENTITY_NAME + "')")
     public UserResponse getUsuario(User me, @PathVariable(value = "username") String username) {
-        log.info("inicio a get user {} slug: {}", me.toString(), username);
         UserVO userVO = userService.getuser(username);
 
         return new UserResponse(userVO);
@@ -142,8 +139,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<UserResponse> updateUser(
             User me, @PathVariable(value = "slug") String id, @RequestBody UpdateUserRequest request) {
-        log.info("en update user me: {}, req: {}", me.getUsername(), id);
-        UserVO userVO = userService.update(me, request);
+        UserVO userVO = userService.updateUser(request);
         UserResponse result = new UserResponse(userVO);
         return ResponseEntity.ok().body(result);
     }
@@ -151,18 +147,18 @@ public class UserController {
     // update for owner account
     @PutMapping(Constants.API_USUARIOS)
     public ResponseEntity<UserResponse> updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
-        log.info("en update user me: {}, req: {}", me.getUsername());
         UserVO userVO = userService.update(me, request);
         UserResponse result = new UserResponse(userVO);
         return ResponseEntity.ok().body(result);
     }
 
+    /* ROLES USER */
     @GetMapping(Constants.API_USUARIOS + "/{username}" + Constants.API_ROLES)
     @PreAuthorize("#username == authentication.name or hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<List<RolesVO>> usuarioRoles(
             @PathVariable(value = "username") String username, Pageable pageable) {
-        User result =
-                userRepository.findByUsername(username).orElseThrow(() -> new DataException("Registro inexistente"));
+        User result = userRepository.findByUsername(username)
+                .orElseThrow(() -> new DataException("Registro inexistente " + username));
         Set<Roles> empl = result.getRoles();
         Page<Roles> page = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
@@ -174,13 +170,24 @@ public class UserController {
                 .body(page.getContent().stream().map(r -> new RolesVO(r)).toList());
     }
 
+    @PutMapping(Constants.API_USUARIOS + "/{username}" + Constants.API_ROLES)
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<UserResponse> updUsuarioRoles(User me,
+            @PathVariable(value = "username") String username, @RequestBody UpdateUserRequest request) {
+
+        UserVO userVO = userService.updateRoles(request);
+
+       UserResponse result = new UserResponse(userVO);
+        return ResponseEntity.ok().body(result);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void postNotFound() {}
+    public void postNotFound() {
+    }
 
     private String resolveRefreshTokenHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        //log.info("XXX: authorization {}", authorization);
         if (StringUtils.isBlank(authorization)) {
             throw new IllegalArgumentException("Token Auth inexistente");
         }

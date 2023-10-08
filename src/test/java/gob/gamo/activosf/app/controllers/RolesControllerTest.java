@@ -69,12 +69,12 @@ public class RolesControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SignUpUserRequest jamesSignUpRequest = new SignUpUserRequest("test@example.com", "test", "password",
-                "test user");
+        SignUpUserRequest jamesSignUpRequest = new SignUpUserRequest(null,"test@example.com", "test", "password",
+                "test user",null,null);
         User james = userService.signUp(jamesSignUpRequest);
 
-        SignUpUserRequest simpsonSignUpRequest = new SignUpUserRequest("simpson@example.com", "simpson", "password",
-                "test user");
+        SignUpUserRequest simpsonSignUpRequest = new SignUpUserRequest(null,"simpson@example.com", "simpson", "password",
+                "test user", null, null);
         User simpson = userService.signUp(simpsonSignUpRequest);
 
         /*
