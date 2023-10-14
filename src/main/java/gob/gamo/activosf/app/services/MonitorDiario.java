@@ -12,10 +12,6 @@ public class MonitorDiario {
 
     // private CatalogosBl catalogosBl;
 
-    private AfTipoCambioBl afTipoCambioBl;
-
-    private AfMaterialBl afMaterialBl;
-
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     Map<String, String> parametros;

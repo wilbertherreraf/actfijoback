@@ -1,7 +1,8 @@
 package gob.gamo.activosf.app.search;
 
 public enum SearchOperation {
-    EQUALITY, NEGATION, GREATER_THAN, LESS_THAN, LIKE, STARTS_WITH, ENDS_WITH, CONTAINS;
+    EQUALITY, NEGATION, GREATER_THAN, LESS_THAN, LIKE, STARTS_WITH, ENDS_WITH, CONTAINS, GREATER_THAN_EQUAL,
+    LESS_THAN_EQUAL, NOT_EQUAL, EQUAL, LIKE_END, LIKE_START, IN, NOT_IN;
 
     public static final String[] SIMPLE_OPERATION_SET = { ":", "!", ">", "<", "~" };
 
@@ -19,18 +20,18 @@ public enum SearchOperation {
 
     public static SearchOperation getSimpleOperation(final char input) {
         switch (input) {
-        case ':':
-            return EQUALITY;
-        case '!':
-            return NEGATION;
-        case '>':
-            return GREATER_THAN;
-        case '<':
-            return LESS_THAN;
-        case '~':
-            return LIKE;
-        default:
-            return null;
+            case ':':
+                return EQUALITY;
+            case '!':
+                return NEGATION;
+            case '>':
+                return GREATER_THAN;
+            case '<':
+                return LESS_THAN;
+            case '~':
+                return LIKE;
+            default:
+                return null;
         }
     }
 }

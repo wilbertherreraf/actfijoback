@@ -55,6 +55,9 @@ public class CriteriaParser {
     }
 
     public Deque<?> parse(String searchParamIn) {
+        if (StringUtils.isBlank(searchParamIn)) {
+            return new LinkedList<>();
+        }
         String searchParam = StringUtils.trimToEmpty(searchParamIn
                 .replaceAll("^\"|^'|\"$|'$", "") // replace " or ' if it's not escaped
                 .replace("\\\"", "\"") // keep " if it's escaped

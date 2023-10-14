@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
-import gob.gamo.activosf.app.dto.sec.UserVO;
 
 @JsonRootName("persona")
 public record PersonaVO(
@@ -29,8 +28,29 @@ public record PersonaVO(
         String usuario,
         String estado,
         String trato,
-        SignUpUserRequest user
-        ) {
+        SignUpUserRequest user) {
+    public PersonaVO(OrgPersona p) {
+        this(p.getIdPersona(),
+                p.getNombre(),
+                p.getNombreDesc(),
+                p.getPrimerApellido(),
+                p.getSegundoApellido(),
+                p.getNumeroDocumento(),
+                p.getTipoDocumento(),
+                p.getTabTipodoc(),
+                p.getTipodoc(),
+                p.getDireccion(),
+                p.getTelefono(),
+                p.getEmail(),
+                p.getTabTipopers(),
+                p.getTipopers(),
+                p.getNemonico(),
+                p.getTxFecha(),
+                p.getUsuario(),
+                p.getEstado(),
+                p.getTrato(),
+                null);
+    }
 
     public OrgPersona persona() {
         return OrgPersona.builder()
@@ -53,8 +73,7 @@ public record PersonaVO(
                 .usuario(usuario)
                 .estado(estado)
                 .trato(trato)
-                //.user(user)
+                // .user(user)
                 .build();
-    }
-    ;
+    };
 }

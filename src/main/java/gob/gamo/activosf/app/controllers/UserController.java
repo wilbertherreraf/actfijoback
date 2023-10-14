@@ -177,8 +177,17 @@ public class UserController {
 
         UserVO userVO = userService.updateRoles(request);
 
-       UserResponse result = new UserResponse(userVO);
+        UserResponse result = new UserResponse(userVO);
         return ResponseEntity.ok().body(result);
+    }
+
+    @DeleteMapping(Constants.API_USUARIOS + "/{username}" + Constants.API_ROLES + "/{codrol}")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<Void> delUsuarioRoles(
+            @PathVariable(value = "username") String username,  @PathVariable(value = "codrol") String codrol) {
+
+        userService.deleteRol(username,codrol);
+        return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

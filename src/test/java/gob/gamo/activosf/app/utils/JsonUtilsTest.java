@@ -1,12 +1,17 @@
 package gob.gamo.activosf.app.utils;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 
+import gob.gamo.activosf.app.dto.EmpleadoVo;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,16 +20,26 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JsonUtilsTest {
+       
     @Test
     public void readJson() {
+        ObjectMapper mapper = new ObjectMapper();
             log.info("hola mundo");        
         String json = "{\"username\":\"james@example.com\",\"email\":\"james@example.com\",\"token\":\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWx3b3JsZC5pbyIsInN1YiI6IjU0IiwiZXhwIjoxNjkzMjY2NTkyLCJpYXQiOjE2OTMyNjYyOTJ9.eTPO9p0Zq8ZDDNzRAVWc2F4gioPsKZtoMFVDGAsuNYMwRJAGNk2XXe1qpIdTNNv1g2YZplNpwPUhHb1HQKv4GNv2Hk6eF6NYtz4Tm_xadnrWUx0GFApRNHx2sg_CDdM4zCypzXi90-3MG-O2hCjS5YNYFVCE4NwFTb1Bz20pjAOHexLsXz25OpiXgUJqkOvyY7trGr8hQLjK3zx9mDpz5w3cuGlkjLsvusqf5ssht3qjhaSMWFjNvPDgA9vC-kqOOTWq-trkWJiW2CK2KCBYAmpLND9MuCXH1MD0ugowZsDUq13yG1wAmejjTvytndYWGidyMg0rwlHAve4pJ-4Lfw\",\"codempleado\":null,\"nombres\":\"james\"}";
         json = "{\"user\":{\"username\":\"james@example.com\",\"email\":\"james@example.com\",\"token\":\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWx3b3JsZC5pbyIsInN1YiI6IjM1IiwiZXhwIjoxNjkzMjU4NzM2LCJpYXQiOjE2OTMyNTg0MzZ9.Ciy_ws45ceoha1EeUujMRca56s_GP26KOWotyg_P_Y68OvPJDuqf4AgRgSDaK8Gv7LkKkl2aLYu-azmG4-hxUVfkef99WUXg8KB7itM-i8S93zQzyjYdd7MO25uJrKlnSa7-omfh8EdNxC0bhshBvaR05YZ4_Hid-2UyKww9iKIKe6vctNK84gAZ4UJ7cg_S1hD5qHA4F2Ofgc1F6dZe_v0O1Kpsvvm2zM8UYpc8h7c7CoH-fBmuSfMVTfqEI27b76jkLsLv-JaP9hfrYuMxQbx_jOBsg3M7NWeOAV0x_U3mXtYODRquv6YOPpyPOYxfJMZ5bZuw_xA-2Kly6im4qQ\",\"codempleado\":null,\"nombres\":\"james\"}}";
         json = "{'user':{'username':'asdf','email':'asdf@asdf.com','token':'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWx3b3JsZC5pbyIsInN1YiI6IjIzIiwiZXhwIjoxNjkzMjc4OTg1LCJpYXQiOjE2OTMyNzg5ODB9.F75np1CtRd61sR9_9pooGXSznTMx-XiFcjdK30HYVGJBu_zSUJVWTUv4lFbHM5EcEKT3LgJZpp7xl3paZRB4HUNyvJzHJbfWqWGrAelPXz3OqrEcdm82PUwUgvLCEtOQgCz7KZExRJcxsETOf3pX_gbScYGYbQTwwja0fnJyd2RlbULAv4l7aSe36hRFDHfwOLaw3TApfGouNIjLBXnuXvzGYEKkbIgxyCsNeY9cxN7hRWD2DX9FRCMT7TSYEV03zZvUfwJfv_Y8ZbFYE_EgWa1Y_4pnmaSLsRTJNI5ewBrR__yz7fyCsGVOVFxpRWAsoZJWbUgwA8Xi_spo3tBQ_w','codempleado':null,'nombres':'asdf2 zzzz'}}";
+        json = "{'empleado':{'id':24,'idUnidad':9,'unidaddesc':'UNID9','codInternoempl':'dfgh','idPersona':1,'codPersona':null,'idCargo':null,'tabRolempleado':55,'rolempleado':5,'rolempleadodesc':{'id':{'desCodtab':55,'desCodigo':5},'desCodeiso':null,'desDescrip':'JEFE'},'fechaIngreso':'2023-10-18','fechaBaja':null,'estado':null,'persona':{'idPersona':1,'nombre':'asdf','nombreDesc':'asdf','primerApellido':'asdf','segundoApellido':'sssssssssss','numeroDocumento':'qw qwer rqw','tipoDocumento':null,'tabTipodoc':104,'tipodoc':4,'direccion':'asdf','telefono':'qwer','email':'asdf@asdf','tabTipopers':101,'tipopers':1,'nemonico':'xxx','txFecha':null,'usuario':null,'estado':null,'trato':null,'user':null}}}";
+        json = "{\"empleado\":{\"id\":24,\"idUnidad\":9,\"unidaddesc\":\"UNID9\",\"codInternoempl\":\"dfgh\",\"idPersona\":1,\"codPersona\":null,\"idCargo\":null,\"tabRolempleado\":55,\"rolempleado\":5,\"rolempleadodesc\":{\"id\":{\"desCodtab\":55,\"desCodigo\":5},\"desCodeiso\":null,\"desDescrip\":\"JEFE\"},\"fechaIngreso\":\"2023-10-18\",\"fechaBaja\":null,\"estado\":null,\"persona\":{\"idPersona\":1,\"nombre\":\"asdf\",\"nombreDesc\":\"asdf\",\"primerApellido\":\"asdf\",\"segundoApellido\":\"sssssssssss\",\"numeroDocumento\":\"qw qwer rqw\",\"tipoDocumento\":null,\"tabTipodoc\":104,\"tipodoc\":4,\"direccion\":\"asdf\",\"telefono\":\"qwer\",\"email\":\"asdf@asdf\",\"tabTipopers\":101,\"tipopers\":1,\"nemonico\":\"xxx\",\"txFecha\":null,\"usuario\":null,\"estado\":null,\"trato\":null,\"user\":null}}}";
         try {
             Gson gson = new Gson();
-            Usuario1 usuario1 = gson.fromJson(json, Usuario1.class);
-            log.info("user usuario1 {}", usuario1.getUser().toString());
+            //Usuario1 usuario1 = gson.fromJson(json, Usuario1.class);
+            EmpleadoVO1 e = gson.fromJson(json, EmpleadoVO1.class);
+            //log.info("user usuario1 {}", usuario1.getUser().toString());
+            log.info("user usuario1 {}", e.empleado.toString(), e.getEmpleado().fechaIngreso());
+            log.info("user usuario1 {} :: {}", e.getEmpleado().fechaIngreso(), UtilsDate.stringFromDate(e.getEmpleado().fechaIngreso(), "dd/MM/yyyy"));
+            String st = mapper.writeValueAsString(e);
+            log.info("user usuario1 sssssss {}", st);
+
             /*
              * JsonReader reader = new JsonReader(new StringReader(json));
              * reader.setLenient(true);
@@ -64,6 +79,11 @@ public class JsonUtilsTest {
     public class Usuario1 {
         private UserVO user;
     }
-
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class EmpleadoVO1 {
+        private EmpleadoVo empleado;
+    }
 
 }

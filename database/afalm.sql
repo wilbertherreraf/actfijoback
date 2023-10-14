@@ -80,6 +80,8 @@ create table org_unidad (
     telefono varchar(50),
     tipo_unidad varchar(50),
     id_unidad_padre integer,
+    tabrolempleado integer default 55,
+    rolempleado integer default 99,    
     estado varchar(10),
     constraint PK_orgunidad primary key (id_unidad)
 );
@@ -112,6 +114,8 @@ create table org_empleado (
     cod_persona varchar(100),
     cod_internoempl varchar(100),    
     id_cargo integer,
+    tabrolempleado integer,
+    rolempleado integer,
     fecha_ingreso date,
     fecha_baja date,
     estado varchar(10),

@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
+import gob.gamo.activosf.app.dto.EmpleadoVo;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 
 /**
@@ -115,7 +116,8 @@ public class OrgPersona {
 
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
+    @JoinColumns(
+        value =  {
         @JoinColumn(updatable = false, insertable = false, name = "tabtipopers", referencedColumnName = "des_codtab"),
         @JoinColumn(updatable = false, insertable = false, name = "tipopers", referencedColumnName = "des_codigo")
     })
@@ -123,4 +125,6 @@ public class OrgPersona {
 
     @Transient
     private UserVO user;
+    @Transient
+    private EmpleadoVo empleado;
 }

@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EmpleadoServiceTest",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.services.EmpleadoServiceTest",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
+            "name": "SearchQueryCriteriaConsumer",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.search.SearchQueryCriteriaConsumer",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

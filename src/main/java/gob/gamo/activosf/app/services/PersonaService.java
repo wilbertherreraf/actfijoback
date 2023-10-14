@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import gob.gamo.activosf.app.commons.Constants;
+import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.PersonaVO;
@@ -32,8 +33,11 @@ import gob.gamo.activosf.app.search.UserSpecification;
 import gob.gamo.activosf.app.services.sec.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -49,9 +53,44 @@ public class PersonaService {
     private final EntityManager entityManager;
 
     @Transactional(readOnly = true)
-    public Page<OrgPersona> findAll(Pageable pageable) {
-        Page<OrgPersona> list = repositoryEntity.findAll(pageable).map(r -> r);
+    public Page<OrgPersona> findAll(String searchTxt, Pageable pageable) {
+        CriteriaParser parser = new CriteriaParser();
+        Deque<?> deque = parser.parse(searchTxt);
+        if (deque.size() > 0) {
+            GenericSpecificationsBuilder<OrgPersona> specBuilder = new GenericSpecificationsBuilder<>();
+            Specification<OrgPersona> spec = specBuilder.build(deque, UserSpecification::new);
+            Page<OrgPersona> list0 = repositoryEntity.findAll(spec, pageable);
+            return list0;
+        }        
+        Page<OrgPersona> list = repositoryEntity.findAll(pageable);
         return list;
+    }
+    
+    public List<OrgPersona> search(SearchCriteria params) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = builder.createTupleQuery();
+        final Root<OrgPersona> root = query.from(OrgPersona.class);
+        Join<OrgEmpleado,OrgPersona> joinPersona = root.join("empleado", JoinType.INNER);
+        Join<OrgPersona,User> joinUsuario = root.join("user", JoinType.INNER);        
+
+        query.multiselect(root); // root.get("nombre")
+
+        Predicate predicate = builder.conjunction();
+
+        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer = new SearchQueryCriteriaConsumer<OrgPersona>(
+                predicate,
+                builder, root);
+
+        searchConsumer.accept(params);
+        Predicate predicateR = searchConsumer.getPredicate();
+        query.where(predicateR);
+
+        List<Tuple> l = entityManager.createQuery(query).getResultList();
+
+        return l.stream().map(r -> {
+            OrgPersona e = (OrgPersona) r.get(0);
+            return e;
+        }).map((x) -> x).toList();
     }
 
     @Transactional
@@ -93,10 +132,10 @@ public class PersonaService {
         repositoryEntity.deleteById(id);
     }
 
-    private OrgPersona findById(Integer id) {
+    public OrgPersona findById(Integer id) {
         return repositoryEntity
                 .findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Registro not found : `%s`".formatted(id)));
+                .orElseThrow(() -> new NoSuchElementException("Persona inexistente : `%s`".formatted(id)));
     }
 
     public List<OrgPersona> search(final List<SearchCriteria> params) {
@@ -128,13 +167,13 @@ public class PersonaService {
 
     public static void validar(OrgPersona entity) {
         if (entity.getTipodoc() == null) {
-            throw new DataException("Tipo documento requerido");
+            throw new DataException("Persona: Tipo documento requerido");
         }
         if (entity.getNumeroDocumento() == null) {
-            throw new DataException("Numero documento requerido");
+            throw new DataException("Persona: Numero documento requerido");
         }
         if (entity.getTipopers() == null) {
-            throw new DataException("Tipo persona requerido");
+            throw new DataException("Persona: Tipo persona requerido");
         }
 
     }

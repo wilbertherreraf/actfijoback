@@ -155,19 +155,32 @@ public class UserService {
             if (!exists.isPresent()) {
                 Userrol userr = new Userrol(unew, rol);
                 unew.getRoles().add(rol);
-/*                 Userrol userrn = userRolRespository.save(userr);
-                log.info("User rol {} {}", userrn.getId().getUserId(),userrn.getId().getRolId()); */
-            } 
+                /*
+                 * Userrol userrn = userRolRespository.save(userr);
+                 * log.info("User rol {} {}",
+                 * userrn.getId().getUserId(),userrn.getId().getRolId());
+                 */
+            }
         }
         Optional<User> userReq = userRepository.findByUsername(request.username());
         log.info("User USERNAME [{}] {} roles :> {}", userReq.get().getId(), userReq.get().getUsername(),
                 userReq.get().getRoles().stream()
-                .map(Roles::getCodrol).collect(Collectors.toList()).toString()
-                );
+                        .map(Roles::getCodrol).collect(Collectors.toList()).toString());
         UserVO userVO = userRepository.findByUsername(request.username()).map(u -> new UserVO(u))
                 .orElseThrow(() -> new DataException("Usuario inexistente " + request.username()));
 
         return userVO;
+    }
+
+    public void deleteRol(String username, String codrol) {
+        User uold = userRepository.findByUsername(username)
+                .orElseThrow(() -> new DataException("Usuario inexistente " + username));
+        Optional<Roles> rol = rolesRepository.findByCodrol(codrol);
+        if (rol.isPresent()) {
+            Userrol usrrol = userRolRespository.findById(new UserrolId(uold.getId(), rol.get().getId()))
+                    .orElseThrow(() -> new DataException("Permiso inexistente " + codrol));
+            userRolRespository.delete(usrrol);
+        }
     }
 
     private User createNewUser(SignUpUserRequest request) {

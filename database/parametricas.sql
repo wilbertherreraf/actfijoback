@@ -14,6 +14,7 @@ INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (13, 'ESTADO DE REGI
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (18, 'TIPOS DE SOLICITUD');
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (31, 'TIPO USUARIO');
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (53, 'TIPO DE ACTUALIZACION');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (55, 'ROL EMPLEADO');
 
 
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (101, 1, 'PERSONA NATURAL                         ', 'P.NAT',  null, null);
@@ -81,3 +82,9 @@ INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  de
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (31, 2, 'SUPERVISA', 'PRE',  null, null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (31, 3, 'AUTORIZA', 'AUT',  null, null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (31, 4, 'CONSULTA', 'CONS',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 1, 'SUPERVISOR', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 2, 'OPERATIVO', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 3, 'TEMPORAL', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 5, 'JEFE', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 6, 'GERENTE', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 99, 'NaN', null,  null, null);

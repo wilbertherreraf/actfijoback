@@ -1,14 +1,13 @@
 package gob.gamo.activosf.app.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.errors.DataException;
@@ -37,13 +35,15 @@ public class UnidadService {
 
     @Transactional(readOnly = true)
     public Page<UnidadResponse> findAll(String searchTxt, Pageable pageable) {
-        CriteriaParser parser = new CriteriaParser();
-        Deque<?> deque = parser.parse(searchTxt);
-        if (deque.size() > 0) {
-            GenericSpecificationsBuilder<OrgUnidad> specBuilder = new GenericSpecificationsBuilder<>();
-            Specification<OrgUnidad> spec = specBuilder.build(deque, UserSpecification::new);
-            Page<UnidadResponse> list0 = repositoryEntity.findAll(spec,pageable).map(r -> new UnidadResponse(r));
-            return list0;
+        if (!StringUtils.isBlank(searchTxt)) {
+            CriteriaParser parser = new CriteriaParser();
+            Deque<?> deque = parser.parse(searchTxt);
+            if (deque.size() > 0) {
+                GenericSpecificationsBuilder<OrgUnidad> specBuilder = new GenericSpecificationsBuilder<>();
+                Specification<OrgUnidad> spec = specBuilder.build(deque, UserSpecification::new);
+                Page<UnidadResponse> list0 = repositoryEntity.findAll(spec, pageable).map(r -> new UnidadResponse(r));
+                return list0;
+            }
         }
         Page<UnidadResponse> list = repositoryEntity.findAll(pageable).map(r -> new UnidadResponse(r));
         return list;
@@ -58,8 +58,7 @@ public class UnidadService {
         if (entity.getIdUnidadPadre() == null) {
             newEntity = repositoryEntity.save(entity);
         } else {
-            OrgUnidad undPadreOld = repositoryEntity.findById(entity.getIdUnidadPadre())
-                    .orElseThrow(() -> new DataException("Registro Padre inexistente " + entity.getIdUnidadPadre()));
+            OrgUnidad undPadreOld = findById(entity.getIdUnidadPadre());
             newEntity = repositoryEntity.save(entity);
         }
 
@@ -77,8 +76,7 @@ public class UnidadService {
 
         OrgUnidad newEntity = null;
 
-        OrgUnidad undOld = repositoryEntity.findById(entity.getIdUnidad())
-                .orElseThrow(() -> new DataException("Registro inexistente " + entity.getIdUnidad()));
+        OrgUnidad undOld = findById(entity.getIdUnidad());
 
         if (orgTree.isEmpty() || entity.getIdUnidadPadre() == null) {
             newEntity = repositoryEntity.save(entity);
@@ -87,8 +85,7 @@ public class UnidadService {
                 throw new DataException(
                         "Padre " + entity.getIdUnidadPadre() + " debe ser diferente a " + entity.getIdUnidad());
             }
-            OrgUnidad undPadreOld = repositoryEntity.findById(entity.getIdUnidadPadre())
-                    .orElseThrow(() -> new DataException("Registro inexistente " + entity.getIdUnidadPadre()));
+            OrgUnidad undPadreOld = findById(entity.getIdUnidadPadre());
 
             Node<OrgUnidad> found = orgTree.searchInTree(entity.getIdUnidadPadre());
 
@@ -106,10 +103,8 @@ public class UnidadService {
     @Transactional
     public void updatePadre(Integer idOld, Integer idPadreNew) {
 
-        OrgUnidad undOld = repositoryEntity.findById(idOld)
-                .orElseThrow(() -> new DataException("Registro inexistente " + idOld));
-        OrgUnidad undNewPadre = repositoryEntity.findById(idPadreNew)
-                .orElseThrow(() -> new DataException("Registro inexistente " + idPadreNew));
+        OrgUnidad undOld = findById(idOld);
+        OrgUnidad undNewPadre = findById(idPadreNew);
 
         List<OrgUnidad> hijos = getHijosN1(undOld);
         if (hijos.size() == 0) {
@@ -134,6 +129,15 @@ public class UnidadService {
         repositoryEntity.deleteById(id);
     }
 
+    public static void validar(OrgUnidad entity) {
+        if (entity.getNombre() == null) {
+            throw new DataException("Unidad: Nombre requerido");
+        }
+        if (entity.getRolempleado() == null) {
+            throw new DataException("Unidad: Rol de empleado principal requerido");
+        }
+    }
+
     public List<OrgUnidad> getHijosN1(OrgUnidad entity) {
         List<OrgUnidad> list = repositoryEntity.findAll();
         List<OrgUnidad> values = hijos(list, entity.getIdUnidad());
@@ -147,7 +151,7 @@ public class UnidadService {
             return new ArrayList<>();
         }
         List<OrgUnidad> values = orgTree.returnChildrens(found).values().stream().map(x -> x.getValue())
-        .filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
+                .filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
                 .collect(Collectors.toList());
         return values;
     }
@@ -158,13 +162,13 @@ public class UnidadService {
         return generarOrgTree(list, entity);
     }
 
-    private OrgUnidad findById(String id) {
+    public OrgUnidad findById(Integer id) {
         return repositoryEntity
-                .findBySigla(id)
-                .orElseThrow(() -> new NoSuchElementException("Article not found : `%s`".formatted(id)));
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Unidad inexistente : `%s`".formatted(id)));
     }
 
-    public OrgUnidad existsOrgUnidad(String id) {
+    private OrgUnidad existsOrgUnidad(String id) {
         return repositoryEntity
                 .findBySigla(id)
                 .orElseThrow(() -> new NoSuchElementException("Article not found : `%s`".formatted(id)));

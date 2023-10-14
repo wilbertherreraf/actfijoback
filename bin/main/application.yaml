@@ -12,14 +12,12 @@ spring:
     password: qazwsx
 
   jpa:
-    #show-sql: true  
-    hibernate:
-      #ddl-auto: create-drop
-      ddl-auto: none
-        
     properties:
       hibernate:
         default_batch_fetch_size: 500
+        ddl-auto: none      
+        query:
+          in_clause_parameter_padding: false
         #format_sql: true
         #use_sql_comments: true
   mvc:

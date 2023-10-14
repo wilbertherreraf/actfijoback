@@ -21,7 +21,12 @@
         </encoder>
     </appender>
 
-    <!-- <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace"/> -->
+
+    <!-- 
+        NO BORRAR PARA VER LOG DE HB
+        <logger name="org.hibernate.SQL" level="DEBUG" />
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="DEBUG" /> -->
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="rollingFileAppender" />

@@ -11,11 +11,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -31,6 +33,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.dto.UnidadResponse;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "idUnd")
@@ -67,6 +70,20 @@ public class OrgUnidad {
     @Column(name = "id_unidad_padre")
     private Integer idUnidadPadre;
 
+    @Column(name = "tabrolempleado")
+    private Integer tabRolempleado;
+
+    @Column(name = "rolempleado")
+    private Integer rolempleado;
+
+    @NotFound(action = NotFoundAction.IGNORE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+        @JoinColumn(updatable = false, insertable = false, name = "tabrolempleado", referencedColumnName = "des_codtab"),
+        @JoinColumn(updatable = false, insertable = false, name = "rolempleado", referencedColumnName = "des_codigo")
+    })
+    private GenDesctabla rolempleadodesc;   
+
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -96,11 +113,16 @@ public class OrgUnidad {
             )
     private Set<OrgEmpleado> empleados = new HashSet<>();
 
+    @Transient
+    private OrgEmpleado empleadoBoss;
+    
     public static OrgUnidad createOrgUnidad(UnidadResponse req) {
         return OrgUnidad.builder()
                 .idUnidad(req.id())
                 .domicilio(req.domicilio())
                 .idUnidadPadre(req.idUnidadPadre())
+                .tabRolempleado(req.tabRolempleado())
+                .rolempleado(req.rolempleado())
                 .nombre(req.nombre())
                 .sigla(req.sigla())
                 .telefono(req.telefono())
