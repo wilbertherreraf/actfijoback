@@ -24,8 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class PaginationUtil {
 
-    private PaginationUtil() {
-    }
+    private PaginationUtil() {}
 
     public static <T> HttpHeaders generatePaginationHttpHeaders(Page<T> page, String baseUrl) {
 
@@ -57,6 +56,27 @@ public final class PaginationUtil {
                 .toUriString();
     }
 
+    public static <T> Page<T> pageForList(int pageIn, int size, int total, List<T> list) {
+        if (list == null || list.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>(), createPageRequestUsing(0, size), 0);
+        }
+        size = size <= 0 ? total : size;
+        int npages = (int) Math.ceil(total / size);
+        npages = npages == 0 ? 1 : npages;
+        npages = (total > (npages * size)) ? npages + 1 : npages;
+
+        int page = pageIn < npages ? pageIn : npages - 1;
+
+        Pageable pageRequest = createPageRequestUsing(page, size);
+
+        // int start = (int) pageRequest.getOffset();
+        // int end = Math.min((start + pageRequest.getPageSize()), total);
+
+        // log.info("page in[{}] {} st {} e {} sz {}", pageIn, page, start, end, total);
+        PageImpl<T> resp = new PageImpl<>(list, pageRequest, total);
+        return resp;
+    }
+
     public static <T> Page<T> pageForList(int pageIn, int size, List<T> list) {
         if (list == null || list.isEmpty()) {
             return new PageImpl<>(new ArrayList<>(), createPageRequestUsing(0, size), 0);
@@ -66,7 +86,7 @@ public final class PaginationUtil {
         int npages = (int) Math.ceil(list.size() / size);
         npages = npages == 0 ? 1 : npages;
         npages = (list.size() > (npages * size)) ? npages + 1 : npages;
-        
+
         int page = pageIn < npages ? pageIn : npages - 1;
 
         Pageable pageRequest = createPageRequestUsing(page, size);

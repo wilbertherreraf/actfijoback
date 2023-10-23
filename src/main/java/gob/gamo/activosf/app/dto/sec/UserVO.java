@@ -4,8 +4,15 @@ import java.util.List;
 
 import gob.gamo.activosf.app.domain.entities.User;
 
-public record UserVO(Integer id,
-        String username, String email, String token, String codpersona, String nombres, Integer idPersona, List<RolesVO> roles) {
+public record UserVO(
+        Integer id,
+        String username,
+        String email,
+        String token,
+        String codpersona,
+        String nombres,
+        Integer idPersona,
+        List<RolesVO> roles) {
     public UserVO(User user) {
         this(
                 user.getId(),

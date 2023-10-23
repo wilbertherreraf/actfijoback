@@ -25,7 +25,10 @@ public class ObjectMapperConfiguration {
                 .featuresToEnable(DeserializationFeature.UNWRAP_ROOT_VALUE)
                 .featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE) //// make sure timezones are not being converted to GMT when parsing json
+                .featuresToDisable(
+                        DeserializationFeature
+                                .ADJUST_DATES_TO_CONTEXT_TIME_ZONE) //// make sure timezones are not being converted to
+                // GMT when parsing json
                 .featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .build();
     }
@@ -36,7 +39,7 @@ public class ObjectMapperConfiguration {
             public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
                     throws IOException {
                 String formattedDateTime = value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-                log.info("en mapppper {} -> {}",value,formattedDateTime);
+                log.info("en mapppper {} -> {}", value, formattedDateTime);
                 gen.writeString(formattedDateTime);
             }
         });

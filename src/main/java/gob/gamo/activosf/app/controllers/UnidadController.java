@@ -2,8 +2,6 @@ package gob.gamo.activosf.app.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -33,6 +31,7 @@ import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.OrgUnidadRepository;
 import gob.gamo.activosf.app.search.SearchCriteria;
+import gob.gamo.activosf.app.services.AfSearchService;
 import gob.gamo.activosf.app.services.EmpleadoService;
 import gob.gamo.activosf.app.services.UnidadService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
@@ -48,16 +47,64 @@ public class UnidadController {
     private final UnidadService service;
     private final OrgUnidadRepository repository;
     private final EmpleadoService empleadoService;
+    private final AfSearchService searchService;
     private static final String ENTITY_NAME = Constants.REC_UNIDS;
 
     @GetMapping(Constants.API_UNIDS)
-    public ResponseEntity<List<UnidadResponse>> getAll(@RequestParam(value = "q", required = false) String search,
-            Pageable pageable) {
+    public ResponseEntity<List<UnidadResponse>> getAll(
+            @RequestParam(value = "q", required = false) String search, Pageable pageable) {
         final Page<UnidadResponse> page = service.findAll(search, pageable);
+
+        /*         OrgHierarchyInterface<OrgUnidad> org = service.generarOrgTree(null);
+
+               Node<OrgUnidad> rootid = org.returnRoot();
+               if (rootid == null) {
+                   throw new DataException("Estructura sin root");
+               }
+
+               List<OrgUnidad> listn = new ArrayList<>();
+               listn.add(rootid.getValue());
+
+               LinkedList<Node<OrgUnidad>> childs = rootid.childs();
+               for (Node<OrgUnidad> node : childs) {
+                   listn.add(node.getValue());
+               }
+        */
+        /*
+         * org.treeByLevels(rootid).entrySet().stream().forEach(l -> {
+         * Integer key = l.getKey();
+         *
+         * LinkedList<Node<OrgUnidad>> value = l.getValue();
+         * for (Node<OrgUnidad> node : value) {
+         * String corr = StringUtils.leftPad("", 2 * key, "X");
+         * node.getValue().setTipoUnidad(corr);
+         *
+         * listn.add(node.getValue());
+         *
+         * int idParent = node.getParent() != null ? node.getParent().getKey() : 0;
+         * log.info("Level [{}] ({}) k: {} ch: {}", key, idParent, node.getKey(),
+         * node.getChildArray().size());
+         * }
+         * });
+         */
+        //        List<UnidadResponse> result = listn.stream().map(u -> new UnidadResponse(u)).toList();
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @PostMapping(Constants.API_UNIDS + "/f")
+    public ResponseEntity<List<UnidadResponse>> getAllByFilter(
+            @RequestBody(required = false) SearchCriteria sc, Pageable pageable) {
+        Page<OrgUnidad> page = searchService.searchUnidades(sc, pageable);
+        //        OrgHierarchyInterface<OrgUnidad> org = UnidadService.generarOrgTreeFromList(page.getContent());
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_PERSONAS);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(page.getContent().stream().map(u -> new UnidadResponse(u)).toList());
     }
 
     @Operation(summary = "Crea un nuevo registro")
@@ -108,7 +155,8 @@ public class UnidadController {
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<List<EmpleadoVo>> unidadEmpleados(
             @RequestParam(value = "q", required = false) String search,
-            @PathVariable(value = "slug") Integer id, Pageable pageable) {
+            @PathVariable(value = "slug") Integer id,
+            Pageable pageable) {
         OrgUnidad result = service.findById(id);
         // Set<OrgEmpleado> empl = result.getEmpleados();
         List<OrgEmpleado> empl = empleadoService.empleadosUnidad(id);
@@ -118,42 +166,23 @@ public class UnidadController {
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        return ResponseEntity.ok().headers(headers)
-                .body(pageRet.getContent().stream().map(e -> new EmpleadoVo(e)).toList());
-    }
-
-    @PostMapping(Constants.API_UNIDS + "/{slug}" + Constants.API_EMPLEADOS)
-    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<EmpleadoVo>> searchEmpleados(
-            @RequestBody SearchCriteria sc,
-            @PathVariable(value = "slug") Integer id, Pageable pageable) {
-        log.info("criteria   {} ", (sc.getOperation()));
-
-        OrgUnidad result = service.findById(id);
-        // Set<OrgEmpleado> empl = result.getEmpleados();
-        List<OrgEmpleado> empl = empleadoService.search(sc);
-        log.info("Resp mepleados {}", empl.size());
-        Page<OrgEmpleado> pageRet = PaginationUtil.pageForList(
-                (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                pageRet, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-
-        return ResponseEntity.ok().headers(headers)
+        return ResponseEntity.ok()
+                .headers(headers)
                 .body(pageRet.getContent().stream().map(e -> new EmpleadoVo(e)).toList());
     }
 
     // pitfalls y jpa interesting
     // https://github.com/eugene-khyst/spring-data-examples
     @GetMapping(Constants.API_UNIDS + "/{slug}" + "/dependientes")
-    public ResponseEntity<List<UnidadResponse>> unidadesHijo(
-            @PathVariable(value = "slug") Integer id) {
+    public ResponseEntity<List<UnidadResponse>> unidadesHijo(@PathVariable(value = "slug") Integer id) {
 
         OrgUnidad entity = service.findById(id);
-
         List<OrgUnidad> hijos = service.getHijosN1(entity);
-        List<UnidadResponse> result = hijos.stream().filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
-                .map(x -> new UnidadResponse(x)).toList();
+
+        List<UnidadResponse> result = hijos.stream()
+                .filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
+                .map(x -> new UnidadResponse(x, false))
+                .toList();
         return ResponseEntity.ok().body(result);
     }
 
@@ -167,23 +196,26 @@ public class UnidadController {
 
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
-                .body(new UnidadResponse(entity));
+                .body(new UnidadResponse(entity, false));
     }
 
     @GetMapping(Constants.API_UNIDS + "/{slug}" + "/padres")
-    public ResponseEntity<List<UnidadResponse>> unidadesPadreEleg(
-            @PathVariable(value = "slug") Integer id) {
+    public ResponseEntity<List<UnidadResponse>> unidadesPadreEleg(@PathVariable(value = "slug") Integer id) {
 
         OrgUnidad entity = service.findById(id);
         List<OrgUnidad> hijos = service.getHijos(entity);
-        List<OrgUnidad> padres = repository.findAll().stream().filter(x -> x.getIdUnidad().compareTo(id) != 0)//
-                .filter(x -> !hijos.stream().filter(y -> y.getIdUnidad().compareTo(x.getIdUnidad()) == 0).findFirst()
+        List<OrgUnidad> padres = repository.findAll().stream()
+                .filter(x -> x.getIdUnidad().compareTo(id) != 0) //
+                .filter(x -> !hijos.stream()
+                        .filter(y -> y.getIdUnidad().compareTo(x.getIdUnidad()) == 0)
+                        .findFirst()
                         .isPresent())
                 .collect(Collectors.toList());
 
-        List<UnidadResponse> result = padres.stream().filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
-                .map(x -> new UnidadResponse(x)).toList();
+        List<UnidadResponse> result = padres.stream()
+                .filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
+                .map(x -> new UnidadResponse(x, false))
+                .toList();
         return ResponseEntity.ok().body(result);
     }
-
 }

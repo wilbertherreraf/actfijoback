@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import gob.gamo.activosf.app.domain.OrgPersona;
-import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 
 @JsonRootName("persona")
 public record PersonaVO(
@@ -28,9 +28,14 @@ public record PersonaVO(
         String usuario,
         String estado,
         String trato,
-        SignUpUserRequest user) {
+        UserVO user) {
     public PersonaVO(OrgPersona p) {
-        this(p.getIdPersona(),
+        this(p, null);
+    }
+
+    public PersonaVO(OrgPersona p, UserVO user) {
+        this(
+                p.getIdPersona(),
                 p.getNombre(),
                 p.getNombreDesc(),
                 p.getPrimerApellido(),
@@ -49,7 +54,7 @@ public record PersonaVO(
                 p.getUsuario(),
                 p.getEstado(),
                 p.getTrato(),
-                null);
+                user);
     }
 
     public OrgPersona persona() {
@@ -75,5 +80,6 @@ public record PersonaVO(
                 .trato(trato)
                 // .user(user)
                 .build();
-    };
+    }
+    ;
 }

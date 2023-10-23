@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import gob.gamo.activosf.app.domain.entities.User;
 
-public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User>  {
+public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     Optional<User> findByUsername(String login);
 
     boolean existsByUsername(String login);
@@ -20,10 +20,11 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
     Optional<User> findByCodPersona(String codPersona);
-    
+
     @Query("select b from User b where b.idUnidEmpl = :idPersona ")
-    Optional<User> findByIdPersona(@Param(value = "idPersona") Integer idPersona);    
+    Optional<User> findByIdPersona(@Param(value = "idPersona") Integer idPersona);
 
     Page<User> findAll(Specification<User> specification, Pageable pageable);
 }

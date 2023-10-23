@@ -1,10 +1,11 @@
 package gob.gamo.activosf.app.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,27 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
-import gob.gamo.activosf.app.domain.entities.User;
-import gob.gamo.activosf.app.dto.EmpleadoVo;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.EmpleadoRepository;
-import gob.gamo.activosf.app.search.SearchCriteria;
-import gob.gamo.activosf.app.search.SearchQueryCriteriaConsumer;
 import gob.gamo.activosf.app.utils.UtilsDate;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 @Slf4j
 @Service
@@ -42,6 +30,7 @@ public class EmpleadoService {
     private final EmpleadoRepository repositoryEntity;
     private final PersonaService personaService;
     private final UnidadService unidadService;
+
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -54,157 +43,185 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado crearNuevo(OrgEmpleado entity) {
-        if (entity.getId() != null)
-            new DataException("Entidad con id, debe ser nulo");
+        if (entity.getId() != null) new DataException("Entidad con id, debe ser nulo");
 
         validar(entity);
-        OrgPersona p = personaService.findById(entity.getIdPersona());
-        OrgUnidad u = unidadService.findById(entity.getIdUnidad());
+        OrgPersona persona = personaService.findById(entity.getIdPersona());
+        OrgUnidad unidad = unidadService.findById(entity.getIdUnidad());
 
-        PersonaService.validar(p);
-        UnidadService.validar(u);
-        boolean isPersona = p.getTipopers().compareTo(Constants.TAB_TIPOPERS_NATURAL) == 0;
+        PersonaService.validar(persona);
+        UnidadService.validar(unidad);
+
+        boolean isPersona = persona.getTipopers().compareTo(Constants.TAB_TIPOPERS_NATURAL) == 0;
         if (!isPersona) {
-            throw new DataException(
-                    "Persona (" + p.getNombre() + ") debe ser natural");
+            throw new DataException("Persona (" + persona.getNombre() + ") debe ser natural");
         }
 
         Optional<OrgEmpleado> empOld = empleadoActivo(entity.getIdPersona());
         if (empOld.isPresent()) {
-            throw new DataException("Persona se encuentra activo " + empOld.get().getId() + " no puede continuar.");
+            throw new DataException(
+                    "Persona se encuentra activo como empleado " + empOld.get().getId() + " no puede continuar.");
         }
+
         Optional<OrgEmpleado> unidBoss = empleadoBoss(entity.getIdUnidad(), true);
-        if (unidBoss.isPresent()) {
-            if (unidBoss.get().getRolempleado().compareTo(entity.getRolempleado()) == 0) {
-                throw new DataException("Unidad ya tiene asignado empleado con rol "
-                        + unidBoss.get().getRolempleadodesc().getDesDescrip()
-                        + " no puede continuar.");
-            }
-        } else {
-            if (u.getRolempleado().compareTo(entity.getRolempleado()) != 0) {
-                throw new DataException(
-                        "Unidad No tiene asignado empleado con rol " + u.getRolempleadodesc().getDesDescrip()
-                                + " no puede continuar.");
-            }
-        }
-        // suspenderTodo(entity.getIdPersona());
+        validarNewUnidad(entity, unidad, unidBoss);
 
         OrgEmpleado newEntity = repositoryEntity.save(entity);
+
+        updUnidadBoss(newEntity);
+
         log.info("entitiy creado {}", newEntity.getId());
         return newEntity;
     }
 
     @Transactional
-    public OrgEmpleado update(OrgEmpleado entity) {
-        if (entity.getId() == null || entity.getId().compareTo(0) == 0)
-            throw new DataException("Entidad con id, debe nulo");
+    public OrgEmpleado update(OrgEmpleado entityNew) {
+        if (entityNew.getId() == null) throw new DataException("Empleado con id nulo");
 
-        validar(entity);
-        OrgPersona p = personaService.findById(entity.getIdPersona());
-        OrgUnidad u = unidadService.findById(entity.getIdUnidad());
+        validar(entityNew);
+        OrgPersona p = personaService.findById(entityNew.getIdPersona());
+        OrgUnidad unidadNew = unidadService.findById(entityNew.getIdUnidad());
+
+        OrgEmpleado empleadoOld = findById(entityNew.getId());
+
+        if (empleadoOld.getFechaBaja() != null) {
+            throw new DataException("Empleado ya fue dado de baja: " + empleadoOld.getId());
+        }
 
         PersonaService.validar(p);
-        UnidadService.validar(u);
+        UnidadService.validar(unidadNew);
 
         boolean isPersona = p.getTipopers().compareTo(Constants.TAB_TIPOPERS_NATURAL) == 0;
         if (!isPersona) {
-            throw new DataException(
-                    "Persona (" + p.getNombre() + ") debe ser natural");
+            throw new DataException("Persona (" + p.getNombre() + ") debe ser natural");
         }
 
-        Optional<OrgEmpleado> unidBoss = empleadoBoss(entity.getIdUnidad(), true);
-        if (unidBoss.isPresent()) {
-            if (entity.getIdPersona().compareTo(unidBoss.get().getIdPersona()) != 0
-                    && unidBoss.get().getRolempleado().compareTo(entity.getRolempleado()) == 0) {
-                throw new DataException("Unidad ya tiene asignado empleado con rol "
-                        + unidBoss.get().getRolempleadodesc().getDesDescrip()
-                        + " no puede continuar.");
-            }
-        } else {
-            if (u.getRolempleado().compareTo(entity.getRolempleado()) != 0) {
-                throw new DataException(
-                        "Unidad No tiene asignado empleado con rol Principal " + u.getRolempleadodesc().getDesDescrip()
-                                + " no puede continuar.");
+        Optional<OrgEmpleado> unidBossOld = empleadoBoss(empleadoOld.getIdUnidad(), true);
+
+        validarOldUnidad(empleadoOld, entityNew, unidBossOld);
+
+        if (unidBossOld.isPresent()) {
+            if (unidBossOld.get().getId().compareTo(empleadoOld.getId()) != 0
+                    && empleadoOld.getUnidad().getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
+                // change of boss
+                Date fBaja = UtilsDate.compara(
+                                        entityNew.getFechaIngreso(),
+                                        unidBossOld.get().getFechaIngreso())
+                                >= 0
+                        ? entityNew.getFechaIngreso()
+                        : unidBossOld.get().getFechaIngreso();
+                bajaEmpleado(unidBossOld.get().getId(), fBaja, false);
             }
         }
-        OrgEmpleado eold = findById(entity.getId());
-        /*
-         * eold.setFechaIngreso(entity.getFechaIngreso());
-         * eold.setCodInternoempl(entity.getCodInternoempl());
-         */
-        if (eold.getFechaBaja() != null) {
-            throw new DataException("Empleado ya fue dado de baja");
-        }
-        log.info("fecha ingreso: {} [{}]", UtilsDate.stringFromDate(entity.getFechaIngreso(), "dd/MM/yyyy"),
-                entity.getFechaIngreso());
-        OrgEmpleado newEntity = repositoryEntity.save(entity);
+
+        Optional<OrgEmpleado> unidBossNew = empleadoBoss(entityNew.getIdUnidad(), true);
+        validarNewUnidad(entityNew, unidadNew, unidBossNew);
+
+        empleadoOld.setCodInternoempl(entityNew.getCodInternoempl());
+        empleadoOld.setCodPersona(entityNew.getCodPersona());
+        empleadoOld.setEstado(entityNew.getEstado());
+        empleadoOld.setFechaIngreso(entityNew.getFechaIngreso());
+        empleadoOld.setIdCargo(entityNew.getIdCargo());
+        empleadoOld.setIdEmpleadopadre(entityNew.getIdEmpleadopadre());
+        empleadoOld.setIdUnidad(entityNew.getIdUnidad());
+        // empleadoOld.setIdPersona(entityNew.getIdPersona());
+        empleadoOld.setTabRolempleado(entityNew.getTabRolempleado());
+        empleadoOld.setRolempleado(entityNew.getRolempleado());
+        empleadoOld.setIdCargo(entityNew.getIdCargo());
+
+        OrgEmpleado newEntity = repositoryEntity.save(empleadoOld);
+        updUnidadBoss(newEntity);
+
         return newEntity;
     }
 
     @Transactional
-    public void delete(Integer id, EmpleadoVo entityReq) {
-
+    public void bajaEmpleado(Integer id, Date fechaBaja, boolean verificaUnidBoss) {
         OrgEmpleado e = findById(id);
         if (e.getFechaBaja() != null) {
             throw new DataException("Empleado ya fue dado de baja");
         }
-        if (entityReq.fechaBaja() == null) {
+        if (fechaBaja == null) {
             throw new DataException("Operación requiere fecha de baja");
         }
-        ;
-        if (e.getFechaIngreso() != null && UtilsDate.compara(e.getFechaIngreso(), entityReq.fechaBaja()) > 0) {
+
+        if (e.getFechaIngreso() != null && UtilsDate.compara(e.getFechaIngreso(), fechaBaja) > 0) {
             throw new DataException("Fecha ingreso mayor a fecha baja");
         }
-        e.setFechaBaja(entityReq.fechaBaja());
-        repositoryEntity.save(e);
 
-        // repositoryEntity.deleteById(id);
+        boolean isBoss = false;
+        Optional<OrgEmpleado> unidBossOld = empleadoBoss(e.getIdUnidad(), false);
+        if (unidBossOld.isPresent()) {
+            isBoss = unidBossOld.get().getId().compareTo(id) == 0;
+            if (verificaUnidBoss && isBoss) {
+                throw new DataException("Empleado asignado con rol Principal en unidad.");
+            }
+
+            if (isBoss) {
+                // change of boss
+                log.info("Change of boss unidad {} from {} to {}", e.getIdUnidad(), e.getId(), "NULL");
+                unidadService.updateIdEmpleado(e.getIdUnidad(), null);
+            }
+        }
+        e.setFechaBaja(fechaBaja);
+        repositoryEntity.save(e);
+    }
+
+    @Transactional
+    public void updUnidadBoss(OrgEmpleado entityNew) {
+        OrgUnidad unidadNew = unidadService.findById(entityNew.getIdUnidad());
+        if (unidadNew.getIdEmpleado() == null) {
+            Optional<OrgEmpleado> boss = empleadoBoss(entityNew.getIdUnidad(), false);
+            if (boss.isPresent()) {
+                unidadService.updateIdEmpleado(
+                        unidadNew.getIdUnidad(), boss.get().getId());
+            }
+        } else {
+            if (unidadNew.getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
+                unidadService.updateIdEmpleado(unidadNew.getIdUnidad(), entityNew.getId());
+            }
+        }
+    }
+
+    @Transactional
+    public void eliminarEmpleado(Integer id) {
+        OrgEmpleado e = findById(id);
+        e.setFechaBaja(new Date());
+        repositoryEntity.save(e);
     }
 
     public OrgEmpleado findById(Integer id) {
         return repositoryEntity
                 .findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Registro not found : `%s`".formatted(id)));
-    }
-
-    public OrgEmpleado nuevo(OrgEmpleado e) {
-        return e.builder().codInternoempl(null).build();
-    }
-
-    public Optional<OrgEmpleado> getByIdPersonaActivo(Integer idPersona, Integer idUnidad, Integer rolempleado) {
-        Optional<OrgEmpleado> empOld = empleadoActivo(idPersona);
-        List<OrgEmpleado> list = repositoryEntity.findByIdPersonaActivo(idPersona);
-        if (list.size() > 1) {
-
-        }
-        for (OrgEmpleado e : list) {
-
-        }
-        return null;
+                .orElseThrow(() -> new DataException("Empleado inexistente : `%s`".formatted(id)));
     }
 
     public Optional<OrgEmpleado> empleadoActivo(Integer idPersona) {
         List<OrgEmpleado> list = repositoryEntity.findByIdPersonaActivo(idPersona);
-        if (list.size() > 1) {
-            throw new DataException(
-                    "Empleado registrado activo mas de una vez  " + list.get(0).getId());
-        }
-        if (list.size() > 0) {
+        if (list.size() == 1) {
             return Optional.of(list.get(0));
         }
         return Optional.empty();
     }
 
     public Optional<OrgEmpleado> empleadoBoss(Integer idUnidad, boolean verifica) {
-        List<OrgEmpleado> l = repositoryEntity.empleadosBoss(idUnidad);
-        if (l.size() > 1 && verifica) {
-            throw new DataException(
-                    "Unidad " + idUnidad + " con mas de un empleado con rol "
-                            + l.get(0).getRolempleadodesc().getDesDescrip());
+        Optional<OrgEmpleado> boss = repositoryEntity.empleadoBoss(idUnidad);
+
+        if (boss.isPresent()) {
+            return boss;
         }
-        if (l.size() == 1) {
+        //        OrgUnidad unidad = unidadService.findById(idUnidad);
+        List<OrgEmpleado> l = repositoryEntity.empleadosBoss(idUnidad);
+
+        if (l.size() > 1 && verifica) {
+            throw new DataException("Unidad " + idUnidad + " con mas de un empleado activo con rol "
+                    + l.get(0).getRolempleadodesc().getDesDescrip());
+        }
+
+        if (l.size() > 0) {
             return Optional.of(l.get(0));
         }
+
         return Optional.empty();
     }
 
@@ -213,7 +230,7 @@ public class EmpleadoService {
         return l;
     }
 
-    public void suspenderTodo(Integer idPersona) {
+    private void suspenderTodo(Integer idPersona) {
         List<OrgEmpleado> l = repositoryEntity.findAllByIdPersona(idPersona);
         for (OrgEmpleado orgEmpleado : l) {
             if (orgEmpleado.getFechaBaja() == null) {
@@ -238,40 +255,56 @@ public class EmpleadoService {
         }
     }
 
-    public List<OrgEmpleado> search(SearchCriteria params) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Tuple> query = builder.createTupleQuery();
-        final Root<OrgEmpleado> root = query.from(OrgEmpleado.class);
-        Join<OrgEmpleado, OrgPersona> joinPersona = root.join("persona", JoinType.INNER);
+    public void validarOldUnidad(OrgEmpleado empleadoOld, OrgEmpleado entityNew, Optional<OrgEmpleado> unidBoss) {
+        OrgUnidad unidOld = empleadoOld.getUnidad();
+        // Optional<OrgEmpleado> unidBoss = empleadoBoss(entity.getIdUnidad(), true);
+        if (unidBoss.isPresent()) {
+            if (entityNew.getId() != null
+                    && entityNew.getId().compareTo(unidBoss.get().getId()) == 0) {
+                if (unidOld != null && unidOld.getRolempleado().compareTo(entityNew.getRolempleado()) != 0) {
+                    throw new DataException("Empleado asignado con rol Principal "
+                            + unidOld.getRolempleadodesc().getDesDescrip()
+                            + " de la unidad " + unidOld.getIdUnidad() + " - " + unidOld.getNombre()
+                            + " primero asigne nuevo personal principal.");
+                }
 
-/*         Join<OrgEmpleado,OrgPersona> joinPersona = root.join("empleado", JoinType.INNER);
-        Join<OrgPersona,User> joinUsuario = root.join("user", JoinType.INNER);    */
-        
-        query.multiselect(root, joinPersona); // root.get("nombre")
-
-        Predicate predicate = builder.conjunction();
-
-        SearchQueryCriteriaConsumer<OrgEmpleado> searchConsumer = new SearchQueryCriteriaConsumer<OrgEmpleado>(
-                predicate,
-                builder, root);
-
-        searchConsumer.accept(params);
-        Predicate predicateR = searchConsumer.getPredicate();
-        query.where(predicateR);
-
-        List<Tuple> l = entityManager.createQuery(query).getResultList();
-
-        return l.stream().map(r -> {
-            OrgEmpleado e = (OrgEmpleado) r.get(0);
-            return e;
-        }).map((x) -> x).toList();
+                if (entityNew.getIdUnidad().compareTo(unidBoss.get().getIdUnidad()) != 0) {
+                    throw new DataException("Empleado asignado con rol Principal "
+                            + unidBoss.get().getUnidad().getRolempleadodesc().getDesDescrip()
+                            + " de la unidad " + unidBoss.get().getIdUnidad()
+                            + ". Designe primero uno nuevo a la unidad con rol principal.");
+                }
+            }
+        }
     }
-    /*
-     * public OrgEmpleado existsOrgEmpleado(String id) {
-     * return repositoryEntity
-     * .findBy Sigla(id)
-     * .orElseThrow(() -> new
-     * NoSuchElementException("Registro not found : `%s`".formatted(id)));
-     * }
-     */
+
+    public void validarNewUnidad(OrgEmpleado entityNew, OrgUnidad unidadNew, Optional<OrgEmpleado> unidBoss) {
+        if (unidBoss.isPresent()) {
+            if (unidadNew.getIdEmpleado() != null
+                    && entityNew.getId() != null
+                    && unidadNew.getIdEmpleado().compareTo(entityNew.getId()) != 0) {
+                // not is boss
+                if (unidadNew.getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
+                    throw new DataException("Unidad ya tiene asignado empleado con rol "
+                            + unidBoss.get().getRolempleadodesc().getDesDescrip()
+                            + " no puede continuar.");
+                }
+            }
+
+            if (entityNew.getId() == null) {
+                if (unidadNew.getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
+                    throw new DataException("Unidad ya tiene asignado empleado con rol "
+                            + unidBoss.get().getRolempleadodesc().getDesDescrip()
+                            + " no puede continuar.");
+                }
+            }
+
+        } else {
+            if (unidadNew.getRolempleado().compareTo(entityNew.getRolempleado()) != 0) {
+                throw new DataException("Unidad " + unidadNew.getIdUnidad() + " No tiene asignado empleado con rol "
+                        + unidadNew.getRolempleadodesc().getDesDescrip()
+                        + " no puede continuar.");
+            }
+        }
+    }
 }

@@ -18,13 +18,18 @@ public class GenericSpecificationsBuilder<U> {
         this.params = new ArrayList<>();
     }
 
-    public final GenericSpecificationsBuilder<U> with(final String key, final String operation, final Object value,
-            final String prefix, final String suffix) {
+    public final GenericSpecificationsBuilder<U> with(
+            final String key, final String operation, final Object value, final String prefix, final String suffix) {
         return with(null, key, operation, value, prefix, suffix);
     }
 
-    public final GenericSpecificationsBuilder<U> with(final String precedenceIndicator, final String key,
-            final String operation, final Object value, final String prefix, final String suffix) {
+    public final GenericSpecificationsBuilder<U> with(
+            final String precedenceIndicator,
+            final String key,
+            final String operation,
+            final Object value,
+            final String prefix,
+            final String suffix) {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
             if (op == SearchOperation.EQUALITY) // the operation may be complex operation
@@ -51,26 +56,22 @@ public class GenericSpecificationsBuilder<U> {
             return null;
         }
 
-        final List<Specification<U>> specs = params.stream()
-                .map(converter)
-                .collect(Collectors.toCollection(ArrayList::new));
+        final List<Specification<U>> specs =
+                params.stream().map(converter).collect(Collectors.toCollection(ArrayList::new));
 
         Specification<U> result = specs.get(0);
 
         for (int idx = 1; idx < specs.size(); idx++) {
-            result = params.get(idx)
-                    .isOrPredicate()
-                            ? Specification.where(result)
-                                    .or(specs.get(idx))
-                            : Specification.where(result)
-                                    .and(specs.get(idx));
+            result = params.get(idx).isOrPredicate()
+                    ? Specification.where(result).or(specs.get(idx))
+                    : Specification.where(result).and(specs.get(idx));
         }
 
         return result;
     }
 
-    public Specification<U> build(Deque<?> postFixedExprStack,
-            Function<SpecSearchCriteria, Specification<U>> converter) {
+    public Specification<U> build(
+            Deque<?> postFixedExprStack, Function<SpecSearchCriteria, Specification<U>> converter) {
 
         Deque<Specification<U>> specStack = new LinkedList<>();
 
@@ -85,20 +86,15 @@ public class GenericSpecificationsBuilder<U> {
                 Specification<U> operand1 = specStack.pop();
                 Specification<U> operand2 = specStack.pop();
                 if (mayBeOperand.equals(SearchOperation.AND_OPERATOR))
-                    specStack.push(Specification.where(operand1)
-                            .and(operand2));
+                    specStack.push(Specification.where(operand1).and(operand2));
                 else if (mayBeOperand.equals(SearchOperation.OR_OPERATOR))
-                    specStack.push(Specification.where(operand1)
-                            .or(operand2));
+                    specStack.push(Specification.where(operand1).or(operand2));
             }
-
         }
         return specStack.pop();
-
     }
 
     public List<SpecSearchCriteria> getParams() {
         return params;
     }
-
 }

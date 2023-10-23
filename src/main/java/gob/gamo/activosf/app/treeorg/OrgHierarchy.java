@@ -1,9 +1,11 @@
 package gob.gamo.activosf.app.treeorg;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -14,8 +16,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
     public boolean isEmpty() {
         if (this.root == null) {
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     public int size() {
@@ -26,8 +27,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         Node<T> requiredEmployee = search(id);
         if (requiredEmployee == null) {
             throw new IllegalIDException("No existe registro con  ID : " + id + "!");
-        } else
-            return requiredEmployee.getLevel();
+        } else return requiredEmployee.getLevel();
     }
 
     public int maxLevel() {
@@ -36,8 +36,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
 
         for (Node<T> child : nRoot.childArray) {
             int lvl = maxLevel(1, child);
-            if (lvl > nlvl)
-                nlvl = lvl;
+            if (lvl > nlvl) nlvl = lvl;
         }
 
         return nlvl;
@@ -47,11 +46,9 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         int nlvl = lvl;
         for (Node<T> child : n.childArray) {
             int lch = maxLevel(lvl + 1, child);
-            if (lch >= nlvl)
-                nlvl = lch;
+            if (lch >= nlvl) nlvl = lch;
         }
-        if (lvl == nlvl)
-            nlvl = lvl + 1;
+        if (lvl == nlvl) nlvl = lvl + 1;
         // log.info("malevel {} -> {}",lvl, nlvl);
         return nlvl;
     }
@@ -60,8 +57,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
         Node<T> requiredEmployee = searchInTree(id);
         if (requiredEmployee == null) {
             throw new IllegalIDException("No existe registro con  ID : " + id + "!");
-        } else
-            return requiredEmployee;
+        } else return requiredEmployee;
     }
 
     public Node<T> searchInTree(int id) {
@@ -229,8 +225,7 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
             }
             if (commonpointer != null) {
                 break;
-            } else
-                pointer1 = pointer1.parent;
+            } else pointer1 = pointer1.parent;
         }
         return commonpointer.getKey();
     }
@@ -313,10 +308,21 @@ public class OrgHierarchy<T> extends Tree<T> implements OrgHierarchyInterface<T>
                                     .collect(Collectors.joining(";"))
                             + "]")
                     .collect(Collectors.joining("   "));
-            if (e1.size() > 0)
-                strl.add(sn2);
+            if (e1.size() > 0) strl.add(sn2);
         }
         return strl;
+    }
+
+    public Map<Integer, LinkedList<Node<T>>> treeByLevels(Node<T> root) {
+        Map<Integer, LinkedList<Node<T>>> mapa = new HashMap<>();
+
+        List<String> strl = new ArrayList<>();
+        int lvl = maxLevel();
+        for (int i = 1; i <= lvl; i++) {
+            LinkedList<Node<T>> e1 = getbylevel(root, i);
+            if (e1.size() > 0) mapa.put(i, e1);
+        }
+        return mapa;
     }
 
     public Node<T> returnRoot() {

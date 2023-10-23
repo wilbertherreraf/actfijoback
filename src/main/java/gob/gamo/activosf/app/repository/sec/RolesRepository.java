@@ -10,9 +10,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import gob.gamo.activosf.app.domain.entities.Roles;
 
-public interface RolesRepository extends JpaRepository<Roles, Integer>, JpaSpecificationExecutor<Roles>  {
+public interface RolesRepository extends JpaRepository<Roles, Integer>, JpaSpecificationExecutor<Roles> {
     Optional<Roles> findByCodrol(String codrol);
 
     Page<Roles> findAll(Pageable pageable);
+
     Page<Roles> findAll(Specification<Roles> specification, Pageable pageable);
 }

@@ -96,7 +96,8 @@ public class RolesController {
     @GetMapping(Constants.API_ROLES + "/{slug}" + Constants.API_PERMISOS)
     public ResponseEntity<List<Recurso>> rolesPermisos(@PathVariable(value = "slug") String id, Pageable pageable) {
         Roles result = repository.findByCodrol(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<Recurso> empl = result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
+        Set<Recurso> empl =
+                result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
         Page<Recurso> pageRet = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 
@@ -112,7 +113,8 @@ public class RolesController {
             @PathVariable(value = "slug") String id, @RequestBody RolesVO request, Pageable pageable) {
 
         Roles result = repository.findByCodrol(id).orElseThrow(() -> new DataException("Registro inexistente"));
-        Set<Recurso> empl = result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
+        Set<Recurso> empl =
+                result.getIncludeRecursos().stream().map(x -> x.getRecurso()).collect(Collectors.toSet());
         Page<Recurso> pageRet = PaginationUtil.pageForList(
                 (int) pageable.getPageNumber(), pageable.getPageSize(), new ArrayList<>(empl));
 

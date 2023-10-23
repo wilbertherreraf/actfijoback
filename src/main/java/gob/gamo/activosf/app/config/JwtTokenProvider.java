@@ -73,7 +73,7 @@ public class JwtTokenProvider {
 
     public String generateToken(final String userId, Collection<? extends GrantedAuthority> grantedAuthorities) {
         String idSession = UUID.randomUUID().toString().replace("-", "");
-        UserVO userVO = new UserVO(null,userId, "", idSession, "", "", null, new ArrayList<>());
+        UserVO userVO = new UserVO(null, userId, "", idSession, "", "", null, new ArrayList<>());
 
         Gson gson = new Gson();
         sessionsSearcherService.createSession(idSession, gson.toJson(userVO));
@@ -106,7 +106,7 @@ public class JwtTokenProvider {
 
         Jwt tokenJwt = jwtDecoder.decode(token);
 
-/*         tokenJwt.getClaims().entrySet().forEach(t -> {
+        /*         tokenJwt.getClaims().entrySet().forEach(t -> {
             log.info("::Claims entry {} -> {}", t.getKey(), t.getValue());
         }); */
 
@@ -242,7 +242,7 @@ public class JwtTokenProvider {
                 .stream()
                 .flatMap(List::stream)
                 .toList());
-        //log.info("XXX: permissions added {}", grantedAuthorities.size());
+        // log.info("XXX: permissions added {}", grantedAuthorities.size());
         return grantedAuthorities;
     }
 }

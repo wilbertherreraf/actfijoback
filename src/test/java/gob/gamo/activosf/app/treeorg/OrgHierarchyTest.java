@@ -32,6 +32,8 @@ public class OrgHierarchyTest {
     OrgUnidad u16 = OrgUnidad.builder().idUnidad(101).idUnidadPadre(12).domicilio("101 asdwerqe").build();
     OrgUnidad u17 = OrgUnidad.builder().idUnidad(102).idUnidadPadre(101).domicilio("101 asdwerqe").build();
     OrgUnidad u18 = OrgUnidad.builder().idUnidad(105).idUnidadPadre(102).domicilio("105 asdwerqe").build();
+    OrgUnidad u19 = OrgUnidad.builder().idUnidad(19).domicilio("19 asdwerqe").build();
+    OrgUnidad u20 = OrgUnidad.builder().idUnidad(20).domicilio("10 asdwerqe").build();
 
     @Test
     void tree() {
@@ -78,7 +80,7 @@ public class OrgHierarchyTest {
             Node<OrgUnidad> unold = org.searchNode(u5.getIdUnidad());
             log.info("Replace ch> {} lvl: {}", unold.nodeID(), unold.maxLevel());
             org.replaceWithOtherNode(u2.getIdUnidad(), u3.getIdUnidad());
-            //org.fireWithNew(u2.getIdUnidad(), createNode(u18), u18.getIdUnidadPadre());
+            // org.fireWithNew(u2.getIdUnidad(), createNode(u18), u18.getIdUnidadPadre());
             // org.hireEmployee(createNode(u2), u2.getIdUnidadPadre());
 
             org.nivls(unold).stream().forEach(l -> {
@@ -197,27 +199,64 @@ public class OrgHierarchyTest {
     }
 
     @Test
+    void genTreeOrgNodesTest() {
+        try {
+            log.info("********* iniciooooooooooooooo genTreeOrgNodesTest ************ ");
+            List<OrgUnidad> list = Arrays.asList(u20,
+                    u5, u19, u9,
+                    u10, u11, u1,
+                    u12, u15, u16,
+                    u17, u6, u7,
+                    u2, u3,
+                    u8, u18);
+
+            OrgHierarchyInterface<OrgUnidad> org = UnidadService.generarOrgTreeFromList(list);
+            if (org.getRoot() == null) {
+                throw new DataException("Arbol no pudo geenerar raiz");
+            }
+            log.info("Root {}", org.getRoot().getKey());
+            Node<OrgUnidad> root = org.returnRoot();
+            if (root == null) {
+                throw new DataException("Registro raiz inexistente");
+            }
+            log.info("Node Root {}", root.getKey());
+            org.nivls(root).stream().forEach(l -> {
+                log.info("" + l);
+            });
+        } catch (Exception e) {
+            log.error("Erro " + e.getMessage(), e);
+        }
+    }
+
+    @Test
     void genTreeNodesTest() {
         try {
             log.info("********* iniciooooooooooooooo genTreeNodesTest ************ ");
             OrgHierarchy<OrgUnidad> org = new OrgHierarchy<OrgUnidad>();
-            u2.setIdUnidadPadre(null);
-            List<OrgUnidad> list = Arrays.asList(u10, u11, u15, u2, u3, u1, u5, u17, u16, u7, u8, u9, u12);
+            List<OrgUnidad> list = Arrays.asList(
+                    u2, u20, u3,
+                    u5, u19, u9,
+                    u10, u11, u1,
+                    u12, u15, u16,
+                    u17, u6, u7,
+                    u8, u18
+
+            );
 
             Integer idpadre = 102;
-            OrgUnidad root = searchRoot(list, idpadre);
+            OrgUnidad root = UnidadService.searchRoot(list, u2,u2.getIdUnidad());
             if (root == null) {
                 throw new DataException("Registro raiz inexistente");
             }
             log.info("Root lista {}", root.getIdUnidad());
             org.hireOwner(new Node<OrgUnidad>(root.getIdUnidad(), root));
 
-            List<OrgUnidad> hijosRoot = hijos(list, root.getIdUnidad());
+            List<OrgUnidad> hijosRoot = UnidadService.hijos(list, root.getIdUnidad());
 
             for (OrgUnidad ou : hijosRoot) {
                 org.addNewChild(createNode(ou), ou.getIdUnidadPadre());
 
-               log.info("Root OU: {} padre: {} ", ou.getIdUnidad(), ou.getIdUnidadPadre());
+                log.info("Root OU: {} padre: {} ", ou.getIdUnidad(), ou.getIdUnidadPadre());
                 addHijos(list, org, ou.getIdUnidad());
             }
 
@@ -229,8 +268,8 @@ public class OrgHierarchyTest {
             });
 
             log.info("sixe org {} vs sixe list {}", org.size(), list.size());
-            //org.fireEmployee(u2.getIdUnidad(), u3.getIdUnidad());
-            //org = UnidadService.generarOrgTree(list, u12);
+            // org.fireEmployee(u2.getIdUnidad(), u3.getIdUnidad());
+            // org = UnidadService.generarOrgTree(list, u12);
             org.updateParent(12, 5);
             u12.setIdUnidadPadre(5);
             org = (OrgHierarchy<OrgUnidad>) UnidadService.generarOrgTree(list, u12);
@@ -260,10 +299,51 @@ public class OrgHierarchyTest {
             log.error("Erro " + e.getMessage(), e);
         }
     }
+
+    @Test
+    void treePrint() {
+        try {
+            log.info("********* iniciooooooooooooooo ************ root {} ", u1.getIdUnidad());
+            OrgHierarchyInterface<OrgUnidad> org = new OrgHierarchy<OrgUnidad>();
+            org.hireOwner(new Node<OrgUnidad>(u1.getIdUnidad(), u1));
+
+            org.addNewChild(createNode(u2), u2.getIdUnidadPadre());
+            org.addNewChild(createNode(u3), u3.getIdUnidadPadre());
+            org.addNewChild(createNode(u5), u5.getIdUnidadPadre());
+            org.addNewChild(createNode(u6), u6.getIdUnidadPadre());
+            org.addNewChild(createNode(u7), u7.getIdUnidadPadre());
+            org.addNewChild(createNode(u8), u8.getIdUnidadPadre());
+            org.addNewChild(createNode(u9), u9.getIdUnidadPadre());
+            org.addNewChild(createNode(u10), u10.getIdUnidadPadre());
+            org.addNewChild(createNode(u11), u11.getIdUnidadPadre());
+            org.addNewChild(createNode(u12), u12.getIdUnidadPadre());
+            org.addNewChild(createNode(u15), u15.getIdUnidadPadre());
+            org.addNewChild(createNode(u16), u16.getIdUnidadPadre());
+            org.addNewChild(createNode(u17), u17.getIdUnidadPadre());
+            // org.hireEmployee(createNode(u12), u12.getIdUnidadPadre());
+
+            Node<OrgUnidad> rootid = org.returnRoot();
+            org.nivls(rootid).stream().forEach(l -> {
+                log.info("" + l);
+            });
+
+            org.treeByLevels(rootid).entrySet().stream().forEach(l -> {
+                Integer key = l.getKey();
+                LinkedList<Node<OrgUnidad>> value = l.getValue();
+                for (Node<OrgUnidad> node : value) {
+                    int idParent = node.getParent() != null ? node.getParent().getKey() : 0;
+                    log.info("Level [{}] ({}) k: {} ch: {}", key, idParent, node.getKey(), node.childArray.size());
+                }
+            });
+        } catch (Exception e) {
+            log.error("Erro " + e.getMessage(), e);
+        }
+    }
+
     public void addHijos(List<OrgUnidad> list, OrgHierarchyInterface<OrgUnidad> org, Integer idUnidad) {
         List<OrgUnidad> hijosRoot = hijos(list, idUnidad);
         for (OrgUnidad ou : hijosRoot) {
-            log.info("  Add OU: {} hijo: {} hijos: [{}]", idUnidad, ou.getIdUnidad(), hijosRoot.size());            
+            log.info("  Add OU: {} hijo: {} hijos: [{}]", idUnidad, ou.getIdUnidad(), hijosRoot.size());
             org.addNewChild(createNode(ou), ou.getIdUnidadPadre());
             addHijos(list, org, ou.getIdUnidad());
         }

@@ -15,11 +15,18 @@ public final class UserSpecificationsBuilder<T> {
 
     // API
 
-    public final UserSpecificationsBuilder<T> with(final String key, final String operation, final Object value, final String prefix, final String suffix) {
+    public final UserSpecificationsBuilder<T> with(
+            final String key, final String operation, final Object value, final String prefix, final String suffix) {
         return with(null, key, operation, value, prefix, suffix);
     }
 
-    public final UserSpecificationsBuilder<T> with(final String orPredicate, final String key, final String operation, final Object value, final String prefix, final String suffix) {
+    public final UserSpecificationsBuilder<T> with(
+            final String orPredicate,
+            final String key,
+            final String operation,
+            final Object value,
+            final String prefix,
+            final String suffix) {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
             if (op == SearchOperation.EQUALITY) { // the operation may be complex operation
@@ -40,17 +47,16 @@ public final class UserSpecificationsBuilder<T> {
     }
 
     public Specification<T> build() {
-        if (params.size() == 0)
-            return null;
+        if (params.size() == 0) return null;
 
         Specification<T> result = new UserSpecification<T>(params.get(0));
-     
+
         for (int i = 1; i < params.size(); i++) {
             result = params.get(i).isOrPredicate()
-              ? Specification.where(result).or(new UserSpecification(params.get(i))) 
-              : Specification.where(result).and(new UserSpecification(params.get(i)));
+                    ? Specification.where(result).or(new UserSpecification(params.get(i)))
+                    : Specification.where(result).and(new UserSpecification(params.get(i)));
         }
-        
+
         return result;
     }
 
@@ -63,7 +69,8 @@ public final class UserSpecificationsBuilder<T> {
         params.add(criteria);
         return this;
     }
-    public List<SpecSearchCriteria> getParams(){
+
+    public List<SpecSearchCriteria> getParams() {
         return params;
     }
 }

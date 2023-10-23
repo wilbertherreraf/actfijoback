@@ -3,6 +3,7 @@ package gob.gamo.activosf.app.treeorg;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public interface OrgHierarchyInterface<T> {
     public boolean isEmpty(); /* Returns true if the organization is empty. */
@@ -49,7 +50,9 @@ public interface OrgHierarchyInterface<T> {
                                                                                * it is the owner, throw the
                                                                                * IllegalIDException.
                                                                                */
+
     public void updateParent(int id, int bossid);
+
     public int boss(int id) throws IllegalIDException; /*
                                                         * Returns the id of the immediate boss, the employee. Output -1
                                                         * if id is the owner’s ID
@@ -88,12 +91,16 @@ public interface OrgHierarchyInterface<T> {
     public Node<T> getRoot();
 
     public Node<T> searchNode(int id) throws IllegalIDException;
-    public Node<T> searchInTree(int id) ;
+
+    public Node<T> searchInTree(int id);
+
     public LinkedHashMap<Integer, Node<T>> returnChildrens(Node<T> root);
 
     public LinkedList<Node<T>> getbylevel(Node<T> root, int level);
 
     public List<String> nivls(Node<T> root);
+
+    public Map<Integer, LinkedList<Node<T>>> treeByLevels(Node<T> root);
 
     public Node<T> returnRoot();
 }

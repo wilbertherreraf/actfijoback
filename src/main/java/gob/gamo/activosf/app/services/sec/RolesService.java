@@ -12,12 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import gob.gamo.activosf.app.domain.OrgUnidad;
+
 import gob.gamo.activosf.app.domain.entities.Profile;
 import gob.gamo.activosf.app.domain.entities.Recurso;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.sec.ProfileRepository;
@@ -49,9 +48,9 @@ public class RolesService {
         if (deque.size() > 0) {
             GenericSpecificationsBuilder<Roles> specBuilder = new GenericSpecificationsBuilder<>();
             Specification<Roles> spec = specBuilder.build(deque, UserSpecification::new);
-            Page<Roles> list0 = rolesRepository.findAll(spec,pageable);
+            Page<Roles> list0 = rolesRepository.findAll(spec, pageable);
             return list0;
-        }        
+        }
         Page<Roles> list = rolesRepository.findAll(pageable);
         return list;
     }

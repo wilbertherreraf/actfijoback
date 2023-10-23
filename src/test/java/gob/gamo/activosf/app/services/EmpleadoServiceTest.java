@@ -33,8 +33,8 @@ public class EmpleadoServiceTest {
             scAnd.getChildren().add(scNombre);
             scAnd.getChildren().add(scFecha);
 
-            List<OrgEmpleado>  l = empleadoService.search(root);
-            log.info("emples {}", l.size());
+            /* List<OrgEmpleado>  l = empleadoService.search(root);
+            log.info("emples {}", l.size()); */
         } catch (Exception e) {
             log.error("Error:" + e.getMessage(), e);
         }
@@ -51,9 +51,9 @@ public class EmpleadoServiceTest {
             root.getChildren().add(scAnd);
             scAnd.getChildren().add(scNombre);
             scAnd.getChildren().add(scFecha);
-
+/* 
             List<OrgEmpleado>  l = empleadoService.search(root);
-            log.info("emples {}", l.size());
+            log.info("emples {}", l.size()); */
         } catch (Exception e) {
             log.error("Error:" + e.getMessage(), e);
         }
@@ -80,18 +80,14 @@ public class EmpleadoServiceTest {
             scAnd.getChildren().add(scTipoper);
             scAnd.getChildren().add(scFechab);
 
-            List<OrgEmpleado>  l = empleadoService.search(root);
+       /*      List<OrgEmpleado>  l = empleadoService.search(root);
             log.info("emples {}", l.size());
             l.forEach(r -> {
                 log.info("resp {} ; {} ; {}", r.getPersona().getNombre(),r.getFechaBaja(), r.getPersona().getNumeroDocumento());
-            });
+            }); */
         } catch (Exception e) {
             log.error("Error:" + e.getMessage(), e);
         }
     }    
 
-    public static void main(String[] args) {
-        String cad = "asdfa*";
-        System.out.println("asdf " + cad.replaceAll("\\*", ""));
-    }
 }

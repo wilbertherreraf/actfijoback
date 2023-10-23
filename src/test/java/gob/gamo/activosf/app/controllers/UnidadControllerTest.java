@@ -154,8 +154,7 @@ public class UnidadControllerTest {
     void createEntity() throws Exception {
         // given
         UnidadResponse request = new UnidadResponse(0, "UNIDAD", "CALLE 1", "UNID", "123456",
-                "SERVICIO", 0,null,null, "V", null, new HashSet<>() {
-
+                "SERVICIO", 0,null,null,null,null, null,  "V", null, new HashSet<>() {
                 });
 
         // when

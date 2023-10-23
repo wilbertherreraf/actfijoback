@@ -6,6 +6,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
@@ -22,6 +34,7 @@ import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.PersonaVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
 import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.PersonaRepository;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
@@ -31,15 +44,7 @@ import gob.gamo.activosf.app.search.SearchCriteria;
 import gob.gamo.activosf.app.search.SearchQueryCriteriaConsumer;
 import gob.gamo.activosf.app.search.UserSpecification;
 import gob.gamo.activosf.app.services.sec.UserService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import gob.gamo.activosf.app.utils.PaginationUtil;
 
 @Slf4j
 @Service
@@ -61,36 +66,88 @@ public class PersonaService {
             Specification<OrgPersona> spec = specBuilder.build(deque, UserSpecification::new);
             Page<OrgPersona> list0 = repositoryEntity.findAll(spec, pageable);
             return list0;
-        }        
+        }
         Page<OrgPersona> list = repositoryEntity.findAll(pageable);
         return list;
     }
-    
-    public List<OrgPersona> search(SearchCriteria params) {
+
+    public Page<OrgPersona> search(SearchCriteria params, Pageable pageable) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
-        final Root<OrgPersona> root = query.from(OrgPersona.class);
-        Join<OrgEmpleado,OrgPersona> joinPersona = root.join("empleado", JoinType.INNER);
-        Join<OrgPersona,User> joinUsuario = root.join("user", JoinType.INNER);        
+        Root<OrgPersona> root = query.from(OrgPersona.class);
+        root.alias("persona");
+
+        log.info("Alisas {}", root.getAlias());
+
+        Boolean existEmpleado = findInSearchCriteria(params, "empleos.");
+        Boolean existUsuario = findInSearchCriteria(params, "usersist.");
+
+        if (existEmpleado) {
+            Join<OrgPersona, OrgEmpleado> j = root.join("empleos", JoinType.INNER);
+            j.alias("empleado");
+        }
+        if (existUsuario) {
+            Join<OrgPersona, User> j = root.join("usersist", JoinType.INNER);
+            j.alias("usuario");
+        }
 
         query.multiselect(root); // root.get("nombre")
 
         Predicate predicate = builder.conjunction();
 
-        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer = new SearchQueryCriteriaConsumer<OrgPersona>(
-                predicate,
-                builder, root);
+        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer =
+                new SearchQueryCriteriaConsumer<OrgPersona>(predicate, builder, root);
 
         searchConsumer.accept(params);
         Predicate predicateR = searchConsumer.getPredicate();
+
         query.where(predicateR);
 
-        List<Tuple> l = entityManager.createQuery(query).getResultList();
+        if (pageable.getSort() != null) {
+            List<Order> o = new ArrayList<>();
+            for (org.springframework.data.domain.Sort.Order sort : pageable.getSort()) {
+                if (sort.isDescending()) {
+                    Order order = builder.desc(root.get(sort.getProperty()));
+                    o.add(order);
+                } else {
+                    Order order = builder.asc(root.get(sort.getProperty()));
+                    o.add(order);
+                }
+            }
+            if (o.size() > 0) query.orderBy(o);
+        }
 
-        return l.stream().map(r -> {
-            OrgPersona e = (OrgPersona) r.get(0);
-            return e;
-        }).map((x) -> x).toList();
+        // List<Tuple> l = entityManager.createQuery(query).getResultList();
+        List<Tuple> l = entityManager
+                .createQuery(query)
+                .setMaxResults(pageable.getPageSize())
+                .setFirstResult((int) pageable.getOffset())
+                .getResultList();
+
+        List<OrgPersona> result = l.stream()
+                .map(r -> {
+                    OrgPersona e = (OrgPersona) r.get(0);
+                    return e;
+                })
+                .map((x) -> x)
+                .toList();
+
+        long count = countAll(builder, query, root);
+        int total = (int) count;
+        Page<OrgPersona> page =
+                PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
+
+        return page;
+    }
+
+    public Long countAll(CriteriaBuilder builder, CriteriaQuery<Tuple> query, Root<OrgPersona> root) {
+        // CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        query.multiselect(builder.count(root));
+        query.orderBy();
+        Tuple result = entityManager.createQuery(query).getSingleResult();
+        log.info("despues de count...{}", result.get(0));
+        Long count = (Long) result.get(0);
+        return count;
     }
 
     @Transactional
@@ -144,8 +201,8 @@ public class PersonaService {
         final Root<OrgPersona> r = query.from(OrgPersona.class);
 
         Predicate predicate = builder.conjunction();
-        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer = new SearchQueryCriteriaConsumer<OrgPersona>(predicate,
-                builder, r);
+        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer =
+                new SearchQueryCriteriaConsumer<OrgPersona>(predicate, builder, r);
         params.stream().forEach(searchConsumer);
         predicate = searchConsumer.getPredicate();
         query.where(predicate);
@@ -175,7 +232,6 @@ public class PersonaService {
         if (entity.getTipopers() == null) {
             throw new DataException("Persona: Tipo persona requerido");
         }
-
     }
 
     public void createUserFromPersona(OrgPersona newEntity, PersonaVO entityIn) {
@@ -183,8 +239,8 @@ public class PersonaService {
             return;
         }
 
-        boolean isUser = entityIn.user() != null && !StringUtils.isBlank(entityIn.user().username())
-                && !StringUtils.isBlank(entityIn.user().password());
+        boolean isUser =
+                entityIn.user() != null && !StringUtils.isBlank(entityIn.user().username());
 
         if (!StringUtils.isBlank(entityIn.user().username())) {
             boolean isPersona = newEntity.getTipopers().compareTo(Constants.TAB_TIPOPERS_NATURAL) == 0;
@@ -193,18 +249,24 @@ public class PersonaService {
                         "Persona con codigo de usuario(" + entityIn.user().username() + ") debe ser natural");
             }
 
-            SignUpUserRequest u = entityIn.user();
+            UserVO u = entityIn.user();
             if (u.id() != null) {
                 throw new DataException("Registro de nuevo usuario con valor ID " + u.id());
             }
 
-            if (StringUtils.isBlank(entityIn.user().password())) {
+            /*             if (StringUtils.isBlank(entityIn.user().password())) {
                 throw new DataException("Registro de usuario: password requerido" + newEntity.getIdPersona() + " "
                         + entityIn.user().username());
-            }
+            } */
 
-            SignUpUserRequest request = new SignUpUserRequest(null, newEntity.getEmail(), u.username(),
-                    u.password(), newEntity.getNombre(), newEntity.getNumeroDocumento(), newEntity.getIdPersona());
+            SignUpUserRequest request = new SignUpUserRequest(
+                    null,
+                    newEntity.getEmail(),
+                    u.username(),
+                    u.username(),
+                    newEntity.getNombre(),
+                    newEntity.getNumeroDocumento(),
+                    newEntity.getIdPersona());
 
             User newuser = userService.signUp(request);
             if (newuser.getIdUnidEmpl().compareTo(newEntity.getIdPersona()) != 0) {
@@ -214,8 +276,8 @@ public class PersonaService {
     }
 
     public void updateUserFromPersona(OrgPersona newEntity, PersonaVO entityIn) {
-        boolean isUser = entityIn.user() != null && !StringUtils.isBlank(entityIn.user().username())
-                && !StringUtils.isBlank(entityIn.user().password());
+        boolean isUser =
+                entityIn.user() != null && !StringUtils.isBlank(entityIn.user().username());
         if (entityIn.user() == null) {
             return;
         }
@@ -226,14 +288,16 @@ public class PersonaService {
             if (uopt.isPresent()) {
                 if (uopt.get().getIdUnidEmpl() != null
                         && uopt.get().getIdUnidEmpl().compareTo(newEntity.getIdPersona()) != 0) {
-                    throw new DataException(
-                            "Usuario (" + entityIn.user().username() + ") registrado para otra entidad. "
-                                    + uopt.get().getIdUnidEmpl());
+                    throw new DataException("Usuario (" + entityIn.user().username()
+                            + ") registrado para otra entidad. " + uopt.get().getIdUnidEmpl());
                 }
             }
         }
-        log.info("en update user persona {} {} ID:: {} pr: {}", entityIn.user().username(), entityIn.user().password(),
-                newEntity.getIdPersona(), uopt.isPresent());
+        log.info(
+                "en update user persona {} {} ID:: {} pr: {}",
+                entityIn.user().username(),
+                newEntity.getIdPersona(),
+                uopt.isPresent());
         if (uopt.isPresent()) {
             boolean isPersona = newEntity.getTipopers().compareTo(Constants.TAB_TIPOPERS_NATURAL) == 0;
             log.info("persnent {} -> {}", newEntity.getTipopers(), isPersona);
@@ -247,13 +311,30 @@ public class PersonaService {
                         + " difiere con el registrado " + uopt.get().getUsername());
             }
 
-            UpdateUserRequest updu = new UpdateUserRequest(newEntity.getEmail(), entityIn.user().username(),
-                    entityIn.user().password(),
-                    newEntity.getNombre(), newEntity.getNumeroDocumento(), newEntity.getIdPersona(), new ArrayList<>());
+            UpdateUserRequest updu = new UpdateUserRequest(
+                    newEntity.getEmail(),
+                    entityIn.user().username(),
+                    entityIn.user().username(),
+                    newEntity.getNombre(),
+                    newEntity.getNumeroDocumento(),
+                    newEntity.getIdPersona(),
+                    new ArrayList<>());
             userService.updateUser(updu);
         } else {
             createUserFromPersona(newEntity, entityIn);
         }
     }
 
+    public static boolean findInSearchCriteria(SearchCriteria sc, String key) {
+        if (sc.getKey().startsWith(key)) {
+            return true;
+        } else {
+            for (SearchCriteria s : sc.getChildren()) {
+                boolean exists = findInSearchCriteria(s, key);
+                if (exists) return true;
+            }
+        }
+
+        return false;
+    }
 }

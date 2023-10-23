@@ -7,6 +7,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.errors.DataException;
@@ -33,6 +37,9 @@ import gob.gamo.activosf.app.treeorg.OrgHierarchyInterface;
 public class UnidadService {
     private final OrgUnidadRepository repositoryEntity;
 
+    @PersistenceContext
+    private final EntityManager entityManager;
+
     @Transactional(readOnly = true)
     public Page<UnidadResponse> findAll(String searchTxt, Pageable pageable) {
         if (!StringUtils.isBlank(searchTxt)) {
@@ -41,7 +48,8 @@ public class UnidadService {
             if (deque.size() > 0) {
                 GenericSpecificationsBuilder<OrgUnidad> specBuilder = new GenericSpecificationsBuilder<>();
                 Specification<OrgUnidad> spec = specBuilder.build(deque, UserSpecification::new);
-                Page<UnidadResponse> list0 = repositoryEntity.findAll(spec, pageable).map(r -> new UnidadResponse(r));
+                Page<UnidadResponse> list0 =
+                        repositoryEntity.findAll(spec, pageable).map(r -> new UnidadResponse(r));
                 return list0;
             }
         }
@@ -51,8 +59,7 @@ public class UnidadService {
 
     @Transactional
     public UnidadResponse crearNuevo(OrgUnidad entity) {
-        if (entity.getIdUnidad() != null)
-            new DataException("Entidad con id, debe ser nulo");
+        if (entity.getIdUnidad() != null) new DataException("Entidad con id, debe ser nulo");
 
         OrgUnidad newEntity = null;
         if (entity.getIdUnidadPadre() == null) {
@@ -68,8 +75,7 @@ public class UnidadService {
 
     @Transactional
     public UnidadResponse update(UnidadResponse entityReq) {
-        if (entityReq.id() == null || entityReq.id().compareTo(0) == 0)
-            new DataException("Entidad con id, debe nulo");
+        if (entityReq.id() == null) new DataException("Entidad con id nulo");
 
         OrgUnidad entity = OrgUnidad.createOrgUnidad(entityReq);
         OrgHierarchyInterface<OrgUnidad> orgTree = generarOrgTree(entity);
@@ -92,7 +98,6 @@ public class UnidadService {
             if (orgTree.size() > 1 && found != null) {
                 orgTree.updateParent(entity.getIdUnidad(), entity.getIdUnidadPadre());
                 orgTree = (OrgHierarchy<OrgUnidad>) generarOrgTree(entity);
-
             }
             newEntity = repositoryEntity.save(entity);
         }
@@ -125,6 +130,18 @@ public class UnidadService {
     }
 
     @Transactional
+    public void updateIdEmpleado(Integer idUnidad, Integer idEmpleado) {
+        if (idEmpleado == null) {
+            // throw new DataException("Unidad: Id empleado principal nulo.");
+        }
+
+        OrgUnidad undOld = findById(idUnidad);
+        undOld.setIdEmpleado(idEmpleado);
+
+        repositoryEntity.save(undOld);
+    }
+
+    @Transactional
     public void delete(Integer id) {
         repositoryEntity.deleteById(id);
     }
@@ -150,16 +167,11 @@ public class UnidadService {
         if (found == null) {
             return new ArrayList<>();
         }
-        List<OrgUnidad> values = orgTree.returnChildrens(found).values().stream().map(x -> x.getValue())
+        List<OrgUnidad> values = orgTree.returnChildrens(found).values().stream()
+                .map(x -> x.getValue())
                 .filter(x -> x.getIdUnidad().compareTo(entity.getIdUnidad()) != 0)
                 .collect(Collectors.toList());
         return values;
-    }
-
-    @Transactional(readOnly = true)
-    public OrgHierarchyInterface<OrgUnidad> generarOrgTree(OrgUnidad entity) {
-        List<OrgUnidad> list = repositoryEntity.findAll();
-        return generarOrgTree(list, entity);
     }
 
     public OrgUnidad findById(Integer id) {
@@ -168,27 +180,33 @@ public class UnidadService {
                 .orElseThrow(() -> new NoSuchElementException("Unidad inexistente : `%s`".formatted(id)));
     }
 
-    private OrgUnidad existsOrgUnidad(String id) {
-        return repositoryEntity
-                .findBySigla(id)
-                .orElseThrow(() -> new NoSuchElementException("Article not found : `%s`".formatted(id)));
+    @Transactional(readOnly = true)
+    public OrgHierarchyInterface<OrgUnidad> generarOrgTree(OrgUnidad entity) {
+        List<OrgUnidad> list = repositoryEntity.findAll();
+
+        return generarOrgTree(list, entity);
+    }
+
+    public static OrgHierarchyInterface<OrgUnidad> generarOrgTreeFromList(List<OrgUnidad> list) {
+        List<OrgUnidad> listWithoutOrphan = list.stream()
+                .filter(n -> n.getIdUnidadPadre() != null
+                        || (n.getChildren() != null && n.getChildren().size() > 0))
+                .toList();
+
+        return generarOrgTree(list, (listWithoutOrphan.size() > 0 ? listWithoutOrphan.get(0) : null));
     }
 
     public static OrgHierarchyInterface<OrgUnidad> generarOrgTree(List<OrgUnidad> list, OrgUnidad orgUnidad) {
-        Integer idpadre = orgUnidad.getIdUnidad();
-
         OrgHierarchyInterface<OrgUnidad> org = new OrgHierarchy<OrgUnidad>();
-        // List<OrgUnidad> list = repositoryEntity.findAll();
-        List<OrgUnidad> hijosUnid = hijos(list, idpadre);
-
-        if (orgUnidad.getIdUnidadPadre() == null && hijosUnid.size() == 0) {
-            log.info("SIN PADRE UNIDAD {}", idpadre);
+        if (list.size() == 0 || orgUnidad == null) {
             return org;
         }
 
-        OrgUnidad root = searchRoot(list, idpadre);
+        Integer idNodeCurr = orgUnidad.getIdUnidad();
+
+        OrgUnidad root = searchRoot(list, orgUnidad, idNodeCurr);
         if (root == null) {
-            throw new DataException("Registro padre inexistente para unidad: " + idpadre);
+            throw new DataException("Registro padre inexistente para unidad: " + idNodeCurr);
         }
         log.info("Root lista {}", root.getIdUnidad());
         org.hireOwner(new Node<OrgUnidad>(root.getIdUnidad(), root));
@@ -203,19 +221,20 @@ public class UnidadService {
         return org;
     }
 
-    public static OrgUnidad searchRoot(List<OrgUnidad> list, Integer idpadre) {
+    public static OrgUnidad searchRoot(List<OrgUnidad> list, OrgUnidad node, Integer idpadre) {
         if (idpadre == null) {
-            return null;
+            return node;
         }
 
         Optional<OrgUnidad> oupadre = list.stream()
-                .filter(r -> r.getIdUnidad() != null && r.getIdUnidad().compareTo(idpadre) == 0).findFirst();
+                .filter(r -> r.getIdUnidad() != null && r.getIdUnidad().compareTo(idpadre) == 0)
+                .findFirst();
         if (!oupadre.isPresent()) {
-            throw new DataException("Registro Padre inexistente " + idpadre);
+            return node;
         }
 
         if (oupadre.get().getIdUnidadPadre() != null) {
-            OrgUnidad found = searchRoot(list, oupadre.get().getIdUnidadPadre());
+            OrgUnidad found = searchRoot(list, oupadre.get(), oupadre.get().getIdUnidadPadre());
             return found;
         }
 
@@ -235,8 +254,10 @@ public class UnidadService {
     }
 
     public static List<OrgUnidad> hijos(List<OrgUnidad> list, Integer idpadre) {
-        return list.stream().filter(x -> x.getIdUnidad().compareTo(idpadre) != 0)
-                .filter(r -> idpadre != null && r.getIdUnidadPadre() != null
+        return list.stream()
+                .filter(x -> x.getIdUnidad().compareTo(idpadre) != 0)
+                .filter(r -> idpadre != null
+                        && r.getIdUnidadPadre() != null
                         && r.getIdUnidadPadre().compareTo(idpadre) == 0)
                 .collect(Collectors.toList());
     }

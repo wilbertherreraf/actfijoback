@@ -10,9 +10,7 @@ public class SpecSearchCriteria {
     private Object value;
     private boolean orPredicate;
 
-    public SpecSearchCriteria() {
-
-    }
+    public SpecSearchCriteria() {}
 
     public SpecSearchCriteria(final String key, final SearchOperation operation, final Object value) {
         super();
@@ -21,7 +19,8 @@ public class SpecSearchCriteria {
         this.value = value;
     }
 
-    public SpecSearchCriteria(final String orPredicate, final String key, final SearchOperation operation, final Object value) {
+    public SpecSearchCriteria(
+            final String orPredicate, final String key, final SearchOperation operation, final Object value) {
         super();
         this.orPredicate = orPredicate != null && orPredicate.equals(SearchOperation.OR_PREDICATE_FLAG);
         this.key = key;
@@ -33,7 +32,7 @@ public class SpecSearchCriteria {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
             if (op == SearchOperation.EQUALITY) { // the operation may be complex operation
-                log.info("SPEC key {} {} {} {} {}", key,operation, prefix, value,  suffix);
+                log.info("SPEC key {} {} {} {} {}", key, operation, prefix, value, suffix);
                 final boolean startWithAsterisk = prefix != null && prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
                 final boolean endWithAsterisk = suffix != null && suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
 
@@ -82,5 +81,4 @@ public class SpecSearchCriteria {
     public void setOrPredicate(boolean orPredicate) {
         this.orPredicate = orPredicate;
     }
-
 }

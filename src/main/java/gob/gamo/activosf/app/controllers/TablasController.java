@@ -28,7 +28,7 @@ import gob.gamo.activosf.app.utils.WebUtil;
 public class TablasController {
     private final GenDesctablaRespository repository;
     private static final String ENTITY_NAME = Constants.REC_TABLAS;
- 
+
     @GetMapping(Constants.API_TABLAS)
     public ResponseEntity<List<GenDesctabla>> getAll(Pageable pageable) {
         final Page<GenDesctabla> page = repository.findAll(pageable);

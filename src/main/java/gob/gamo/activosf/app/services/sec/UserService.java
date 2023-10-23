@@ -15,13 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.config.JwtTokenProvider;
-import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.domain.entities.Userrol;
 import gob.gamo.activosf.app.domain.entities.UserrolId;
-import gob.gamo.activosf.app.dto.UnidadResponse;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
@@ -129,7 +128,8 @@ public class UserService {
     @Transactional
     public UserVO updateUser(UpdateUserRequest request) {
 
-        User unew = userRepository.findByUsername(request.username())
+        User unew = userRepository
+                .findByUsername(request.username())
                 .orElseThrow(() -> new DataException("Usuario inexistente " + request.username()));
         unew.setIdUnidEmpl(request.idPersona());
         unew.setNombres(request.nombres());
@@ -144,13 +144,16 @@ public class UserService {
 
     @Transactional
     public UserVO updateRoles(UpdateUserRequest request) {
-        User unew = userRepository.findByUsername(request.username())
+        User unew = userRepository
+                .findByUsername(request.username())
                 .orElseThrow(() -> new DataException("Usuario inexistente " + request.username()));
 
         for (RolesVO r : request.roles()) {
-            Roles rol = rolesRepository.findByCodrol(r.codrol())
+            Roles rol = rolesRepository
+                    .findByCodrol(r.codrol())
                     .orElseThrow(() -> new DataException("Rol inexistente " + r.codrol()));
-            Optional<Roles> exists = unew.getRoles().stream().filter(ru -> ru.getCodrol().equalsIgnoreCase(r.codrol()))
+            Optional<Roles> exists = unew.getRoles().stream()
+                    .filter(ru -> ru.getCodrol().equalsIgnoreCase(r.codrol()))
                     .findFirst();
             if (!exists.isPresent()) {
                 Userrol userr = new Userrol(unew, rol);
@@ -163,21 +166,30 @@ public class UserService {
             }
         }
         Optional<User> userReq = userRepository.findByUsername(request.username());
-        log.info("User USERNAME [{}] {} roles :> {}", userReq.get().getId(), userReq.get().getUsername(),
+        log.info(
+                "User USERNAME [{}] {} roles :> {}",
+                userReq.get().getId(),
+                userReq.get().getUsername(),
                 userReq.get().getRoles().stream()
-                        .map(Roles::getCodrol).collect(Collectors.toList()).toString());
-        UserVO userVO = userRepository.findByUsername(request.username()).map(u -> new UserVO(u))
+                        .map(Roles::getCodrol)
+                        .collect(Collectors.toList())
+                        .toString());
+        UserVO userVO = userRepository
+                .findByUsername(request.username())
+                .map(u -> new UserVO(u))
                 .orElseThrow(() -> new DataException("Usuario inexistente " + request.username()));
 
         return userVO;
     }
 
     public void deleteRol(String username, String codrol) {
-        User uold = userRepository.findByUsername(username)
+        User uold = userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new DataException("Usuario inexistente " + username));
         Optional<Roles> rol = rolesRepository.findByCodrol(codrol);
         if (rol.isPresent()) {
-            Userrol usrrol = userRolRespository.findById(new UserrolId(uold.getId(), rol.get().getId()))
+            Userrol usrrol = userRolRespository
+                    .findById(new UserrolId(uold.getId(), rol.get().getId()))
                     .orElseThrow(() -> new DataException("Permiso inexistente " + codrol));
             userRolRespository.delete(usrrol);
         }

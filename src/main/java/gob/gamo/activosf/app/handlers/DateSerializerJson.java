@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import gob.gamo.activosf.app.utils.UtilsDate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,6 +33,6 @@ public class DateSerializerJson extends StdSerializer<Date> {
             // log.info("serialization {} {} - > {}", value, d,
             // UtilsDate.stringFromDate(value, "dd/MM/yyyy"));
             gen.writeString(d);
-        } 
+        }
     }
 }

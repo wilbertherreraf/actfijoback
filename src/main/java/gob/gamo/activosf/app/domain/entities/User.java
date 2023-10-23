@@ -2,19 +2,18 @@ package gob.gamo.activosf.app.domain.entities;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
-import gob.gamo.activosf.app.dto.sec.UserVO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +21,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import gob.gamo.activosf.app.domain.OrgPersona;
+import gob.gamo.activosf.app.dto.sec.UpdateUserRequest;
+import gob.gamo.activosf.app.dto.sec.UserVO;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "id")
 @Slf4j
@@ -59,26 +62,33 @@ public class User {
     private String codPersona;
 
     @JoinColumns({
-            @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
-            @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo")
+        @JoinColumn(name = "usr_tabtipousr", referencedColumnName = "des_codtab"),
+        @JoinColumn(name = "usr_tipousr", referencedColumnName = "des_codigo")
     })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla tipoUsuario;
 
     @JoinColumns({
-            @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
-            @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo")
+        @JoinColumn(name = "usr_tabstatuser", referencedColumnName = "des_codtab"),
+        @JoinColumn(name = "usr_statuser", referencedColumnName = "des_codigo")
     })
     @ManyToOne(fetch = FetchType.LAZY)
     private GenDesctabla estado;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sec_userrol", //
+    @JoinTable(
+            name = "sec_userrol", //
             joinColumns = @JoinColumn(name = "uro_usrid") //
-            , inverseJoinColumns = @JoinColumn(name = "uro_rolid") //
-    )
+            ,
+            inverseJoinColumns = @JoinColumn(name = "uro_rolid") //
+            )
     private Set<Roles> roles = new HashSet<>();
+
+    @NotFound(action = NotFoundAction.IGNORE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(updatable = false, insertable = false, name = "id_unid_empl")
+    private OrgPersona persona;
 
     @Transient
     private String token;
@@ -125,14 +135,22 @@ public class User {
     }
 
     public static User createUser(UserVO upd) {
-        return User.builder().username(upd.username()).nombres(upd.nombres()).email(upd.email())
-                .codPersona(upd.codpersona()).build();
+        return User.builder()
+                .username(upd.username())
+                .nombres(upd.nombres())
+                .email(upd.email())
+                .codPersona(upd.codpersona())
+                .build();
     }
 
     public static User createUser(UpdateUserRequest upd) {
-        return User.builder().username(upd.username()).nombres(upd.nombres()).email(upd.email())
+        return User.builder()
+                .username(upd.username())
+                .nombres(upd.nombres())
+                .email(upd.email())
                 .codPersona(upd.codpersona())
-                .roles(upd.roles().stream().map(x -> Roles.builder().codrol(x.codrol()).build())
+                .roles(upd.roles().stream()
+                        .map(x -> Roles.builder().codrol(x.codrol()).build())
                         .collect(Collectors.toSet()))
                 .build();
     }

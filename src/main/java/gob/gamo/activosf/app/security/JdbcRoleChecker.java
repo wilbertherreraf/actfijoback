@@ -21,7 +21,7 @@ public class JdbcRoleChecker implements RoleChecker {
         log.info("creando role checker...");
         this.request = request;
     }
- 
+
     @Override
     public boolean check(Authentication authentication) {
 

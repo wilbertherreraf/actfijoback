@@ -6,6 +6,7 @@
 package gob.gamo.activosf.app.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -29,7 +31,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
+import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.EmpleadoVo;
 import gob.gamo.activosf.app.dto.sec.UserVO;
 
@@ -117,14 +121,29 @@ public class OrgPersona {
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns(
-        value =  {
-        @JoinColumn(updatable = false, insertable = false, name = "tabtipopers", referencedColumnName = "des_codtab"),
-        @JoinColumn(updatable = false, insertable = false, name = "tipopers", referencedColumnName = "des_codigo")
-    })
+            value = {
+                @JoinColumn(
+                        updatable = false,
+                        insertable = false,
+                        name = "tabtipopers",
+                        referencedColumnName = "des_codtab"),
+                @JoinColumn(
+                        updatable = false,
+                        insertable = false,
+                        name = "tipopers",
+                        referencedColumnName = "des_codigo")
+            })
     private GenDesctabla tipopersdesc;
+
+    @OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
+    private List<OrgEmpleado> empleos;
+
+    @OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
+    private List<User> usersist;
 
     @Transient
     private UserVO user;
+
     @Transient
     private EmpleadoVo empleado;
 }

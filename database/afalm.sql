@@ -82,6 +82,7 @@ create table org_unidad (
     id_unidad_padre integer,
     tabrolempleado integer default 55,
     rolempleado integer default 99,    
+    id_empleado integer,
     estado varchar(10),
     constraint PK_orgunidad primary key (id_unidad)
 );
@@ -116,6 +117,7 @@ create table org_empleado (
     id_cargo integer,
     tabrolempleado integer,
     rolempleado integer,
+    id_empleadopadre integer,
     fecha_ingreso date,
     fecha_baja date,
     estado varchar(10),
@@ -733,6 +735,24 @@ comment on column ACF_CODIGO_CONTABLE.TX_HOST_INI is 'IP de la maquina desde la 
 comment on column ACF_CODIGO_CONTABLE.TX_FCH_MOD is 'Fecha de modificacion del registro.';
 comment on column ACF_CODIGO_CONTABLE.TX_USR_MOD is 'Id del usuario que realizo la ultima modificacion al registro, este ID corresponde con la columna ID_USUARIO de la tabla TX_USUARIO del esquema "seguridad".';
 comment on column ACF_CODIGO_CONTABLE.TX_HOST_MOD is 'IP de la maquina donde se realizo la ultima modificacion del registro.';
+
+create table ACF_ITEMAF (
+id_item SERIAL not null,
+codnemo varchar(20),
+nivel        varchar(15),
+tipo         varchar(15),
+grupo        varchar(15),
+clase        varchar(15),
+familia      varchar(15),
+item         varchar(15),
+nombre       varchar(150),
+unidmedida   varchar(15),
+codclasif    varchar(15),
+tipo_costodi varchar(15),
+tipo_costofv varchar(15),
+    constraint PK_AF_ITEMAF primary key (ID_ITEM)
+);
+
 /* Table: ACF_COMISION_RECEPCION                                 */
 create table ACF_COMISION_RECEPCION (
     ID_COMISION_RECEPCION SERIAL not null,
@@ -1755,6 +1775,9 @@ GRANT ALL ON TABLE public.tx_area TO activosf;
 GRANT ALL ON TABLE public.tx_persona TO activosf;
 GRANT ALL ON TABLE public.tx_transaccion TO activosf;
 GRANT ALL ON TABLE public.tx_usuario TO activosf;
+GRANT ALL ON TABLE public.ACF_ITEMAF TO activosf;
+
+GRANT ALL ON SEQUENCE public.acf_itemaf_id_item_seq TO activosf;
 GRANT ALL ON SEQUENCE public.acf_accesorio_activo_fijo_id_accesorio_activo_fijo_seq TO activosf;
 GRANT ALL ON SEQUENCE public.acf_activo_fijo_hist_id_activo_fijo_hist_seq TO activosf;
 GRANT ALL ON SEQUENCE public.acf_activo_fijo_id_activo_fijo_seq TO activosf;

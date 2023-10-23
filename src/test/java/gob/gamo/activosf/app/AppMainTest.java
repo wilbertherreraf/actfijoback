@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 @DisplayName("Realworld Application")
 public class AppMainTest {
-    @Autowired
+    @Autowired 
     private UserRepository userRepository;
     @Autowired
     private UserService userService;

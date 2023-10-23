@@ -80,7 +80,7 @@ tasks.jacocoTestReport {
 tasks.compileJava {
     dependsOn(tasks.clean)
 }
-
+ 
 spotless {
     java {
         target("src/main/java/**/*.java")

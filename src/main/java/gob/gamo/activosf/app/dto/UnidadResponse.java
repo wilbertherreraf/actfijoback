@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import gob.gamo.activosf.app.domain.OrgUnidad;
+import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 
 @JsonRootName("unidad")
 public record UnidadResponse(
@@ -19,12 +20,13 @@ public record UnidadResponse(
         Integer idUnidadPadre,
         Integer tabRolempleado,
         Integer rolempleado,
+        GenDesctabla rolempleadodesc,
+        Integer idEmpleado,
         EmpleadoVo empleadoBoss,
         String estado,
         UnidadResponse unidadPadre,
         Set<UnidadResponse> children) {
     public UnidadResponse(OrgUnidad entity) {
-
         this(
                 entity.getIdUnidad(),
                 entity.getNombre(),
@@ -35,38 +37,35 @@ public record UnidadResponse(
                 entity.getIdUnidadPadre(),
                 entity.getTabRolempleado(),
                 entity.getRolempleado(),
-                entity.getEmpleadoBoss() != null ? new EmpleadoVo(entity.getEmpleadoBoss()) : null,
-                entity.getEstado(),
-                entity.getUnidadPadre() != null
-                        ? new UnidadResponse(entity.getIdUnidadPadre(), entity.getUnidadPadre().getNombre(),
-                                entity.getUnidadPadre().getDomicilio(),
-                                entity.getUnidadPadre().getSigla(),
-                                entity.getUnidadPadre().getTelefono(),
-                                entity.getUnidadPadre().getTipoUnidad(),
+                entity.getRolempleadodesc(),
+                entity.getIdEmpleado(),
+                entity.getEmpleadoBoss() != null
+                        ? new EmpleadoVo(
+                                entity.getEmpleadoBoss().getId(),
+                                entity.getEmpleadoBoss().getIdUnidad(),
                                 null,
-                                entity.getUnidadPadre().getTabRolempleado(),
-                                entity.getUnidadPadre().getRolempleado(),
-                                entity.getEmpleadoBoss() != null ? new EmpleadoVo(entity.getEmpleadoBoss()) : null,
-                                entity.getUnidadPadre().getEstado(),
-                                null, new HashSet<>())
+                                entity.getEmpleadoBoss().getCodInternoempl(),
+                                entity.getEmpleadoBoss().getIdPersona(),
+                                entity.getEmpleadoBoss().getCodPersona(),
+                                entity.getEmpleadoBoss().getIdCargo(),
+                                entity.getEmpleadoBoss().getTabRolempleado(),
+                                entity.getEmpleadoBoss().getRolempleado(),
+                                entity.getEmpleadoBoss().getIdEmpleadopadre(),
+                                entity.getEmpleadoBoss().getRolempleadodesc(),
+                                entity.getEmpleadoBoss().getFechaIngreso(),
+                                entity.getEmpleadoBoss().getFechaBaja(),
+                                entity.getEmpleadoBoss().getEstado(),
+                                null)
                         : null,
-                entity.getChildren().stream().map(x ->
-                // UnidadResponse::new
-                new UnidadResponse(x.getIdUnidad(),
-                        x.getNombre(),
-                        x.getDomicilio(),
-                        x.getSigla(),
-                        x.getTelefono(), x.getTipoUnidad(),
-                        x.getIdUnidadPadre(),
-                        x.getTabRolempleado(),
-                        x.getRolempleado(),
-                        x.getEmpleadoBoss() != null ? new EmpleadoVo(x.getEmpleadoBoss()) : null,
-                        x.getEstado(),
-                        null, new HashSet<>())).collect(Collectors.toSet()));
-    };
+                entity.getEstado(),
+                entity.getUnidadPadre() != null ? new UnidadResponse(entity.getUnidadPadre(), false) : null,
+                entity.getChildren().stream()
+                        .map(x -> new UnidadResponse(x, false))
+                        .collect(Collectors.toSet()));
+    }
+    ;
 
     public UnidadResponse(OrgUnidad entity, boolean all) {
-
         this(
                 entity.getIdUnidad(),
                 entity.getNombre(),
@@ -74,24 +73,33 @@ public record UnidadResponse(
                 entity.getSigla(),
                 entity.getTelefono(),
                 entity.getTipoUnidad(),
-                entity.getIdUnidadPadre(),
+                all ? entity.getIdUnidadPadre() : null,
                 entity.getTabRolempleado(),
                 entity.getRolempleado(),
-                entity.getEmpleadoBoss() != null ? new EmpleadoVo(entity.getEmpleadoBoss()) : null,
-                entity.getEstado(),
-                entity.getUnidadPadre() != null
-                        ? new UnidadResponse(entity.getIdUnidadPadre(), entity.getUnidadPadre().getNombre(),
-                                entity.getUnidadPadre().getDomicilio(),
-                                entity.getUnidadPadre().getSigla(),
-                                entity.getUnidadPadre().getTelefono(),
-                                entity.getUnidadPadre().getTipoUnidad(),
-                                null,
-                                entity.getTabRolempleado(),
-                                entity.getRolempleado(),
-                                entity.getEmpleadoBoss() != null ? new EmpleadoVo(entity.getEmpleadoBoss()) : null,
-                                entity.getUnidadPadre().getEstado(),
-                                null, new HashSet<>())
+                entity.getRolempleadodesc(),
+                entity.getIdEmpleado(),
+                all
+                        ? (entity.getEmpleadoBoss() != null
+                                ? new EmpleadoVo(
+                                        entity.getEmpleadoBoss().getId(),
+                                        entity.getEmpleadoBoss().getIdUnidad(),
+                                        null,
+                                        entity.getEmpleadoBoss().getCodInternoempl(),
+                                        entity.getEmpleadoBoss().getIdPersona(),
+                                        entity.getEmpleadoBoss().getCodPersona(),
+                                        entity.getEmpleadoBoss().getIdCargo(),
+                                        entity.getEmpleadoBoss().getTabRolempleado(),
+                                        entity.getEmpleadoBoss().getRolempleado(),
+                                        entity.getEmpleadoBoss().getIdEmpleadopadre(),
+                                        entity.getEmpleadoBoss().getRolempleadodesc(),
+                                        entity.getEmpleadoBoss().getFechaIngreso(),
+                                        entity.getEmpleadoBoss().getFechaBaja(),
+                                        entity.getEmpleadoBoss().getEstado(),
+                                        null)
+                                : null)
                         : null,
-                entity.getChildren().stream().map(x -> new UnidadResponse(x, true)).collect(Collectors.toSet()));
+                entity.getEstado(),
+                null,
+                new HashSet<>());
     }
 }

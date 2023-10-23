@@ -71,9 +71,9 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // .cors( SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
-                        HttpMethod.POST,
-                        Constants.API_ROOT_VERSION + Constants.API_LOGIN,
-                        Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
+                                HttpMethod.POST,
+                                Constants.API_ROOT_VERSION + Constants.API_LOGIN,
+                                Constants.API_ROOT_VERSION + Constants.API_PUBLIC + "/register")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

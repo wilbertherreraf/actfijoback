@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,8 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.config.JwtTokenProvider;
+import gob.gamo.activosf.app.domain.OrgEmpleado;
+import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
+import gob.gamo.activosf.app.dto.EmpleadoVo;
+import gob.gamo.activosf.app.dto.PersonaVO;
+import gob.gamo.activosf.app.dto.UserPersonaVo;
 import gob.gamo.activosf.app.dto.sec.LoginUserRequest;
 import gob.gamo.activosf.app.dto.sec.RolesVO;
 import gob.gamo.activosf.app.dto.sec.SignUpUserRequest;
@@ -42,7 +48,10 @@ import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.errors.ResourceNotFoundException;
 import gob.gamo.activosf.app.errors.TokenRefreshException;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
+import gob.gamo.activosf.app.search.SearchCriteria;
 import gob.gamo.activosf.app.security.SessionsSearcherService;
+import gob.gamo.activosf.app.services.AfSearchService;
+import gob.gamo.activosf.app.services.EmpleadoService;
 import gob.gamo.activosf.app.services.sec.UserService;
 import gob.gamo.activosf.app.utils.PaginationUtil;
 import gob.gamo.activosf.app.utils.WebUtil;
@@ -53,12 +62,14 @@ import gob.gamo.activosf.app.utils.WebUtil;
 @RequestMapping(value = Constants.API_ROOT_VERSION, produces = MediaType.APPLICATION_JSON_VALUE)
 // @RequestMapping(Constants.API_URL_ROOT + Constants.API_URL_VERSION)
 public class UserController {
-    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern AUTHORIZATION_PATTERN =
+            Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
     private final UserRepository userRepository;
     private final UserService userService;
+    private final EmpleadoService empleadoService;
     private final SessionsSearcherService sessionsSearcherService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AfSearchService searchService;
     private static final String ENTITY_NAME = Constants.REC_USUARIOS;
 
     @ResponseStatus(CREATED)
@@ -69,7 +80,8 @@ public class UserController {
         UserVO userVO = userService.login(request);
         UserResponse userResponse = new UserResponse(userVO);
         HttpHeaders headers = new HttpHeaders();
-        String tokenRefresh = jwtTokenProvider.getRefreshToken(userResponse.user().token());
+        String tokenRefresh =
+                jwtTokenProvider.getRefreshToken(userResponse.user().token());
         headers.add(Constants.HEADER_X_ACTIVOS, tokenRefresh);
         return ResponseEntity.ok().headers(headers).body(userResponse);
     }
@@ -99,7 +111,8 @@ public class UserController {
         UserVO userVO = userService.getuser(username);
         UserResponse userResponse = new UserResponse(userVO);
         HttpHeaders headers = new HttpHeaders();
-        String tokenRefresh = jwtTokenProvider.getRefreshToken(userResponse.user().token());
+        String tokenRefresh =
+                jwtTokenProvider.getRefreshToken(userResponse.user().token());
         headers.add(Constants.HEADER_X_ACTIVOS, tokenRefresh);
         return ResponseEntity.ok().headers(headers).body(userResponse);
         // return new UserResponse(userVO);
@@ -107,13 +120,46 @@ public class UserController {
 
     @GetMapping(Constants.API_USUARIOS)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<UserVO>> getAll(@RequestParam(value = "q", required = false) String search,
-            Pageable pageable) {
+    public ResponseEntity<List<UserVO>> getAll(
+            @RequestParam(value = "q", required = false) String search, Pageable pageable) {
         final Page<UserVO> page = userService.findAll(search, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @PostMapping(Constants.API_USUARIOS + "/f")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<List<UserPersonaVo>> getAllByFilter(
+            @RequestBody(required = false) SearchCriteria sc, Pageable pageable) {
+        Page<User> page = searchService.searchUsuarios(sc, pageable);
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_PERSONAS);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(page.getContent().stream()
+                        .map(u -> {
+                            UserPersonaVo up = null;
+                            OrgPersona p = u.getPersona();
+                            if (p != null) {
+                                Optional<OrgEmpleado> empleado = empleadoService.empleadoActivo(p.getIdPersona());
+                                if (empleado.isPresent()) {
+                                    PersonaVO pvo = new PersonaVO(p);
+                                    EmpleadoVo emp = new EmpleadoVo(empleado.get(), null);
+                                    up = new UserPersonaVo(new UserVO(u), pvo, emp);
+                                } else {
+                                    PersonaVO pvo = new PersonaVO(p);
+                                    up = new UserPersonaVo(u, pvo);
+                                }
+                            } else {
+                                up = new UserPersonaVo(u);
+                            }
+                            return up;
+                        })
+                        .toList());
     }
 
     @PostMapping(Constants.API_USUARIOS)
@@ -157,7 +203,8 @@ public class UserController {
     @PreAuthorize("#username == authentication.name or hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<List<RolesVO>> usuarioRoles(
             @PathVariable(value = "username") String username, Pageable pageable) {
-        User result = userRepository.findByUsername(username)
+        User result = userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new DataException("Registro inexistente " + username));
         Set<Roles> empl = result.getRoles();
         Page<Roles> page = PaginationUtil.pageForList(
@@ -172,8 +219,8 @@ public class UserController {
 
     @PutMapping(Constants.API_USUARIOS + "/{username}" + Constants.API_ROLES)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<UserResponse> updUsuarioRoles(User me,
-            @PathVariable(value = "username") String username, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updUsuarioRoles(
+            User me, @PathVariable(value = "username") String username, @RequestBody UpdateUserRequest request) {
 
         UserVO userVO = userService.updateRoles(request);
 
@@ -184,16 +231,15 @@ public class UserController {
     @DeleteMapping(Constants.API_USUARIOS + "/{username}" + Constants.API_ROLES + "/{codrol}")
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<Void> delUsuarioRoles(
-            @PathVariable(value = "username") String username,  @PathVariable(value = "codrol") String codrol) {
+            @PathVariable(value = "username") String username, @PathVariable(value = "codrol") String codrol) {
 
-        userService.deleteRol(username,codrol);
+        userService.deleteRol(username, codrol);
         return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void postNotFound() {
-    }
+    public void postNotFound() {}
 
     private String resolveRefreshTokenHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);

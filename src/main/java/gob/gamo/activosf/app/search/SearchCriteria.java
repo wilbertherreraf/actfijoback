@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.persistence.Entity;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,15 +27,16 @@ public class SearchCriteria {
     private Object value;
     private Integer idPadre;
     private SearchCriteria padre;
+
     @Builder.Default
     private Set<SearchCriteria> children = new HashSet<>();
-/*     public SearchCriteria(final String key, final String operation, final Object value) {
-        super();
-        this.key = key;
-        this.operation = operation;
-        this.value = value;
-    }
- */
+    /*     public SearchCriteria(final String key, final String operation, final Object value) {
+           super();
+           this.key = key;
+           this.operation = operation;
+           this.value = value;
+       }
+    */
     public String getKey() {
         return key;
     }
@@ -77,5 +76,4 @@ public class SearchCriteria {
     public void setIdPadre(Integer idPadre) {
         this.idPadre = idPadre;
     }
-
 }

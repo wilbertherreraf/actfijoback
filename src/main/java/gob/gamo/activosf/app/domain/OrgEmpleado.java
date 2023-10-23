@@ -1,8 +1,6 @@
 package gob.gamo.activosf.app.domain;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -13,13 +11,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "id")
 @Entity
@@ -58,8 +57,11 @@ public class OrgEmpleado {
     @Column(name = "rolempleado")
     private Integer rolempleado;
 
+    @Column(name = "id_empleadopadre")
+    private Integer idEmpleadopadre;
+
     @Column(name = "fecha_ingreso")
-    @Temporal(TemporalType.DATE)    
+    @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
 
     @Column(name = "fecha_baja")
@@ -72,20 +74,24 @@ public class OrgEmpleado {
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-        @JoinColumn(updatable = false, insertable = false, name = "tabrolempleado", referencedColumnName = "des_codtab"),
+        @JoinColumn(
+                updatable = false,
+                insertable = false,
+                name = "tabrolempleado",
+                referencedColumnName = "des_codtab"),
         @JoinColumn(updatable = false, insertable = false, name = "rolempleado", referencedColumnName = "des_codigo")
     })
-    private GenDesctabla rolempleadodesc;   
-     
+    private GenDesctabla rolempleadodesc;
+
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false, insertable = false, name = "id_persona")
-    private OrgPersona persona;   
+    private OrgPersona persona;
 
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false, insertable = false, name = "id_unidad")
-    private OrgUnidad unidad;     
+    private OrgUnidad unidad;
 
     /* @Builder.Default
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)

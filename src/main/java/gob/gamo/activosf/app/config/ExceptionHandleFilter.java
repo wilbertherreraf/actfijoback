@@ -60,7 +60,7 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
                     request.getContentType(),
                     (jwtDecoder == null));
 
-     /*        request.getParameterMap().entrySet().forEach(entry -> {
+            /*        request.getParameterMap().entrySet().forEach(entry -> {
                 log.info("parameter {} -> {}", entry.getKey(), entry.getValue());
             }); */
             cachedHttpServletRequest = new RequestWrapper(request);
@@ -112,7 +112,7 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
                 } else cachedHttpServletRequest.setAttribute("exception", e);
             }
             // exceptionHandler.handle(e);
-        } 
+        }
         filterChain.doFilter(cachedHttpServletRequest, response);
     }
 

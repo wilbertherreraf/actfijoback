@@ -12,8 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -33,6 +31,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.dto.UnidadResponse;
 
@@ -76,13 +75,20 @@ public class OrgUnidad {
     @Column(name = "rolempleado")
     private Integer rolempleado;
 
+    @Column(name = "id_empleado")
+    private Integer idEmpleado;
+
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-        @JoinColumn(updatable = false, insertable = false, name = "tabrolempleado", referencedColumnName = "des_codtab"),
+        @JoinColumn(
+                updatable = false,
+                insertable = false,
+                name = "tabrolempleado",
+                referencedColumnName = "des_codtab"),
         @JoinColumn(updatable = false, insertable = false, name = "rolempleado", referencedColumnName = "des_codigo")
     })
-    private GenDesctabla rolempleadodesc;   
+    private GenDesctabla rolempleadodesc;
 
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -95,7 +101,7 @@ public class OrgUnidad {
     private OrgUnidad unidadPadre;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "unidadPadre")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "unidadPadre")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<OrgUnidad> children = new HashSet<>();
 
@@ -103,19 +109,17 @@ public class OrgUnidad {
     private String estado;
 
     // @JsonIgnore
-    @Builder.Default
+    /*    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "org_unidad_emp", //
+    @JoinTable(name = "org_unidad_emp", //
             joinColumns = @JoinColumn(name = "id_unidad") //
-            ,
-            inverseJoinColumns = @JoinColumn(name = "id_empleado") //
-            )
-    private Set<OrgEmpleado> empleados = new HashSet<>();
+            , inverseJoinColumns = @JoinColumn(name = "id_empleado") //
+    )
+    private Set<OrgEmpleado> empleados0 = new HashSet<>(); */
 
     @Transient
     private OrgEmpleado empleadoBoss;
-    
+
     public static OrgUnidad createOrgUnidad(UnidadResponse req) {
         return OrgUnidad.builder()
                 .idUnidad(req.id())
