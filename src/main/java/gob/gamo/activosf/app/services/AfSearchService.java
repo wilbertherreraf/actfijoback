@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.domain.AfActivoFijo;
+import gob.gamo.activosf.app.domain.AfItemaf;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
@@ -299,6 +300,25 @@ public class AfSearchService {
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
     }
 
+
+/* AAAAAAAFFFFFFFFFFFFFFFFFFFFFFF */    
+
+    public Page<AfItemaf> searchItemsaf(SearchCriteria params, Pageable pageable) {
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = builder.createTupleQuery();
+        final Root<AfItemaf> root = query.from(AfItemaf.class);
+        root.alias("itemsaf");
+
+        List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
+
+        List<AfItemaf> result =
+                listT.stream().map(r -> (AfItemaf) r.get(0)).toList();
+        int total = countAll(builder, query, root);
+
+        return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
+    }
+
+/********************************** */
     public Page<OrgUnidad> searchUnidades(SearchCriteria params, Pageable pageable) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
@@ -384,6 +404,7 @@ public class AfSearchService {
         Tuple result = em.createQuery(query).getSingleResult();
         long count = (Long) result.get(0);
         int countR = (int) count;
+        log.info("Total de {} recuperados {}", root.getAlias(), countR);        
         return countR;
     }
 

@@ -30,6 +30,7 @@ public interface Constants {
     String API_PROVEEDORES = "/proveedores";
     String API_EMPLEADOS = "/empleados";
     String API_PERSONAS = "/personas";
+    String API_ITEMS = "/items";    
 
     String API_USUARIOS = "/users";
     String API_ROLES = "/roles";
@@ -53,6 +54,7 @@ public interface Constants {
     String REC_USUARIOS = "USERS";
     String REC_ROLES = "ROLES";
     String REC_PERMISOS = "PERMISOS";
+    String REC_ITEMS = "ITEMS";
 
     public static final Integer SEC_MAX_ATTEMPT = 3;
     public static final Integer SEC_TIME_LOCKED_FOR_ATTEMPS = 5 * 60; // minutos

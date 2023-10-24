@@ -62,8 +62,8 @@ public class AfItemaf {
     private String codclasif;
 
     @Column(name = "tipo_costodi")
-    private String tipo_costodi;
+    private String tipoCostodi;
 
     @Column(name = "tipo_costofv")
-    private String tipo_costofv;
+    private String tipoCostofv;
 }

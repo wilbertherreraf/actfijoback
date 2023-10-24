@@ -51,6 +51,7 @@ INSERT INTO public.sec_recurso(res_id,res_codrec, res_descrip) VALUES (53,'PARTI
 INSERT INTO public.sec_recurso(res_id,res_codrec, res_descrip) VALUES (55,'PROVEEDORES','PROVEEDORES');
 INSERT INTO public.sec_recurso(res_id,res_codrec, res_descrip) VALUES (56,'EMPLEADOS','EMPLEADOS');
 INSERT INTO public.sec_recurso(res_id,res_codrec, res_descrip) VALUES (57,'PERSONAS','PERSONAS');
+INSERT INTO public.sec_recurso(res_id,res_codrec, res_descrip) VALUES (58,'ITEMS','ITEMS');
 
 -- PROFILE
 
