@@ -43,7 +43,8 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado crearNuevo(OrgEmpleado entity) {
-        if (entity.getId() != null) new DataException("Entidad con id, debe ser nulo");
+        if (entity.getId() != null)
+            new DataException("Entidad con id, debe ser nulo");
 
         validar(entity);
         OrgPersona persona = personaService.findById(entity.getIdPersona());
@@ -76,7 +77,8 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado update(OrgEmpleado entityNew) {
-        if (entityNew.getId() == null) throw new DataException("Empleado con id nulo");
+        if (entityNew.getId() == null)
+            throw new DataException("Empleado con id nulo");
 
         validar(entityNew);
         OrgPersona p = personaService.findById(entityNew.getIdPersona());
@@ -105,11 +107,10 @@ public class EmpleadoService {
                     && empleadoOld.getUnidad().getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
                 // change of boss
                 Date fBaja = UtilsDate.compara(
-                                        entityNew.getFechaIngreso(),
-                                        unidBossOld.get().getFechaIngreso())
-                                >= 0
-                        ? entityNew.getFechaIngreso()
-                        : unidBossOld.get().getFechaIngreso();
+                        entityNew.getFechaIngreso(),
+                        unidBossOld.get().getFechaIngreso()) >= 0
+                                ? entityNew.getFechaIngreso()
+                                : unidBossOld.get().getFechaIngreso();
                 bajaEmpleado(unidBossOld.get().getId(), fBaja, false);
             }
         }
@@ -204,13 +205,19 @@ public class EmpleadoService {
         return Optional.empty();
     }
 
+    public OrgEmpleado findByIdAct(Integer idEmpl) {
+        OrgEmpleado emp = repositoryEntity.findByIdAct(idEmpl)
+                .orElseThrow(() -> new DataException("Empleado inexistente : `%s`".formatted(idEmpl)));
+        return emp;
+    }
+
     public Optional<OrgEmpleado> empleadoBoss(Integer idUnidad, boolean verifica) {
         Optional<OrgEmpleado> boss = repositoryEntity.empleadoBoss(idUnidad);
 
         if (boss.isPresent()) {
             return boss;
         }
-        //        OrgUnidad unidad = unidadService.findById(idUnidad);
+        // OrgUnidad unidad = unidadService.findById(idUnidad);
         List<OrgEmpleado> l = repositoryEntity.empleadosBoss(idUnidad);
 
         if (l.size() > 1 && verifica) {

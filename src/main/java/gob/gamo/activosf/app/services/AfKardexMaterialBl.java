@@ -55,7 +55,7 @@ public class AfKardexMaterialBl {
 
     AfSolicitudRepository afSolicitudRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfKardexMaterial> findAll(Pageable pageable) {

@@ -33,7 +33,7 @@ import gob.gamo.activosf.app.repository.AfProveedorRepository;
 public class AfProveedorBl {
 
     AfProveedorRepository afProveedorRepository;
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfProveedor> findAll(Pageable pageable) {

@@ -40,23 +40,6 @@ public class UnidadService {
     @PersistenceContext
     private final EntityManager entityManager;
 
-    @Transactional(readOnly = true)
-    public Page<UnidadResponse> findAll(String searchTxt, Pageable pageable) {
-        if (!StringUtils.isBlank(searchTxt)) {
-            CriteriaParser parser = new CriteriaParser();
-            Deque<?> deque = parser.parse(searchTxt);
-            if (deque.size() > 0) {
-                GenericSpecificationsBuilder<OrgUnidad> specBuilder = new GenericSpecificationsBuilder<>();
-                Specification<OrgUnidad> spec = specBuilder.build(deque, UserSpecification::new);
-                Page<UnidadResponse> list0 =
-                        repositoryEntity.findAll(spec, pageable).map(r -> new UnidadResponse(r));
-                return list0;
-            }
-        }
-        Page<UnidadResponse> list = repositoryEntity.findAll(pageable).map(r -> new UnidadResponse(r));
-        return list;
-    }
-
     @Transactional
     public UnidadResponse crearNuevo(OrgUnidad entity) {
         if (entity.getIdUnidad() != null) new DataException("Entidad con id, debe ser nulo");
@@ -261,4 +244,22 @@ public class UnidadService {
                         && r.getIdUnidadPadre().compareTo(idpadre) == 0)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    private Page<UnidadResponse> findAll(String searchTxt, Pageable pageable) {
+        if (!StringUtils.isBlank(searchTxt)) {
+            CriteriaParser parser = new CriteriaParser();
+            Deque<?> deque = parser.parse(searchTxt);
+            if (deque.size() > 0) {
+                GenericSpecificationsBuilder<OrgUnidad> specBuilder = new GenericSpecificationsBuilder<>();
+                Specification<OrgUnidad> spec = specBuilder.build(deque, UserSpecification::new);
+                Page<UnidadResponse> list0 =
+                        repositoryEntity.findAll(spec, pageable).map(r -> new UnidadResponse(r));
+                return list0;
+            }
+        }
+        Page<UnidadResponse> list = repositoryEntity.findAll(pageable).map(r -> new UnidadResponse(r));
+        return list;
+    }
+
 }

@@ -45,7 +45,7 @@ public class AfGestionBl {
     AfGestionRepository afGestionRepository;
     AfFamiliaActivoBl afFamiliaActivoBl;
     AfKardexMaterialBl afKardexMaterialBl;
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
     AfActivoFijoBl afActivoFijoBl;
     AfAlmacenRepository afAlmacenRepository;
     AfMaterialRepository afMaterialRepository;

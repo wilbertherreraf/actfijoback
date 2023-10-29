@@ -69,16 +69,8 @@ public class UnidadControllerTest {
     @Autowired
     private JwtDecoder jwtDecoder;
 
-    @Test
-    public void getUnidades() {
-        try {
-            PageRequest pageable = PageRequest.of(0, 20);
-            List<UnidadResponse> list = service.findAll("",pageable).getContent();
-            log.info("Undis {}", list.size());
-        } catch (Exception e) {
-            log.error("Error " + e.getMessage(), e);
-        }
-    }
+   
+   
 
     @Test
     public void getUnidadesRest() {

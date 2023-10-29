@@ -32,7 +32,7 @@ public class AfFamiliaActivoBl {
 
     AfFamiliaActivoRepository afFamiliaActivoRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfFamiliaActivo> findAll(Pageable pageable) {

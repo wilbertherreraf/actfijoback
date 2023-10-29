@@ -1582,13 +1582,30 @@ comment on column ACF_TRANSFERENCIA_ASIGNACION.TX_HOST_INI is 'IP de la maquina 
 comment on column ACF_TRANSFERENCIA_ASIGNACION.TX_FCH_MOD is 'Fecha de modificacion del registro.';
 comment on column ACF_TRANSFERENCIA_ASIGNACION.TX_USR_MOD is 'Id del usuario que realizo la ultima modificacion al registro, este ID corresponde con la columna ID_USUARIO de la tabla TX_USUARIO del esquema "seguridad".';
 comment on column ACF_TRANSFERENCIA_ASIGNACION.TX_HOST_MOD is 'IP de la maquina donde se realizo la ultima modificacion del registro.';
+
 create table TX_TRANSACCION (
     ID_TRANSACCION SERIAL not null,
+    TAB_TIPOOPERACION INTEGER,
+    TIPOOPERACION INTEGER,
+    TAB_TIPOOPERSUB INTEGER,
+    TIPOOPERSUB INTEGER,    
+    GLOSA VARCHAR(150),
+    MONTO NUMERIC(15,2),
+    FECHA_OPER DATE,
+    FECHA_VALOR DATE,
+    ID_EMPLEADO INTEGER,
+    ID_EMPLEADOAUT INTEGER,
+    ID_UNIDAD INTEGER,
+    ID_UNIDADDEST INTEGER,
+    ID_USRREG VARCHAR(50),
+    ID_USRAUT VARCHAR(50),
+    ID_TRXORIGEN INTEGER,
     TX_FECHA TIMESTAMP WITH TIME ZONE not null,
     TX_USUARIO Integer not null,
     TX_HOST VARCHAR(30) not null,
     constraint PK_TX_TRANSACCION primary key (ID_TRANSACCION)
 );
+
 comment on table TX_TRANSACCION is 'Entidad destinada a almacenar los IDs de todas las transacciones realizadas en el sistema.';
 comment on column TX_TRANSACCION.ID_TRANSACCION is 'Id de la transaccion';
 comment on column TX_TRANSACCION.TX_FECHA is 'Fecha de la transaccion.';
@@ -1684,9 +1701,52 @@ alter table ACF_TRANSFERENCIA_ASIGNACION
 add constraint FK_AF_TRANs_AF_AMB_DEST foreign key (ID_AMBIENTE_DESTINO) references ACF_AMBIENTE (ID_AMBIENTE) on delete restrict on update restrict;
 alter table gen_desctabla
 add constraint fk_gen_des_gen_tab foreign key (des_codtab) references gen_tablas(tab_codigo) on delete restrict on update restrict;
+
+create table TX_TRANSDET (
+    ID_TRANSDET SERIAL not null,
+    ID_TRANSACCION INTEGER,
+    ID_CORRELATIVO INTEGER,
+    TAB_DETOPERACION INTEGER,
+    DETOPERACION INTEGER,        
+    TAB_TAREAOPERACION INTEGER,
+    TAREAOPERACION INTEGER,    
+    TAB_OPERMAYOR INTEGER,
+    OPERMAYOR INTEGER,        
+    ID_ITEMAF INTEGER,
+    GLOSA VARCHAR(150),
+    MONTO NUMERIC(15,2),
+    CANTIDAD NUMERIC(15,5),    
+    TAB_UNIDADMED INTEGER,
+    UNIDADMED INTEGER,
+    TAB_METODOCALC INTEGER,
+    METODOCALC INTEGER,    
+    FECHA_OPER DATE,
+    FECHA_VALOR DATE,
+    TAB_TIPOOPERACION INTEGER,
+    TIPOOPERACION INTEGER,
+    ID_EMPLEADO INTEGER,    
+    ID_EMPLEADOAUT INTEGER,        
+    ID_UNIDAD INTEGER,
+    ID_USRREG VARCHAR(50),
+    ID_USRAUT VARCHAR(50),
+    ID_TRANSDETPADRE INTEGER,    
+    ID_TRXORIGEN INTEGER,
+    TX_FECHA TIMESTAMP WITH TIME ZONE not null,
+    TX_USUARIO Integer not null,
+    TX_HOST VARCHAR(30) not null,
+    constraint PK_TX_IDTRANSDET primary key (ID_TRANSDET)
+);
+
+
+
+
+
 drop table if exists tx_area;
 drop table if exists tx_persona;
 drop table if exists tx_usuario;
+
+
+
 create table tx_area (
     id_area serial not null,
     constraint PK_tx_area primary key (id_area)
@@ -1774,6 +1834,7 @@ GRANT ALL ON TABLE public.sec_usuario TO activosf;
 GRANT ALL ON TABLE public.tx_area TO activosf;
 GRANT ALL ON TABLE public.tx_persona TO activosf;
 GRANT ALL ON TABLE public.tx_transaccion TO activosf;
+GRANT ALL ON TABLE public.tx_transdet TO activosf;
 GRANT ALL ON TABLE public.tx_usuario TO activosf;
 GRANT ALL ON TABLE public.ACF_ITEMAF TO activosf;
 

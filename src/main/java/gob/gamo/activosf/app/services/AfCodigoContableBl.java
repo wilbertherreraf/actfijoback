@@ -32,7 +32,7 @@ public class AfCodigoContableBl {
 
     AfCodigoContableRepository afCodigoContableRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfCodigoContable> findAll(Pageable pageable) {

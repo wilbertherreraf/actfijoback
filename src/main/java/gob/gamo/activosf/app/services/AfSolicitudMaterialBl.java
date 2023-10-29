@@ -28,7 +28,7 @@ public class AfSolicitudMaterialBl {
 
     AfSolicitudMaterialRepository afSolicitudMaterialRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     public void mergeAfSolicitudMaterial(AfSolicitudMaterial afSolicitudMaterial, UserRequestVo userRequestVo) {
         TxTransaccion txTransaccion = txTransaccionBl.generateTxTransaccion(userRequestVo);

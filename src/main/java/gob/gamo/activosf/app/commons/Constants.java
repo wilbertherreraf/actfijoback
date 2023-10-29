@@ -31,6 +31,8 @@ public interface Constants {
     String API_EMPLEADOS = "/empleados";
     String API_PERSONAS = "/personas";
     String API_ITEMS = "/items";    
+    String API_TRANSACCION = "/trx";        
+    String API_TRANSDET = "/trxdet";        
 
     String API_USUARIOS = "/users";
     String API_ROLES = "/roles";
@@ -55,6 +57,8 @@ public interface Constants {
     String REC_ROLES = "ROLES";
     String REC_PERMISOS = "PERMISOS";
     String REC_ITEMS = "ITEMS";
+    String REC_TRANSACCION = "TRX";    
+    String REC_TRANSDET = "TRXDET";        
 
     public static final Integer SEC_MAX_ATTEMPT = 3;
     public static final Integer SEC_TIME_LOCKED_FOR_ATTEMPS = 5 * 60; // minutos
@@ -65,4 +69,10 @@ public interface Constants {
     String HEADER_X_ACTIVOS = "X-Activosf";
 
     static Integer TAB_TIPOPERS_NATURAL = 1;
+
+    static final Integer TAB_TOP_AF = 1;
+    static final Integer TAB_TOP_AF_CREAKARDEX = 1;
+        
+    static final Integer TAB_TOP_ALM = 2;    
+
 }

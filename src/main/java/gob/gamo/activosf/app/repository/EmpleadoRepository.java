@@ -12,6 +12,12 @@ import gob.gamo.activosf.app.domain.OrgEmpleado;
 
 public interface EmpleadoRepository extends JpaRepository<OrgEmpleado, Integer> {
     @Query("Select e from OrgEmpleado e, OrgPersona p where e.idPersona = p.idPersona "
+            + "and e.fechaBaja is null "
+            + " and e.id = :idEmpleado ")
+    Optional<OrgEmpleado> findByIdAct(@Param(value = "idEmpleado") Integer idEmpleado);
+
+
+    @Query("Select e from OrgEmpleado e, OrgPersona p where e.idPersona = p.idPersona "
             + " and p.idPersona = :idPersona ")
     List<OrgEmpleado> findAllByIdPersona(@Param(value = "idPersona") Integer idPersona);
 

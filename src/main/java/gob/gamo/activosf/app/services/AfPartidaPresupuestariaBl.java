@@ -32,7 +32,7 @@ public class AfPartidaPresupuestariaBl {
 
     AfPartidaPresupuestariaRepository afPartidaPresupuestariaRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfPartidaPresupuestaria> findAll(Pageable pageable) {

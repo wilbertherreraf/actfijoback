@@ -43,7 +43,7 @@ public class AfAltaMaterialBl {
 
     AfRegistroKardexMaterialBl afRegistroKardexMaterialBl;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfAltaMaterial> findAll(Pageable pageable) {

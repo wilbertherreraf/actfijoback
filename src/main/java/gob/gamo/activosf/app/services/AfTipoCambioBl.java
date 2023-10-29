@@ -33,7 +33,7 @@ public class AfTipoCambioBl {
 
     AfTipoCambioRepository afTipoCambioRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfTipoCambio> findAll(Pageable pageable) {

@@ -16,6 +16,12 @@ INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (31, 'TIPO USUARIO')
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (53, 'TIPO DE ACTUALIZACION');
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (55, 'ROL EMPLEADO');
 
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (80, 'OPERACION AF');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (85, 'OPERACION AF SUB');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (88, 'OPERACION MAYOR AF');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (86, 'ITEM DETALLE OPERACION');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (180, 'OPERACION ALM');
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (185, 'OPERACION ALM SUB');
 
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (101, 1, 'PERSONA NATURAL                         ', 'P.NAT',  null, null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (101, 2, 'SUCESION INDIVISA                       ', 'SUC.I',  null, null);
@@ -88,3 +94,28 @@ INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  de
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 5, 'JEFE', null,  null, null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 6, 'GERENTE', null,  null, null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (55, 99, 'NaN', null,  null, null);
+
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (80, 1, 'ACTIVO', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (80, 2, 'ALMACENES', null,  null, null);
+
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 1, 'SOLICITUD ACTIVO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 2, 'ALTA ACTIVO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 3, 'ASIGNACION ACTIVO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 5, 'BAJA/REVERSA ACTIVO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 6, 'RECHAZO ACTIVO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 7, 'RECEPCION AF', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 8, 'RECEPCION ALM', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 20, 'REGISTRO POR ROBO', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 21, 'REGISTRO POR PERDIDA', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (85, 23, 'REVALORIZACION', '',  null, null);
+
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (86, 1, 'BIEN', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (86, 2, 'INMUEBLE', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (86, 3, 'FAMILIA', '',  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (86, 5, 'ITEM', '',  null, null);
+
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (88, 1, 'ACTIVO - COTIZACION', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (88, 2, 'MONTO COMPRA', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (88, 3, 'PERDIDA POR MERMA', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (88, 6, 'PERDIDA POR ROBO', null,  null, null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso,  des_auditusr,  des_auditwst) VALUES (88, 7, 'REVALORIZACION', null,  null, null);

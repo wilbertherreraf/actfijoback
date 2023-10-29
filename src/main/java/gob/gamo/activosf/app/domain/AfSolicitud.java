@@ -30,12 +30,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author wherrera
  */
 @Entity
+@Setter
 @Getter
 @Builder
 @Table(name = "acf_solicitud")
@@ -131,7 +133,7 @@ public class AfSolicitud {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSolicitud", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AfSolicitudMaterial> afSolicitudMaterialList;
 
-    public AfSolicitud(
+/*     public AfSolicitud(
             Integer idSolicitud,
             Integer gestion,
             String catTipoSolicitud,
@@ -157,7 +159,8 @@ public class AfSolicitud {
         this.txUsrIni = txUsrIni;
         this.txHostIni = txHostIni;
     }
-
+ */
+/* 
     public Integer getIdSolicitud() {
         return idSolicitud;
     }
@@ -374,5 +377,5 @@ public class AfSolicitud {
     @Override
     public String toString() {
         return "gob.gamo.activosf.app.domain.AfSolicitud[ idSolicitud=" + idSolicitud + " ]";
-    }
+    } */
 }

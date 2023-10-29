@@ -30,7 +30,7 @@ import gob.gamo.activosf.app.repository.AfAmbienteRepository;
 public class AfAmbienteBl {
     AfAmbienteRepository afAmbienteRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfAmbiente> findAll(Pageable pageable) {

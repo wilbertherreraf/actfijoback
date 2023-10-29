@@ -31,7 +31,7 @@ public class AfComisionRecepcionBl {
 
     AfComisionRecepcionRepository afComisionRecepcionRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfComisionRecepcion> findAll(Pageable pageable) {

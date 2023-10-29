@@ -34,6 +34,7 @@ import gob.gamo.activosf.app.domain.AfItemaf;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
+import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.CriteriosBusquedaEnum;
@@ -46,6 +47,7 @@ import gob.gamo.activosf.app.utils.PaginationUtil;
 @Service
 @RequiredArgsConstructor
 public class AfSearchService {
+    private final TxTransaccionService transService;
     @PersistenceContext
     private final EntityManager em;
 
@@ -89,8 +91,8 @@ public class AfSearchService {
                 + " AND af.cat_estado_activo_fijo != 'PROREC' ");
         if (criterios.containsKey(CriteriosBusquedaEnum.CODIGO_ACTIVO)) {
             query.append(" AND af.codigo_extendido LIKE(:codigoExtendido) ");
-            params.put("codigoExtendido", QueryParams.prepareStringForLikeSufix((String)
-                    criterios.get(CriteriosBusquedaEnum.CODIGO_ACTIVO)));
+            params.put("codigoExtendido",
+                    QueryParams.prepareStringForLikeSufix((String) criterios.get(CriteriosBusquedaEnum.CODIGO_ACTIVO)));
         }
 
         if (criterios.containsKey(CriteriosBusquedaEnum.USUARIO_ASIGNADO)) {
@@ -239,8 +241,8 @@ public class AfSearchService {
                 .toList();
 
         int total = countAll(builder, query, root);
-        Page<OrgPersona> page =
-                PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
+        Page<OrgPersona> page = PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(),
+                total, result);
 
         return page;
     }
@@ -272,8 +274,7 @@ public class AfSearchService {
 
         List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
 
-        List<OrgEmpleado> result =
-                listT.stream().map(r -> (OrgEmpleado) r.get(0)).toList();
+        List<OrgEmpleado> result = listT.stream().map(r -> (OrgEmpleado) r.get(0)).toList();
         int total = countAll(builder, query, root);
 
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
@@ -300,8 +301,31 @@ public class AfSearchService {
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
     }
 
+    public Page<TxTransaccion> searchTransaf(SearchCriteria params, Pageable pageable) {
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = builder.createTupleQuery();
+        final Root<TxTransaccion> root = query.from(TxTransaccion.class);
+        root.alias("transaccion");
 
-/* AAAAAAAFFFFFFFFFFFFFFFFFFFFFFF */    
+        Boolean existPersona = findInSearchCriteria(params, "persona.");
+
+        if (existPersona) {
+            /*
+             * Join<User, OrgPersona> j = root.join("persona", JoinType.INNER);
+             * j.alias("persona");
+             */
+        }
+
+        List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
+
+        List<TxTransaccion> result = listT.stream().map(r -> (TxTransaccion) r.get(0))
+                .map(r -> transService.completeRels(r)).toList();
+        int total = countAll(builder, query, root);
+
+        return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
+    }
+
+    /* AAAAAAAFFFFFFFFFFFFFFFFFFFFFFF */
 
     public Page<AfItemaf> searchItemsaf(SearchCriteria params, Pageable pageable) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -311,14 +335,13 @@ public class AfSearchService {
 
         List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
 
-        List<AfItemaf> result =
-                listT.stream().map(r -> (AfItemaf) r.get(0)).toList();
+        List<AfItemaf> result = listT.stream().map(r -> (AfItemaf) r.get(0)).toList();
         int total = countAll(builder, query, root);
 
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
     }
 
-/********************************** */
+    /********************************** */
     public Page<OrgUnidad> searchUnidades(SearchCriteria params, Pageable pageable) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
@@ -349,7 +372,8 @@ public class AfSearchService {
         query.where(searchConsumer.getPredicates().toArray(new Predicate[0]));
 
         List<Order> sorts = orders(builder, root, pageable);
-        if (sorts.size() > 0) query.orderBy(sorts);
+        if (sorts.size() > 0)
+            query.orderBy(sorts);
 
         List<Tuple> l = em.createQuery(query)
                 .setMaxResults(pageable.getPageSize())
@@ -404,7 +428,7 @@ public class AfSearchService {
         Tuple result = em.createQuery(query).getSingleResult();
         long count = (Long) result.get(0);
         int countR = (int) count;
-        log.info("Total de {} recuperados {}", root.getAlias(), countR);        
+        log.info("Total de {} recuperados {}", root.getAlias(), countR);
         return countR;
     }
 
@@ -417,7 +441,8 @@ public class AfSearchService {
         } else {
             for (SearchCriteria s : sc.getChildren()) {
                 boolean exists = findInSearchCriteria(s, key);
-                if (exists) return true;
+                if (exists)
+                    return true;
             }
         }
 

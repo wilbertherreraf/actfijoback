@@ -57,7 +57,6 @@ public class RolesService {
 
     @Transactional
     public RolesVO createRol(User me, RolesVO request) {
-        log.info("new rol {}", request.toString());
         Roles nRol = Roles.builder()
                 .codrol(request.codrol())
                 .descripcion(request.descripcion())
@@ -117,118 +116,6 @@ public class RolesService {
 
         rolesRepository.delete(rol);
     }
-
-    /*
-     * private void saveRoleApiPermissions(RolesVO newRolesVO) {
-     * List<RoleApiEntity> newRoleApiPermList = new ArrayList<>();
-     * List<ApiPermissionEntity> newPermApiEntities = newRolesVO.getApiEntities();
-     *
-     * newPermApiEntities.forEach(entity -> {
-     * RoleApiEntity newRoleApiEntity = new RoleApiEntity();
-     * newRoleApiEntity.setRoleId(newRolesVO.getRoleId());
-     * newRoleApiEntity.setApiPermissionId(entity.getApiPermissionId());
-     * newRoleApiPermList.add(newRoleApiEntity);
-     * });
-     * logger.debug(newRoleApiPermList.toString());
-     * this.roleApiRepository.saveAll(newRoleApiPermList);
-     * }
-     *
-     * @Transactional
-     * public RolesVO createRole(RolesVO newRolesVO) {
-     * // TODO:
-     * this.saveRoleApiPermissions(newRolesVO);
-     * newRolesVO = this.rolesRepository.save(newRolesVO);
-     * return newRolesVO;
-     * }
-     */
-    /**
-     *
-     * TODO:
-     *
-     * @param newRolesVO
-     * @return
-     */
-
-    /*
-     * @Transactional
-     * public RolesVO updateRole(RolesVO newRolesVO) {
-     * // TODO:
-     *
-     * RolesVO oldEntity =
-     * this.roleRepository.findDistinctByRoleId(newRolesVO.getRoleId());
-     *
-     * this.roleApiRepository.deleteAllByRoleId(newRolesVO.getRoleId());
-     * this.saveRoleApiPermissions(newRolesVO);
-     *
-     * this.roleComponentRepository.deleteAllByRoleId(newRolesVO.getRoleId());
-     * this.saveRoleComponentPermissions(newRolesVO);
-     *
-     * return this.roleRepository.save(newRolesVO);
-     * }
-     */
-    /**
-     * TODO:
-     *
-     * @param roleId
-     * @return
-     */
-    /*
-     * @Transactional
-     * public Integer deleteRole(Integer roleId) {
-     * this.roleApiRepository.deleteAllByRoleId(roleId);
-     * this.roleComponentRepository.deleteAllByRoleId(roleId);
-     * this.userRoleRepository.deleteAllByRoleId(roleId);
-     * return this.roleRepository.deleteByRoleId(roleId);
-     * }
-     *
-     *
-     * public Page<RolesVO> getRoleListPaging(RolesVO RolesVO, Pageable pageable) {
-     * return this.roleRepository.findAll(new Specification<RolesVO>() {
-     *
-     * public Predicate toPredicate(Root<RolesVO> root, CriteriaQuery<?>
-     * criteriaQuery,
-     * CriteriaBuilder criteriaBuilder) {
-     * List<Predicate> predicates = new ArrayList<>();
-     * if (!StringUtils.isEmpty(RolesVO.getRoleName())) {
-     * predicates.add(criteriaBuilder.like(root.get("roleName"), "%" +
-     * RolesVO.getRoleName() + "%"));
-     * }
-     * if (!StringUtils.isEmpty(RolesVO.getStatus())) {
-     * predicates.add(criteriaBuilder.equal(root.get("status"),
-     * RolesVO.getStatus()));
-     * }
-     * return criteriaBuilder.and(predicates.toArray(new
-     * Predicate[predicates.size()]));
-     * }
-     * }, pageable);
-     * }
-     *
-     *
-     * public RolesVO getRoleById(Integer roleId) {
-     * return this.roleRepository.findDistinctByRoleId(roleId);
-     * }
-     *
-     *
-     * @Transactional
-     * public Integer deleteAuthUsers(Integer roleId, Integer[] userIds) {
-     * this.userRoleRepository.deleteByRoleIdAndUserIdIsIn(roleId, userIds);
-     * return 0;
-     * }
-     *
-     *
-     * @Transactional
-     * public Integer addAuthUsers(Integer roleId, Integer[] userIds) {
-     * List<UserRolesVO> list = new ArrayList<>();
-     * for (int i = 0; i < userIds.length; i++) {
-     * UserRolesVO userRolesVO = new UserRolesVO();
-     * userRolesVO.setRoleId(roleId);
-     * userRolesVO.setUserId(userIds[i]);
-     * list.add(userRolesVO);
-     * }
-     * this.userRoleRepository.saveAll(list);
-     * return 0;
-     * }
-     */
 
     private Roles findByCodrol(String codrol) {
         return rolesRepository

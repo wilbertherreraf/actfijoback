@@ -38,7 +38,7 @@ import gob.gamo.activosf.app.repository.sec.UserRepository;
 public class AfSolicitudBl {
 
     AfSolicitudRepository afSolicitudRepository;
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
     AfRegistroKardexMaterialBl afRegistroKardexMaterialBl;
     AfSolicitudMaterialBl afSolicitudMaterialBl;
     UserRepository userRepository;

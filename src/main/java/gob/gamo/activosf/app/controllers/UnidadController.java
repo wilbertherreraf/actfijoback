@@ -50,50 +50,7 @@ public class UnidadController {
     private final AfSearchService searchService;
     private static final String ENTITY_NAME = Constants.REC_UNIDS;
 
-    @GetMapping(Constants.API_UNIDS)
-    public ResponseEntity<List<UnidadResponse>> getAll(
-            @RequestParam(value = "q", required = false) String search, Pageable pageable) {
-        final Page<UnidadResponse> page = service.findAll(search, pageable);
-
-        /*         OrgHierarchyInterface<OrgUnidad> org = service.generarOrgTree(null);
-
-               Node<OrgUnidad> rootid = org.returnRoot();
-               if (rootid == null) {
-                   throw new DataException("Estructura sin root");
-               }
-
-               List<OrgUnidad> listn = new ArrayList<>();
-               listn.add(rootid.getValue());
-
-               LinkedList<Node<OrgUnidad>> childs = rootid.childs();
-               for (Node<OrgUnidad> node : childs) {
-                   listn.add(node.getValue());
-               }
-        */
-        /*
-         * org.treeByLevels(rootid).entrySet().stream().forEach(l -> {
-         * Integer key = l.getKey();
-         *
-         * LinkedList<Node<OrgUnidad>> value = l.getValue();
-         * for (Node<OrgUnidad> node : value) {
-         * String corr = StringUtils.leftPad("", 2 * key, "X");
-         * node.getValue().setTipoUnidad(corr);
-         *
-         * listn.add(node.getValue());
-         *
-         * int idParent = node.getParent() != null ? node.getParent().getKey() : 0;
-         * log.info("Level [{}] ({}) k: {} ch: {}", key, idParent, node.getKey(),
-         * node.getChildArray().size());
-         * }
-         * });
-         */
-        //        List<UnidadResponse> result = listn.stream().map(u -> new UnidadResponse(u)).toList();
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
+   
     @PostMapping(Constants.API_UNIDS + "/f")
     public ResponseEntity<List<UnidadResponse>> getAllByFilter(
             @RequestBody(required = false) SearchCriteria sc, Pageable pageable) {

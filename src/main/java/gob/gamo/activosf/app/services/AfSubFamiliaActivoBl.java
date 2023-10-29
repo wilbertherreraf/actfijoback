@@ -35,7 +35,7 @@ public class AfSubFamiliaActivoBl {
 
     AfSubFamiliaActivoRepository afSubFamiliaActivoRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfSubFamiliaActivo> findAll(Pageable pageable) {

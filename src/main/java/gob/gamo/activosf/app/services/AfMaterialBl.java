@@ -34,7 +34,7 @@ public class AfMaterialBl {
     private final AfMaterialRepository afMaterialRepository;
     private final AfMaterialRepository repositoryEntity;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     @Transactional(readOnly = true)
     public Page<AfMaterial> findAll(Pageable pageable) {

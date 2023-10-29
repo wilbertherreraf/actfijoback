@@ -57,7 +57,7 @@ public class AfActivoFijoBl {
 
     private final AfActivoFijoRepository afActivoFijoRepository;
 
-    private final TxTransaccionBl txTransaccionBl;
+    private final TxTransaccionService txTransaccionBl;
 
     private final AfTipoCambioBl afTipoCambioBl;
 

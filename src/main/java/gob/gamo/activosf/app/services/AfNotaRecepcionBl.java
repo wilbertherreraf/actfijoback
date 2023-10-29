@@ -66,7 +66,7 @@ public class AfNotaRecepcionBl {
 
     AfFamiliaActivoRepository afFamiliaTipoActivoRepository;
 
-    TxTransaccionBl txTransaccionBl;
+    TxTransaccionService txTransaccionBl;
 
     AfTipoCambioRepository afTipoCambioRepository;
 

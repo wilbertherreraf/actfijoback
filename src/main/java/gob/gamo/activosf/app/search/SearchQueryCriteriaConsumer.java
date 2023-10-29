@@ -166,6 +166,8 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
             return builder.notEqual(path, param.getValue());
         } else if (param.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
+                if (param.getValue() == null)
+                    return null;
                 String value = param.getValue().toString();
                 if (StringUtils.isBlank(value)) {
                     return null;
@@ -174,11 +176,14 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
                 boolean isContains = value.startsWith("*") && value.endsWith("*");
 
                 if (value.startsWith("*") && !isContains) {
-                    return builder.like(path.as(String.class), "%" + value.replaceAll("\\*", ""));
+                    value = value.toLowerCase();
+                    return builder.like(builder.lower(path.as(String.class)), "%" + value.replaceAll("\\*", ""));
                 } else if (value.endsWith("*") && !isContains) {
-                    return builder.like(path.as(String.class), value.replaceAll("\\*", "") + "%");
+                    value = value.toLowerCase();
+                    return builder.like(builder.lower(path.as(String.class)), value.replaceAll("\\*", "") + "%");
                 } else if (isContains) {
-                    return builder.like(path.as(String.class), "%" + value.replaceAll("\\*", "") + "%");
+                    value = value.toLowerCase();
+                    return builder.like(builder.lower(path.as(String.class)), "%" + value.replaceAll("\\*", "") + "%");
                 } else {
                     return builder.equal(path, param.getValue());
                 }
