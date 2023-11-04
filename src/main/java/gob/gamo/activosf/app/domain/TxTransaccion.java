@@ -47,14 +47,14 @@ public class TxTransaccion {
     @Column(name = "id_transaccion")
     private Integer idTransaccion;
 
+    @Column(name = "tab_tipoopersub")
+    private Integer tabTipoopersub;
+    @Column(name = "tipoopersub")
+    private Integer tipoopersub;    
     @Column(name = "tab_tipooperacion")
     private Integer tabTipooperacion;
     @Column(name = "tipooperacion")
     private Integer tipooperacion;
-    @Column(name = "tab_tipoopersub")
-    private Integer tabTipoopersub;
-    @Column(name = "tipoopersub")
-    private Integer tipoopersub;
     @Column(name = "glosa")
     private String glosa;
     @Column(name = "monto")
@@ -77,7 +77,10 @@ public class TxTransaccion {
     private String idUsraut;
     @Column(name = "id_trxorigen")
     private Integer idTrxorigen;
-
+    @Column(name = "tab_tareaoperacion")
+    private Integer tabTareaoperacion;
+    @Column(name = "tareaoperacion")
+    private Integer tareaoperacion;
     @Column(name = "tx_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date txFecha;

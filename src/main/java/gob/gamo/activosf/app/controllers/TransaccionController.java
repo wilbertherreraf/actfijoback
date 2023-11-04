@@ -8,12 +8,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.TxTransaccion;
@@ -61,8 +67,8 @@ public class TransaccionController {
     @Operation(summary = "Crea un nuevo registro")
     @PostMapping(value = Constants.API_TRANSACCION)
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<TxTransaccion> create(@RequestBody TransaccionVo req) {
-        TxTransaccion result = service.registro(req.getTransaccion());
+    public ResponseEntity<TxTransaccion> create(User me, @RequestBody TransaccionVo req) {
+        TxTransaccion result = service.registro(me, req.transaccion());
 
         return ResponseEntity.ok()
                 .body(result);
@@ -76,33 +82,104 @@ public class TransaccionController {
                 .body(result);
     }
 
-    @PostMapping(value = Constants.API_TRANSACCION + "/init")
+    @PostMapping(value = Constants.API_TRANSACCION + Constants.API_PREPARE)
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<TxTransaccion> iniciarTransaccion(User me, @RequestBody TxTransaccion req) {
-        TxTransaccion result = service.generarOperacion(me, req);
-
-        return ResponseEntity.ok()
-                .body(result);
+    public ResponseEntity<TransaccionVo> iniciarTransaccion(User me, @RequestBody TransaccionVo req) {
+        TxTransaccion result = service.prepareOperation(me, req.transaccion());
+        TransaccionVo r = new TransaccionVo(result);
+        /*
+         * ObjectMapper mapper = new ObjectMapper();
+         * String json;
+         * try {
+         * json = mapper.writeValueAsString(r);
+         * log.info("JSOM salid {}", json);
+         * } catch (JsonProcessingException e) {
+         * // TODO Auto-generated catch block
+         * e.printStackTrace();
+         * }
+         */
+        return ResponseEntity.ok().body((new TransaccionVo(result)));
     }
 
     @GetMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET)
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<TransdetVo>> allTransdet(@PathVariable(value = "slug") Integer id) {
+    public ResponseEntity<List<TransdetVo>> allTransdet(@PathVariable(value = "slug") Integer id, Pageable pageable) {
         TxTransaccion trx = service.findById(id);
-        List<TransdetVo> result = transdetService.getAll(trx).stream().map(x -> new TransdetVo(x)).toList();
+        Page<TransdetVo> page = transdetService.getAll(trx, pageable).map(x -> new TransdetVo(x));
 
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_TRANSACCION);
         return ResponseEntity.ok()
-                .body(result);
+                .headers(headers)
+                .body(page.getContent());
+
     }
 
     @PostMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET)
     // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<TransdetVo> createTransdet(@PathVariable(value = "slug") Integer id,
+    public ResponseEntity<TransdetVo> createTransdet(User me, @PathVariable(value = "slug") Integer id,
             @RequestBody TransdetVo req) {
         TxTransaccion trx = service.findById(id);
-        TxTransdet result = transdetService.create(trx, req.transdet());
+        TxTransdet result = transdetService.create(me, trx, req.transdet());
 
         return ResponseEntity.ok()
                 .body(new TransdetVo(result));
     }
+
+    @PutMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET + "/{id}")
+    // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<TransdetVo> updateTransdet(User me, @PathVariable(value = "slug") Integer id,
+            @RequestBody TransdetVo req, @PathVariable(value = "id") Integer idDet) {
+        TxTransaccion trx = service.findById(id);
+        TxTransdet trxdet = transdetService.findById(idDet);
+        TxTransdet result = transdetService.update(me, trx, req.transdet());
+
+        return ResponseEntity.ok()
+                .body(new TransdetVo(result));
+    }
+
+    @DeleteMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET + "/{id}")
+    // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<Void> delete(User me, @PathVariable(value = "slug") Integer id,
+            @PathVariable(value = "id") Integer idTrandet) {
+        TxTransaccion trx = service.findById(id);
+        transdetService.delete(me, trx, idTrandet);
+
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
+                .build();
+    }
+
+    @DeleteMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET + "/{id}" + "/rv")
+    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<Void> reversa(User me, @PathVariable(value = "slug") Integer id) {
+        TxTransaccion trx = service.findById(id);
+        transdetService.reversa(me, trx, id);
+
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
+                .build();
+    }
+
+    @PostMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET + Constants.API_PREPARE)
+    // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<TransdetVo> prepareTransdet(User me, @PathVariable(value = "slug") Integer id) {
+        TxTransaccion trx = service.prepareOperationdet(me, id);
+        TxTransdet newTd = transdetService.prepareNewTrxdet(me, trx);
+        TxTransdet result = transdetService.prepareTrxdet(me, trx, newTd);
+        return ResponseEntity.ok()
+                .body(new TransdetVo(result));
+    }
+
+    @PostMapping(value = Constants.API_TRANSACCION + "/{slug}" + Constants.API_TRANSDET + "/info")
+    // @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
+    public ResponseEntity<TransdetVo> updInfoTransdet(User me, @PathVariable(value = "slug") Integer id,
+            @RequestBody TransdetVo req) {
+        TxTransaccion trx = service.findById(id);
+        TxTransdet result = transdetService.updInfoItemaf(me, trx, req.transdet());
+
+        return ResponseEntity.ok()
+                .body(new TransdetVo(result));
+    }
+
 }

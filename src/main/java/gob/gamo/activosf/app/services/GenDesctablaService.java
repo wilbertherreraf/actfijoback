@@ -17,6 +17,9 @@ public class GenDesctablaService {
 
     @Transactional(readOnly = true)
     public GenDesctabla find(Integer tab, Integer cod) {
+        if (tab == null || cod  == null){
+            throw new DataException("Error al determinar catalogo, valores nulos.");
+        }
         return repository.findByDesCodtabAndDesCodigo(tab, cod)
                 .orElseThrow(() -> new DataException("Catalogo inexistente " + tab + " " + cod));
     }

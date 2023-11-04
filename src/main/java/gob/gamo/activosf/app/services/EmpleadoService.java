@@ -19,6 +19,7 @@ import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
+import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.errors.DataException;
 import gob.gamo.activosf.app.repository.EmpleadoRepository;
 import gob.gamo.activosf.app.utils.UtilsDate;
@@ -211,6 +212,10 @@ public class EmpleadoService {
         return emp;
     }
 
+    public OrgEmpleado empleadoIsActivo(Integer idPersona){
+        return empleadoActivo(idPersona).orElseThrow(() -> new DataException("Persona " + idPersona+ " inexistente o no se encuentra activo"));
+    }
+
     public Optional<OrgEmpleado> empleadoBoss(Integer idUnidad, boolean verifica) {
         Optional<OrgEmpleado> boss = repositoryEntity.empleadoBoss(idUnidad);
 
@@ -236,15 +241,13 @@ public class EmpleadoService {
         List<OrgEmpleado> l = repositoryEntity.empleadosUnidad(idUnidad);
         return l;
     }
-
-    private void suspenderTodo(Integer idPersona) {
-        List<OrgEmpleado> l = repositoryEntity.findAllByIdPersona(idPersona);
-        for (OrgEmpleado orgEmpleado : l) {
-            if (orgEmpleado.getFechaBaja() == null) {
-                orgEmpleado.setFechaBaja(new Date());
-                repositoryEntity.save(orgEmpleado);
-            }
+    public OrgUnidad retUnidad(User me, Integer idEmpleado, Integer idUnidad) {
+        OrgEmpleado empl = empleadoActivo(me.getIdUnidEmpl()).orElseThrow(
+                () -> new DataException("ID Persona de usuario inexistente en empleados " + me.getIdUnidEmpl()));
+        if (empl.getIdUnidad() == null || empl.getIdUnidad() != idUnidad) {
+            throw new DataException("Operacion: Empleado difiere con la Id de la operacion " + idEmpleado);
         }
+        return empl.getUnidad();
     }
 
     public void validar(OrgEmpleado e) {

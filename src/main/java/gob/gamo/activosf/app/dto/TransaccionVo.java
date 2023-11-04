@@ -72,7 +72,7 @@ public record TransaccionVo(
                         : new ArrayList<>());
     }
 
-    public TxTransaccion getTransaccion() {
+    public TxTransaccion transaccion() {
         return TxTransaccion.builder()
                 .idTransaccion(idTransaccion)
                 .tabTipooperacion(tabTipooperacion)

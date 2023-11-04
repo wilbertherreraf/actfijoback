@@ -28,13 +28,8 @@ public class GenDesctabla {
     @Column(name = "des_descrip")
     private String desDescrip;
 
-        //@Column(name = "des_codrol")
-    @Transient
-    private String codrol;
-    //@Column(name = "des_codrec")
-    @Transient
-    private String codrec;
-    //@Column(name = "des_codtabpadre")    
-    @Transient
-    private Integer desCodtabpadre;
+    @Column(name = "des_codrec")
+    private String desCodrec;
+    @Column(name = "des_codigopadre")    
+    private Integer desCodigopadre;
 }

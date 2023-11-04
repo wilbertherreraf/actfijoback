@@ -4,15 +4,19 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import gob.gamo.activosf.app.domain.AfItemaf;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.TxTransdet;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.handlers.DateDesserializerJson;
 import gob.gamo.activosf.app.handlers.DateSerializerJson;
+import jakarta.persistence.Column;
 
+@JsonRootName(value = "transdet")
 public record TransdetVo(
         Integer idTransdet,
         Integer idTransaccion,
@@ -26,19 +30,22 @@ public record TransdetVo(
         Integer idItemaf,
         String glosa,
         BigDecimal monto,
+        BigDecimal montoOrig,
+        Integer tabMonedaamtorig,
+        Integer monedaamtorig,
+        BigDecimal tipoCambio,
+        BigDecimal montoDesc,
+        BigDecimal montoCont,
+        Integer tipoCargo,
         BigDecimal cantidad,
         Integer tabUnidadmed,
         Integer unidadmed,
         Integer tabMetodocalc,
         Integer metodocalc,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // , timezone = "America/Los_Angeles"
-                @JsonSerialize(using = DateSerializerJson.class)
-                @JsonDeserialize(using = DateDesserializerJson.class)        
-        Date fechaOper,
+        @JsonSerialize(using = DateSerializerJson.class) @JsonDeserialize(using = DateDesserializerJson.class) Date fechaOper,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // , timezone = "America/Los_Angeles"
-                @JsonSerialize(using = DateSerializerJson.class)
-                @JsonDeserialize(using = DateDesserializerJson.class)        
-        Date fechaValor,
+        @JsonSerialize(using = DateSerializerJson.class) @JsonDeserialize(using = DateDesserializerJson.class) Date fechaValor,
         Integer tabTipooperacion,
         Integer tipooperacion,
         Integer idEmpleado,
@@ -50,7 +57,11 @@ public record TransdetVo(
         Integer idTrxorigen,
         GenDesctabla detoperaciondesc,
         GenDesctabla tareaoperaciondesc,
-        GenDesctabla opermayordesc) {
+        GenDesctabla opermayordesc,
+        GenDesctabla tipooperaciondesc,
+        ItemafVo itemsaf,
+        EmpleadoVo empleado
+        ) {
     public TransdetVo(TxTransdet t) {
         this(
                 t.getIdTransdet(),
@@ -65,6 +76,13 @@ public record TransdetVo(
                 t.getIdItemaf(),
                 t.getGlosa(),
                 t.getMonto(),
+                t.getMontoOrig(),
+                t.getTabMonedaamtorig(),
+                t.getMonedaamtorig(),
+                t.getTipoCambio(),
+                t.getMontoDesc(),
+                t.getMontoCont(),
+                t.getTipoCargo(),
                 t.getCantidad(),
                 t.getTabUnidadmed(),
                 t.getUnidadmed(),
@@ -83,7 +101,11 @@ public record TransdetVo(
                 t.getIdTrxorigen(),
                 t.getDetoperaciondesc(),
                 t.getTareaoperaciondesc(),
-                t.getOpermayordesc());
+                t.getOpermayordesc(),
+                t.getTipooperaciondesc(),
+                t.getItemaf() != null ? new ItemafVo(t.getItemaf()) : null,
+                t.getEmpleado() != null ? new EmpleadoVo(t.getEmpleado()) : null
+                );
     };
 
     public TxTransdet transdet() {
@@ -100,6 +122,13 @@ public record TransdetVo(
                 .idItemaf(idItemaf)
                 .glosa(glosa)
                 .monto(monto)
+                .montoOrig(montoOrig)
+                .tabMonedaamtorig(tabMonedaamtorig)
+                .monedaamtorig(monedaamtorig)
+                .tipoCambio(tipoCambio)
+                .montoDesc(montoDesc)
+                .montoCont(montoCont)
+                .tipoCargo(tipoCargo)
                 .cantidad(cantidad)
                 .tabUnidadmed(tabUnidadmed)
                 .unidadmed(unidadmed)

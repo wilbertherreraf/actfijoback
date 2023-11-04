@@ -36,65 +36,79 @@ public class TxTransdet {
     @Column(name = "id_transdet")
     private Integer idTransdet;
 
-    @Column(name ="id_transaccion")
+    @Column(name = "id_transaccion")
     private Integer idTransaccion;
-    @Column(name ="id_correlativo")
+    @Column(name = "id_correlativo")
     private Integer idCorrelativo;
-    @Column(name ="tab_detoperacion")
+    @Column(name = "tab_detoperacion")
     private Integer tabDetoperacion;
-    @Column(name ="detoperacion")
+    @Column(name = "detoperacion")
     private Integer detoperacion;
-    @Column(name ="tab_tareaoperacion")
+    @Column(name = "tab_tareaoperacion")
     private Integer tabTareaoperacion;
-    @Column(name ="tareaoperacion")
+    @Column(name = "tareaoperacion")
     private Integer tareaoperacion;
-    @Column(name ="tab_opermayor")
+    @Column(name = "tab_opermayor")
     private Integer tabOpermayor;
-    @Column(name ="opermayor")
+    @Column(name = "opermayor")
     private Integer opermayor;
-    @Column(name ="id_itemaf")
+    @Column(name = "id_itemaf")
     private Integer idItemaf;
-    @Column(name ="glosa")
+    @Column(name = "glosa")
     private String glosa;
-    @Column(name ="monto")
+    @Column(name = "monto_orig")
+    private BigDecimal montoOrig;
+    @Column(name = "tab_monedaamtorig")
+    private Integer tabMonedaamtorig;
+    @Column(name = "monedaamtorig")
+    private Integer monedaamtorig;
+    @Column(name = "tipo_cambio")
+    private BigDecimal tipoCambio;
+    @Column(name = "monto_desc")
+    private BigDecimal montoDesc;
+    @Column(name = "monto_cont")
+    private BigDecimal montoCont;
+    @Column(name = "tipo_cargo")
+    private Integer tipoCargo;
+    @Column(name = "monto")
     private BigDecimal monto;
-    @Column(name ="cantidad")
+    @Column(name = "cantidad")
     private BigDecimal cantidad;
-    @Column(name ="tab_unidadmed")
+    @Column(name = "tab_unidadmed")
     private Integer tabUnidadmed;
-    @Column(name ="unidadmed")
+    @Column(name = "unidadmed")
     private Integer unidadmed;
-    @Column(name ="tab_metodocalc")
+    @Column(name = "tab_metodocalc")
     private Integer tabMetodocalc;
-    @Column(name ="metodocalc")
+    @Column(name = "metodocalc")
     private Integer metodocalc;
-    @Column(name ="fecha_oper")
+    @Column(name = "fecha_oper")
     private Date fechaOper;
-    @Column(name ="fecha_valor")
+    @Column(name = "fecha_valor")
     private Date fechaValor;
-    @Column(name ="tab_tipooperacion")
+    @Column(name = "tab_tipooperacion")
     private Integer tabTipooperacion;
-    @Column(name ="tipooperacion")
+    @Column(name = "tipooperacion")
     private Integer tipooperacion;
-    @Column(name ="id_empleado")
+    @Column(name = "id_empleado")
     private Integer idEmpleado;
-    @Column(name ="id_empleadoaut")
+    @Column(name = "id_empleadoaut")
     private Integer idEmpleadoaut;
-    @Column(name ="id_unidad")
+    @Column(name = "id_unidad")
     private Integer idUnidad;
-    @Column(name ="id_usrreg")
+    @Column(name = "id_usrreg")
     private String idUsrreg;
-    @Column(name ="id_usraut")
+    @Column(name = "id_usraut")
     private String idUsraut;
-    @Column(name ="id_transdetpadre")
+    @Column(name = "id_transdetpadre")
     private Integer idTransdetpadre;
-    @Column(name ="id_trxorigen")
+    @Column(name = "id_trxorigen")
     private Integer idTrxorigen;
-    @Column(name ="tx_fecha")
+    @Column(name = "tx_fecha")
     private Date txFecha;
-    @Column(name ="tx_usuario")
+    @Column(name = "tx_usuario")
     private Integer txUsuario;
-    @Column(name ="tx_host")
+    @Column(name = "tx_host")
     private String txHost;
 
     @Transient
@@ -103,4 +117,10 @@ public class TxTransdet {
     private GenDesctabla tareaoperaciondesc;
     @Transient
     private GenDesctabla opermayordesc;
+    @Transient
+    private AfItemaf itemaf;
+    @Transient
+    private OrgEmpleado empleado;
+    @Transient
+    private GenDesctabla tipooperaciondesc;
 }

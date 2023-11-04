@@ -51,7 +51,7 @@ drop table if exists gen_tablas;
 /*genericos*/
 create table gen_claves (
     clv_id serial not null primary key,
-    clv_codclave varchar(20) not null,
+    clv_codclave varchar(50) not null,
     clv_descrip varchar(200),
     clv_valor varchar(240),
     constraint UK_clvcodclave unique (clv_codclave)
@@ -65,9 +65,10 @@ create table gen_desctabla (
     des_codtab integer not null,
     des_codigo integer not null,
     des_descrip varchar(100) not null,
-    des_codeiso varchar(15),
+    des_codeiso varchar(50),
+    des_codrec varchar(50),
+    des_codigopadre integer,
     des_auditusr varchar(15),
-    des_updatedat timestamp,
     des_auditwst varchar(20),
     primary key (des_codtab, des_codigo),
     constraint FK_clvcodclave foreign key (des_codtab) references gen_tablas (tab_codigo)
@@ -747,9 +748,14 @@ familia      varchar(15),
 item         varchar(15),
 nombre       varchar(150),
 unidmedida   varchar(15),
+tab_umedida INTEGER default 32,
+umedida INTEGER default 1,
 codclasif    varchar(15),
 tipo_costodi varchar(15),
 tipo_costofv varchar(15),
+precio_unitario NUMERIC(15,5) DEFAULT 0,
+stock integer DEFAULT 0,
+stock_min integer DEFAULT 1,
     constraint PK_AF_ITEMAF primary key (ID_ITEM)
 );
 
@@ -1714,7 +1720,14 @@ create table TX_TRANSDET (
     OPERMAYOR INTEGER,        
     ID_ITEMAF INTEGER,
     GLOSA VARCHAR(150),
-    MONTO NUMERIC(15,2),
+    MONTO_ORIG NUMERIC(15,5) DEFAULT 0,
+    TAB_MONEDAAMTORIG INTEGER DE,
+    MONEDAAMTORIG INTEGER,     
+    TIPO_CAMBIO NUMERIC(15,5) DEFAULT 1,   
+    TIPO_CARGO INTEGER,
+    MONTO NUMERIC(15,5) DEFAULT 0,
+    MONTO_DESC NUMERIC(15,5) DEFAULT 0,
+    MONTO_CONT NUMERIC(15,5) DEFAULT 0,    
     CANTIDAD NUMERIC(15,5),    
     TAB_UNIDADMED INTEGER,
     UNIDADMED INTEGER,

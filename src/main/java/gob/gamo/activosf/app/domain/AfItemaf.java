@@ -7,9 +7,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import java.math.BigDecimal;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,4 +70,22 @@ public class AfItemaf {
 
     @Column(name = "tipo_costofv")
     private String tipoCostofv;
+
+    @Column(name = "precio_unitario")
+    private BigDecimal punit;
+    
+    @Column(name = "stock")
+    private Integer stock;
+    
+    @Column(name = "stock_min")
+    private Integer stockMin;
+
+    @Column(name = "tab_umedida")
+    private Integer tabUmedida;
+
+    @Column(name = "umedida")
+    private Integer umedida;
+
+    @Transient
+    private GenDesctabla umedidadesc;
 }

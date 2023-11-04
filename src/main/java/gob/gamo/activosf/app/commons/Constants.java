@@ -33,6 +33,7 @@ public interface Constants {
     String API_ITEMS = "/items";    
     String API_TRANSACCION = "/trx";        
     String API_TRANSDET = "/trxdet";        
+    String API_PREPARE = "/pre";        
 
     String API_USUARIOS = "/users";
     String API_ROLES = "/roles";
@@ -70,9 +71,36 @@ public interface Constants {
 
     static Integer TAB_TIPOPERS_NATURAL = 1;
 
-    static final Integer TAB_TOP_AF = 1;
-    static final Integer TAB_TOP_AF_CREAKARDEX = 1;
-        
-    static final Integer TAB_TOP_ALM = 2;    
+    static final Integer TAB_MD = 1;
+    static final Integer TAB_MD_AD = 1; //ADMINIS
+    static final Integer TAB_MD_SG = 2; //seguridad
+    static final Integer TAB_MD_AF = 5;
+    static final Integer TAB_MD_AL = 8;
 
+    static final Integer TAB_AF = TAB_MD_AF;
+    static final Integer TAB_AF_CREAKARDEX = 1;
+        
+    static final Integer TAB_ALM = TAB_MD_AL;    
+    static final Integer TAB_ALM_CREKARDEX = 1;
+    static final Integer TAB_ALM_INGRESO = 2;
+    static final Integer TAB_ALM_SALIDA = 3;
+    static final Integer TAB_ALM_ACTKRD = 5;
+
+    static final Integer TAB_TOPSUB = 5;
+    static final Integer TAB_TOPSUB_IO = 2;
+
+    static final Integer TAB_MY = 58;    
+    static final Integer TAB_MY_SALDOINICIAL = 1;        
+    static final Integer TAB_MY_SALIDA_STOCK = 2;            
+    static final Integer TAB_MY_INGRESO_STOCK = 3;
+
+    static final Integer TAB_TASK = 30;
+    static final Integer TAB_TASK_PRE = 1;
+    static final Integer TAB_TASK_VER = 2;
+    static final Integer TAB_TASK_REG = 3;
+    static final Integer TAB_TASK_ACT = 5;
+    static final Integer TAB_TASK_DEL = 6;
+
+    static final Integer TAB_UND = 32;    
+    static final Integer TAB_UND_UND = 1;    
 }
