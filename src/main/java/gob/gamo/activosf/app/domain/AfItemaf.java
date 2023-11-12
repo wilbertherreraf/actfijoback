@@ -1,5 +1,7 @@
 package gob.gamo.activosf.app.domain;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -9,17 +11,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import java.math.BigDecimal;
-
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 
 @Entity
 @Setter
@@ -29,12 +31,13 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate(value = true)
 public class AfItemaf {
     @Id
     @Column(name = "id_item")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    /* */
     @Column(name = "codnemo")
     private String codnemo;
 
@@ -73,10 +76,10 @@ public class AfItemaf {
 
     @Column(name = "precio_unitario")
     private BigDecimal punit;
-    
+
     @Column(name = "stock")
     private Integer stock;
-    
+
     @Column(name = "stock_min")
     private Integer stockMin;
 
@@ -85,6 +88,9 @@ public class AfItemaf {
 
     @Column(name = "umedida")
     private Integer umedida;
+
+    @Column(name = "id_transaccionkdx")
+    private Integer idTrxkdx;
 
     @Transient
     private GenDesctabla umedidadesc;

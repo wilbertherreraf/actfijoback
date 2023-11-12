@@ -1,7 +1,6 @@
 package gob.gamo.activosf.app.services;
 
 import java.util.Date;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -9,16 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.OrgEmpleado;
-import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.TxTransaccion;
-import gob.gamo.activosf.app.domain.TxTransdet;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
-import gob.gamo.activosf.app.domain.entities.Roles;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.UserRequestVo;
 import gob.gamo.activosf.app.errors.DataException;
+import gob.gamo.activosf.app.repository.AfItemafRepository;
 import gob.gamo.activosf.app.repository.EmpleadoRepository;
 import gob.gamo.activosf.app.repository.GenDesctablaRespository;
 import gob.gamo.activosf.app.repository.OrgUnidadRepository;
@@ -40,6 +38,8 @@ public class TxTransaccionService {
     private final EmpleadoService empleadoService;
     private final EmpleadoRepository empleadoRepository;
     private final OrgUnidadRepository unidadRepository;
+    private final TxAlmService almService;
+    private final AfItemafRepository itemRepository;
 
     @Transactional
     public TxTransaccion registro(User me, TxTransaccion trx) {
@@ -58,23 +58,24 @@ public class TxTransaccionService {
         return newTrx;
     }
 
-    @Transactional(readOnly = true)
-    public TxTransaccion generarOperacion0(User me, TxTransaccion tx) {
-        completeAudit(tx);
-        TxTransaccion txTransaccion = new TxTransaccion();
+    @Transactional
+    public void preAccept(User me, TxTransaccion trx) {
+        validar(trx);
+        processOperation(me, trx);
 
-        GenDesctabla tipoOperSub = retOperacion(me, tx);
-        OrgEmpleado empl = retEmpleado(me, tx);
-        OrgUnidad unid = empleadoService.retUnidad(me, tx.getIdEmpleado(), tx.getIdUnidad());
-        OrgEmpleado boss = retEmpleadoBoss(me, tx);
+        trx.setTareaoperacion(Constants.TAB_TASK_IMP);
+        TxTransaccion newTrx = txTransaccionRepository.save(trx);
+    }
 
-        txTransaccion.setIdUnidad(unid.getIdUnidad());
-        txTransaccion.setFechaOper(new Date());
-        txTransaccion.setIdUsrreg(me.getUsername());
-        txTransaccion.setTxUsuario(me.getIdUnidEmpl());
-        txTransaccion.setIdEmpleadoaut(boss.getId());
+    public void processOperation(User me, TxTransaccion tx) {
+        Integer modulo = tx.getTipoopersub();
 
-        return txTransaccion;
+        if (modulo == Constants.TAB_MD_AF) {
+        } else if (modulo == Constants.TAB_MD_AL) {
+            almService.modAlmProcess(me, tx);
+        } else {
+            throw new DataException("Modulo no implementado " + tx.getTipoopersub());
+        }
     }
 
     public GenDesctabla retOperacion(User me, TxTransaccion tx) {
@@ -98,31 +99,40 @@ public class TxTransaccionService {
     }
 
     public OrgEmpleado retEmpleadoBoss(User me, TxTransaccion tx) {
-        OrgEmpleado empl = empleadoService.empleadoBoss(tx.getIdUnidad(), true).orElseThrow(
-                () -> new DataException(
+        OrgEmpleado empl = empleadoService
+                .empleadoBoss(tx.getIdUnidad(), true)
+                .orElseThrow(() -> new DataException(
                         "Operacion: No se pudo encontrar empleado superior para unidad " + tx.getIdUnidad()));
 
         return empl;
     }
 
-    public static void completeAudit(TxTransaccion trx) {
-        trx.setTxFecha(new Date());
-        trx.setTxUsuario(0);
-        trx.setTxHost("");
-    }
-
     public TxTransaccion completeRels(TxTransaccion tx) {
         if (tx.getTipooperacion() != null)
-            tablasRespository.findByDesCodtabAndDesCodigo(tx.getTabTipooperacion(), tx.getTipooperacion())
+            tablasRespository
+                    .findByDesCodtabAndDesCodigo(tx.getTabTipooperacion(), tx.getTipooperacion())
                     .ifPresent(g -> tx.setTipooperaciondesc(g));
         if (tx.getTipoopersub() != null)
-            tablasRespository.findByDesCodtabAndDesCodigo(tx.getTabTipoopersub(), tx.getTipoopersub())
+            tablasRespository
+                    .findByDesCodtabAndDesCodigo(tx.getTabTipoopersub(), tx.getTipoopersub())
                     .ifPresent(g -> tx.setTipoopersubdesc(g));
+        if (tx.getTareaoperacion() != null)
+            tablasRespository
+                    .findByDesCodtabAndDesCodigo(tx.getTabTareaoperacion(), tx.getTareaoperacion())
+                    .ifPresent(g -> tx.setTareaoperaciondesc(g));
         if (tx.getIdUnidad() != null)
             unidadRepository.findById(tx.getIdUnidad()).ifPresent(g -> tx.setUnidad(g));
         if (tx.getIdEmpleado() != null)
             empleadoRepository.findById(tx.getIdEmpleado()).ifPresent(g -> tx.setEmpleado(g));
+        if (tx.getIdItemaf() != null) itemRepository.findById(tx.getIdItemaf()).ifPresent(g -> tx.setItemaf(g));
         return tx;
+    }
+
+    @Transactional(readOnly = true)
+    public TxTransaccion findByIdAndComplete(Integer id) {
+        TxTransaccion trx = findById(id);
+        completeRels(trx);
+        return trx;
     }
 
     public TxTransaccion findById(Integer id) {
@@ -134,14 +144,12 @@ public class TxTransaccionService {
     public TxTransaccion prepareOperation(User me, TxTransaccion txIn) {
         validarIni(txIn);
 
-        TxTransaccion tx = new TxTransaccion();
-        tx.setTabTipoopersub(Constants.TAB_MD);        
+        TxTransaccion tx = TxTransaccion.nuevoReg();
         tx.setTipoopersub(txIn.getTipoopersub());
+        // warning on setting tx.setTabTipooperacion(txIn.getTipoopersub());
         tx.setTipooperacion(txIn.getTipooperacion());
 
         Integer modulo = tx.getTipoopersub();
-        tx.setTabTareaoperacion(Constants.TAB_TASK);
-        tx.setTareaoperacion(Constants.TAB_TASK_PRE);
 
         if (modulo == Constants.TAB_MD_AF) {
             modActivosf(me, tx);
@@ -157,7 +165,7 @@ public class TxTransaccionService {
         tx.setIdUnidad(empl.getIdUnidad());
         tx.setIdUsrreg(me.getUsername());
         tx.setFechaOper(new Date());
-        //tx.setTxHost(me.getToken());
+        // tx.setTxHost(me.getToken());
 
         completeRels(tx);
         return tx;
@@ -193,17 +201,6 @@ public class TxTransaccionService {
         return tx;
     }
 
- 
-
-    public static void validarIni(TxTransaccion tx) {
-        if (tx.getTipoopersub() == null) {
-            throw new DataException("Modulo requerido");
-        }
-        if (tx.getTipooperacion() == null) {
-            throw new DataException("Tipo operacion requerido");
-        }
-    }
-
     public static void validar(TxTransaccion tx) {
         validarIni(tx);
         if (tx.getIdEmpleado() == null) {
@@ -217,12 +214,29 @@ public class TxTransaccionService {
         }
     }
 
+    public static void validarIni(TxTransaccion tx) {
+        if (tx.getTipoopersub() == null) {
+            throw new DataException("Modulo requerido");
+        }
+        if (tx.getTipooperacion() == null) {
+            throw new DataException("Tipo operacion requerido");
+        }
+    }
+
     public void validarOwner(User me, TxTransaccion tx) {
         OrgEmpleado empl = retEmpleado(me, tx);
         if (empl.getId() != tx.getIdEmpleado()) {
             throw new DataException("Operacion " + tx.getIdTransaccion() + " no pertenece al usuario "
                     + me.getUsername() + ", no puede modificar");
         }
+    }
+
+    public void validarStatus(User me, TxTransaccion tx) {}
+
+    public static void completeAudit(TxTransaccion trx) {
+        trx.setTxFecha(new Date());
+        trx.setTxUsuario(0);
+        trx.setTxHost("");
     }
 
     /************************ OLD ************ */
@@ -234,5 +248,4 @@ public class TxTransaccionService {
         txTransaccionRepository.save(txTransaccion);
         return txTransaccion;
     }
-
 }

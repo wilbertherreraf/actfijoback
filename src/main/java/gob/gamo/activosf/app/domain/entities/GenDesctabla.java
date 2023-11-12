@@ -30,6 +30,7 @@ public class GenDesctabla {
 
     @Column(name = "des_codrec")
     private String desCodrec;
-    @Column(name = "des_codigopadre")    
+
+    @Column(name = "des_codigopadre")
     private Integer desCodigopadre;
 }

@@ -2,20 +2,11 @@ package gob.gamo.activosf.app.services;
 
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -28,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.PersonaVO;
@@ -40,11 +30,8 @@ import gob.gamo.activosf.app.repository.PersonaRepository;
 import gob.gamo.activosf.app.repository.sec.UserRepository;
 import gob.gamo.activosf.app.search.CriteriaParser;
 import gob.gamo.activosf.app.search.GenericSpecificationsBuilder;
-import gob.gamo.activosf.app.search.SearchCriteria;
-import gob.gamo.activosf.app.search.SearchQueryCriteriaConsumer;
 import gob.gamo.activosf.app.search.UserSpecification;
 import gob.gamo.activosf.app.services.sec.UserService;
-import gob.gamo.activosf.app.utils.PaginationUtil;
 
 @Slf4j
 @Service
@@ -69,85 +56,6 @@ public class PersonaService {
         }
         Page<OrgPersona> list = repositoryEntity.findAll(pageable);
         return list;
-    }
-
-    public Page<OrgPersona> search(SearchCriteria params, Pageable pageable) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Tuple> query = builder.createTupleQuery();
-        Root<OrgPersona> root = query.from(OrgPersona.class);
-        root.alias("persona");
-
-        log.info("Alisas {}", root.getAlias());
-
-        Boolean existEmpleado = findInSearchCriteria(params, "empleos.");
-        Boolean existUsuario = findInSearchCriteria(params, "usersist.");
-
-        if (existEmpleado) {
-            Join<OrgPersona, OrgEmpleado> j = root.join("empleos", JoinType.INNER);
-            j.alias("empleado");
-        }
-        if (existUsuario) {
-            Join<OrgPersona, User> j = root.join("usersist", JoinType.INNER);
-            j.alias("usuario");
-        }
-
-        query.multiselect(root); // root.get("nombre")
-
-        Predicate predicate = builder.conjunction();
-
-        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer =
-                new SearchQueryCriteriaConsumer<OrgPersona>(predicate, builder, root);
-
-        searchConsumer.accept(params);
-        Predicate predicateR = searchConsumer.getPredicate();
-
-        query.where(predicateR);
-
-        if (pageable.getSort() != null) {
-            List<Order> o = new ArrayList<>();
-            for (org.springframework.data.domain.Sort.Order sort : pageable.getSort()) {
-                if (sort.isDescending()) {
-                    Order order = builder.desc(root.get(sort.getProperty()));
-                    o.add(order);
-                } else {
-                    Order order = builder.asc(root.get(sort.getProperty()));
-                    o.add(order);
-                }
-            }
-            if (o.size() > 0) query.orderBy(o);
-        }
-
-        // List<Tuple> l = entityManager.createQuery(query).getResultList();
-        List<Tuple> l = entityManager
-                .createQuery(query)
-                .setMaxResults(pageable.getPageSize())
-                .setFirstResult((int) pageable.getOffset())
-                .getResultList();
-
-        List<OrgPersona> result = l.stream()
-                .map(r -> {
-                    OrgPersona e = (OrgPersona) r.get(0);
-                    return e;
-                })
-                .map((x) -> x)
-                .toList();
-
-        long count = countAll(builder, query, root);
-        int total = (int) count;
-        Page<OrgPersona> page =
-                PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
-
-        return page;
-    }
-
-    public Long countAll(CriteriaBuilder builder, CriteriaQuery<Tuple> query, Root<OrgPersona> root) {
-        // CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        query.multiselect(builder.count(root));
-        query.orderBy();
-        Tuple result = entityManager.createQuery(query).getSingleResult();
-        log.info("despues de count...{}", result.get(0));
-        Long count = (Long) result.get(0);
-        return count;
     }
 
     @Transactional
@@ -193,33 +101,6 @@ public class PersonaService {
         return repositoryEntity
                 .findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Persona inexistente : `%s`".formatted(id)));
-    }
-
-    public List<OrgPersona> search(final List<SearchCriteria> params) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<OrgPersona> query = builder.createQuery(OrgPersona.class);
-        final Root<OrgPersona> r = query.from(OrgPersona.class);
-
-        Predicate predicate = builder.conjunction();
-        SearchQueryCriteriaConsumer<OrgPersona> searchConsumer =
-                new SearchQueryCriteriaConsumer<OrgPersona>(predicate, builder, r);
-        params.stream().forEach(searchConsumer);
-        predicate = searchConsumer.getPredicate();
-        query.where(predicate);
-
-        return entityManager.createQuery(query).getResultList();
-    }
-
-    public Page<OrgPersona> search(final String searchTxt, Pageable pageable) {
-        CriteriaParser parser = new CriteriaParser();
-        Deque<?> deque = parser.parse(searchTxt);
-        if (deque.size() > 0) {
-            GenericSpecificationsBuilder<OrgPersona> specBuilder = new GenericSpecificationsBuilder<>();
-            Specification<OrgPersona> spec = specBuilder.build(deque, UserSpecification::new);
-            Page<OrgPersona> list0 = repositoryEntity.findAll(spec, pageable);
-            return list0;
-        }
-        return Page.empty();
     }
 
     public static void validar(OrgPersona entity) {
@@ -323,18 +204,5 @@ public class PersonaService {
         } else {
             createUserFromPersona(newEntity, entityIn);
         }
-    }
-
-    public static boolean findInSearchCriteria(SearchCriteria sc, String key) {
-        if (sc.getKey().startsWith(key)) {
-            return true;
-        } else {
-            for (SearchCriteria s : sc.getChildren()) {
-                boolean exists = findInSearchCriteria(s, key);
-                if (exists) return true;
-            }
-        }
-
-        return false;
     }
 }

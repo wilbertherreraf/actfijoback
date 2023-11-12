@@ -8,13 +8,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import gob.gamo.activosf.app.domain.AfItemaf;
-import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.TxTransdet;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.handlers.DateDesserializerJson;
 import gob.gamo.activosf.app.handlers.DateSerializerJson;
-import jakarta.persistence.Column;
 
 @JsonRootName(value = "transdet")
 public record TransdetVo(
@@ -36,16 +33,21 @@ public record TransdetVo(
         BigDecimal tipoCambio,
         BigDecimal montoDesc,
         BigDecimal montoCont,
-        Integer tipoCargo,
+        Integer tabTipocargo,
+        Integer tipocargo,
         BigDecimal cantidad,
         Integer tabUnidadmed,
         Integer unidadmed,
         Integer tabMetodocalc,
         Integer metodocalc,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // , timezone = "America/Los_Angeles"
-        @JsonSerialize(using = DateSerializerJson.class) @JsonDeserialize(using = DateDesserializerJson.class) Date fechaOper,
+                @JsonSerialize(using = DateSerializerJson.class)
+                @JsonDeserialize(using = DateDesserializerJson.class)
+                Date fechaOper,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // , timezone = "America/Los_Angeles"
-        @JsonSerialize(using = DateSerializerJson.class) @JsonDeserialize(using = DateDesserializerJson.class) Date fechaValor,
+                @JsonSerialize(using = DateSerializerJson.class)
+                @JsonDeserialize(using = DateDesserializerJson.class)
+                Date fechaValor,
         Integer tabTipooperacion,
         Integer tipooperacion,
         Integer idEmpleado,
@@ -60,8 +62,7 @@ public record TransdetVo(
         GenDesctabla opermayordesc,
         GenDesctabla tipooperaciondesc,
         ItemafVo itemsaf,
-        EmpleadoVo empleado
-        ) {
+        EmpleadoVo empleado) {
     public TransdetVo(TxTransdet t) {
         this(
                 t.getIdTransdet(),
@@ -82,7 +83,8 @@ public record TransdetVo(
                 t.getTipoCambio(),
                 t.getMontoDesc(),
                 t.getMontoCont(),
-                t.getTipoCargo(),
+                t.getTabTipocargo(),
+                t.getTipocargo(),
                 t.getCantidad(),
                 t.getTabUnidadmed(),
                 t.getUnidadmed(),
@@ -104,9 +106,9 @@ public record TransdetVo(
                 t.getOpermayordesc(),
                 t.getTipooperaciondesc(),
                 t.getItemaf() != null ? new ItemafVo(t.getItemaf()) : null,
-                t.getEmpleado() != null ? new EmpleadoVo(t.getEmpleado()) : null
-                );
-    };
+                t.getEmpleado() != null ? new EmpleadoVo(t.getEmpleado()) : null);
+    }
+    ;
 
     public TxTransdet transdet() {
         return TxTransdet.builder()
@@ -128,7 +130,8 @@ public record TransdetVo(
                 .tipoCambio(tipoCambio)
                 .montoDesc(montoDesc)
                 .montoCont(montoCont)
-                .tipoCargo(tipoCargo)
+                .tabTipocargo(tabTipocargo)
+                .tipocargo(tipocargo)
                 .cantidad(cantidad)
                 .tabUnidadmed(tabUnidadmed)
                 .unidadmed(unidadmed)
@@ -146,6 +149,5 @@ public record TransdetVo(
                 .idTransdetpadre(idTransdetpadre)
                 .idTrxorigen(idTrxorigen)
                 .build();
-
     }
 }

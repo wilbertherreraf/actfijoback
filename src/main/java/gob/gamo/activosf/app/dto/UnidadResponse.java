@@ -39,24 +39,7 @@ public record UnidadResponse(
                 entity.getRolempleado(),
                 entity.getRolempleadodesc(),
                 entity.getIdEmpleado(),
-                entity.getEmpleadoBoss() != null
-                        ? new EmpleadoVo(
-                                entity.getEmpleadoBoss().getId(),
-                                entity.getEmpleadoBoss().getIdUnidad(),
-                                null,
-                                entity.getEmpleadoBoss().getCodInternoempl(),
-                                entity.getEmpleadoBoss().getIdPersona(),
-                                entity.getEmpleadoBoss().getCodPersona(),
-                                entity.getEmpleadoBoss().getIdCargo(),
-                                entity.getEmpleadoBoss().getTabRolempleado(),
-                                entity.getEmpleadoBoss().getRolempleado(),
-                                entity.getEmpleadoBoss().getIdEmpleadopadre(),
-                                entity.getEmpleadoBoss().getRolempleadodesc(),
-                                entity.getEmpleadoBoss().getFechaIngreso(),
-                                entity.getEmpleadoBoss().getFechaBaja(),
-                                entity.getEmpleadoBoss().getEstado(),
-                                null)
-                        : null,
+                entity.getEmpleadoBoss() != null ? new EmpleadoVo(entity.getEmpleadoBoss(), null, false) : null,
                 entity.getEstado(),
                 entity.getUnidadPadre() != null ? new UnidadResponse(entity.getUnidadPadre(), false) : null,
                 entity.getChildren().stream()
@@ -80,22 +63,7 @@ public record UnidadResponse(
                 entity.getIdEmpleado(),
                 all
                         ? (entity.getEmpleadoBoss() != null
-                                ? new EmpleadoVo(
-                                        entity.getEmpleadoBoss().getId(),
-                                        entity.getEmpleadoBoss().getIdUnidad(),
-                                        null,
-                                        entity.getEmpleadoBoss().getCodInternoempl(),
-                                        entity.getEmpleadoBoss().getIdPersona(),
-                                        entity.getEmpleadoBoss().getCodPersona(),
-                                        entity.getEmpleadoBoss().getIdCargo(),
-                                        entity.getEmpleadoBoss().getTabRolempleado(),
-                                        entity.getEmpleadoBoss().getRolempleado(),
-                                        entity.getEmpleadoBoss().getIdEmpleadopadre(),
-                                        entity.getEmpleadoBoss().getRolempleadodesc(),
-                                        entity.getEmpleadoBoss().getFechaIngreso(),
-                                        entity.getEmpleadoBoss().getFechaBaja(),
-                                        entity.getEmpleadoBoss().getEstado(),
-                                        null)
+                                ? new EmpleadoVo(entity.getEmpleadoBoss(), null, false)
                                 : null)
                         : null,
                 entity.getEstado(),

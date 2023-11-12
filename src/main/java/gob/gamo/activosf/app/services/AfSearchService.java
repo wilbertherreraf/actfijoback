@@ -3,10 +3,13 @@ package gob.gamo.activosf.app.services;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -35,6 +38,7 @@ import gob.gamo.activosf.app.domain.OrgEmpleado;
 import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.OrgUnidad;
 import gob.gamo.activosf.app.domain.TxTransaccion;
+import gob.gamo.activosf.app.domain.TxTransdet;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.domain.entities.User;
 import gob.gamo.activosf.app.dto.CriteriosBusquedaEnum;
@@ -48,6 +52,7 @@ import gob.gamo.activosf.app.utils.PaginationUtil;
 @RequiredArgsConstructor
 public class AfSearchService {
     private final TxTransaccionService transService;
+
     @PersistenceContext
     private final EntityManager em;
 
@@ -91,8 +96,8 @@ public class AfSearchService {
                 + " AND af.cat_estado_activo_fijo != 'PROREC' ");
         if (criterios.containsKey(CriteriosBusquedaEnum.CODIGO_ACTIVO)) {
             query.append(" AND af.codigo_extendido LIKE(:codigoExtendido) ");
-            params.put("codigoExtendido",
-                    QueryParams.prepareStringForLikeSufix((String) criterios.get(CriteriosBusquedaEnum.CODIGO_ACTIVO)));
+            params.put("codigoExtendido", QueryParams.prepareStringForLikeSufix((String)
+                    criterios.get(CriteriosBusquedaEnum.CODIGO_ACTIVO)));
         }
 
         if (criterios.containsKey(CriteriosBusquedaEnum.USUARIO_ASIGNADO)) {
@@ -241,8 +246,8 @@ public class AfSearchService {
                 .toList();
 
         int total = countAll(builder, query, root);
-        Page<OrgPersona> page = PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(),
-                total, result);
+        Page<OrgPersona> page =
+                PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
 
         return page;
     }
@@ -274,7 +279,8 @@ public class AfSearchService {
 
         List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
 
-        List<OrgEmpleado> result = listT.stream().map(r -> (OrgEmpleado) r.get(0)).toList();
+        List<OrgEmpleado> result =
+                listT.stream().map(r -> (OrgEmpleado) r.get(0)).toList();
         int total = countAll(builder, query, root);
 
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
@@ -307,19 +313,59 @@ public class AfSearchService {
         final Root<TxTransaccion> root = query.from(TxTransaccion.class);
         root.alias("transaccion");
 
-        Boolean existPersona = findInSearchCriteria(params, "persona.");
-
-        if (existPersona) {
+        Boolean hasSubQry = findInSearchCriteria(params, "transdet.");
+        Page<TxTransdet> foundDets = null;
+        if (hasSubQry) {
+            Pageable pageableDet = PaginationUtil.createPageRequestUsing(0, 100);
+            foundDets = searchTransdet(params, pageable);
             /*
-             * Join<User, OrgPersona> j = root.join("persona", JoinType.INNER);
-             * j.alias("persona");
+             * Root<TxTransdet> rootDet = query.from(TxTransdet.class);
+             * rootDet.alias("transdet");
+             *
+             * Join<TxTransaccion, TxTransdet> j = rootDet.join("idTransaccion");
              */
+            // j.alias("transaccion");
         }
+        Predicate p = null;
+        List<Integer> ids = new ArrayList<>();
+        if (foundDets != null) {
+            ids = foundDets.getContent().stream()
+                    .map(x -> x.getIdTransaccion())
+                    .distinct()
+                    .toList();
+            if (ids.size() > 0) {
+                Predicate pAux = root.get("idTransaccion").in(ids);
+                Predicate pAux2 = builder.or(pAux);
+                p = builder.and(pAux2);
+            }
+        }
+        List<Tuple> listT = null;
+        if (p == null) {
+            listT = generateQuery(builder, root, query, params, pageable, root);
+        } else {
+            listT = generateQuery(builder, root, query, params, pageable, p, root);
+        }
+
+        List<TxTransaccion> result = listT.stream()
+                .map(r -> (TxTransaccion) r.get(0))
+                .map(r -> transService.completeRels(r))
+                .toList();
+        int total = countAll(builder, query, root);
+        log.info("Transac {} detas: {} ", result.size(), ids.toString());
+
+        return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
+    }
+
+    public Page<TxTransdet> searchTransdet(SearchCriteria params, Pageable pageable) {
+        final CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = builder.createTupleQuery();
+        final Root<TxTransdet> root = query.from(TxTransdet.class);
+        root.alias("transdet");
 
         List<Tuple> listT = generateQuery(builder, root, query, params, pageable, root);
 
-        List<TxTransaccion> result = listT.stream().map(r -> (TxTransaccion) r.get(0))
-                .map(r -> transService.completeRels(r)).toList();
+        List<TxTransdet> result =
+                listT.stream().map(r -> (TxTransdet) r.get(0)).map(r -> r).toList();
         int total = countAll(builder, query, root);
 
         return PaginationUtil.pageForList((int) pageable.getPageNumber(), pageable.getPageSize(), total, result);
@@ -363,17 +409,34 @@ public class AfSearchService {
             SearchCriteria params,
             Pageable pageable,
             Selection<?>... selections) {
+        return generateQuery(builder, root, query, params, pageable, null, selections);
+    }
+
+    public List<Tuple> generateQuery(
+            CriteriaBuilder builder,
+            Root<?> root,
+            CriteriaQuery<Tuple> query,
+            SearchCriteria params,
+            Pageable pageable,
+            Predicate p,
+            Selection<?>... selections) {
 
         SearchQueryCriteriaConsumer<?> searchConsumer = new SearchQueryCriteriaConsumer<>(null, builder, root);
 
         searchConsumer.accept(params);
-
+        List<Predicate> predicates = searchConsumer.getPredicates();
+        Predicate predicatesF = searchConsumer.getPredicate();
+        Predicate pre = null;
+        if (p != null) {
+            pre = builder.or(predicatesF, p);
+        } else {
+            pre = predicatesF;
+        }
         query.multiselect(selections); //
-        query.where(searchConsumer.getPredicates().toArray(new Predicate[0]));
-
+        // query.where(predicates.toArray(new Predicate[0]));
+        query.where(pre);
         List<Order> sorts = orders(builder, root, pageable);
-        if (sorts.size() > 0)
-            query.orderBy(sorts);
+        if (sorts.size() > 0) query.orderBy(sorts);
 
         List<Tuple> l = em.createQuery(query)
                 .setMaxResults(pageable.getPageSize())
@@ -441,11 +504,23 @@ public class AfSearchService {
         } else {
             for (SearchCriteria s : sc.getChildren()) {
                 boolean exists = findInSearchCriteria(s, key);
-                if (exists)
-                    return true;
+                if (exists) return true;
             }
         }
 
         return false;
+    }
+
+    public static void main(String[] args) {
+        Integer[] array1 = {1, 2, 3, 60, 12, 3, 6, 3};
+        Integer[] array2 = {10, 20, 3, 5, 6, 9, 3, 10, 11};
+        Set<Integer> s1 = new HashSet<Integer>(Arrays.asList(array1));
+        Set<Integer> s2 = new HashSet<Integer>(Arrays.asList(array2));
+        s1.retainAll(s2);
+
+        Integer[] result = s1.toArray(new Integer[s1.size()]);
+        for (Integer integer : result) {
+            System.out.println(integer);
+        }
     }
 }

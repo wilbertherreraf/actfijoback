@@ -106,8 +106,7 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
         String alias = isJoin ? param.getKey().substring(0, idx) : param.getKey();
         String attrib = isJoin ? param.getKey().substring(idx + 1) : param.getKey();
 
-        // log.info("buscando tab: {} col [{}] -> {} {}", alias, attrib, param.getKey(),
-        // param.getValue());
+        log.info("buscando tab: {} col [{}] -> {} {}", alias, attrib, param.getKey(), param.getValue());
         Expression<?> path = null;
         if (root.getAlias() != null && alias.equalsIgnoreCase(root.getAlias()) || !isJoin) {
             path = root.get(attrib);
@@ -136,25 +135,26 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
                 param.getValue());
         if (param.getOperation().equalsIgnoreCase(">")) {
             if (path.getJavaType() == String.class) {
-                return builder.greaterThanOrEqualTo(
+                return builder.greaterThan(
                         path.as(String.class), param.getValue().toString());
             } else if (path.getJavaType() == Integer.class) {
-                Integer d = (Integer) param.getValue();
-                return builder.greaterThanOrEqualTo(path.as(Integer.class), d);
+                String v = param.getValue().toString();
+                Integer d = Integer.valueOf(v);
+                return builder.greaterThan(path.as(Integer.class), d);
             } else if (path.getJavaType() == Date.class || path.getJavaType() == Timestamp.class) {
                 Date d = (Date) param.getValue();
-                return builder.greaterThanOrEqualTo(path.as(Date.class), d);
+                return builder.greaterThan(path.as(Date.class), d);
             }
         } else if (param.getOperation().equalsIgnoreCase("<")) {
             if (path.getJavaType() == String.class) {
-                return builder.greaterThanOrEqualTo(
+                return builder.lessThanOrEqualTo(
                         path.as(String.class), param.getValue().toString());
             } else if (path.getJavaType() == Integer.class) {
                 Integer d = (Integer) param.getValue();
-                return builder.greaterThanOrEqualTo(path.as(Integer.class), d);
+                return builder.lessThanOrEqualTo(path.as(Integer.class), d);
             } else if (path.getJavaType() == Date.class || path.getJavaType() == Timestamp.class) {
                 Date d = (Date) param.getValue();
-                return builder.greaterThanOrEqualTo(path.as(Date.class), d);
+                return builder.lessThanOrEqualTo(path.as(Date.class), d);
             }
         } else if (param.getOperation().equalsIgnoreCase("Nil")
                 || param.getOperation().equalsIgnoreCase("Null")) {
@@ -166,8 +166,7 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
             return builder.notEqual(path, param.getValue());
         } else if (param.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
-                if (param.getValue() == null)
-                    return null;
+                if (param.getValue() == null) return null;
                 String value = param.getValue().toString();
                 if (StringUtils.isBlank(value)) {
                     return null;
@@ -195,10 +194,14 @@ public class SearchQueryCriteriaConsumer<T> implements Consumer<SearchCriteria> 
     }
 
     public Predicate getPredicate() {
-        return predicate0;
+        Predicate finalP = builder.and(lp.toArray(new Predicate[0]));
+        for (Predicate p : lp) {}
+
+        return finalP;
     }
 
     public List<Predicate> getPredicates() {
+
         return lp;
     }
 }

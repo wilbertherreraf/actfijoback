@@ -50,7 +50,6 @@ public class UnidadController {
     private final AfSearchService searchService;
     private static final String ENTITY_NAME = Constants.REC_UNIDS;
 
-   
     @PostMapping(Constants.API_UNIDS + "/f")
     public ResponseEntity<List<UnidadResponse>> getAllByFilter(
             @RequestBody(required = false) SearchCriteria sc, Pageable pageable) {

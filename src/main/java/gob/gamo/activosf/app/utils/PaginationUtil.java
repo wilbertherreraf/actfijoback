@@ -94,7 +94,7 @@ public final class PaginationUtil {
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());
 
-        log.info("page in[{}] {} st {} e {} sz {}", pageIn, page, start, end, list.size());
+        // log.info("page in[{}] {} st {} e {} sz {}", pageIn, page, start, end, list.size());
         List<T> pageContent = list.subList(start, end);
         PageImpl<T> resp = new PageImpl<>(pageContent, pageRequest, list.size());
         return resp;
@@ -104,7 +104,7 @@ public final class PaginationUtil {
         return pageForList(pageable.getPageNumber(), pageable.getPageSize(), list);
     }
 
-    private static Pageable createPageRequestUsing(int page, int size) {
+    public static Pageable createPageRequestUsing(int page, int size) {
         return PageRequest.of(page, size <= 0 ? 1 : size);
     }
 }

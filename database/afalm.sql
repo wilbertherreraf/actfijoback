@@ -45,6 +45,7 @@ drop table if exists ACF_PROVEEDOR;
 drop table if exists ACF_FACTURA;
 drop table if exists ACF_GESTION;
 drop table if exists TX_TRANSACCION;
+drop table if exists category_configuration;
 drop table if exists gen_claves;
 drop table if exists gen_desctabla;
 drop table if exists gen_tablas;
@@ -249,6 +250,7 @@ comment on column ACF_ACCESORIO_ACTIVO_FIJO.TX_HOST_MOD is 'IP de la maquina don
 /* Table: ACF_ACTIVO_FIJO                                        */
 create table ACF_ACTIVO_FIJO (
     ID_ACTIVO_FIJO SERIAL not null,
+    id_item integer,
     CORRELATIVO INTEGER null,
     GESTION INTEGER,
     ID_SUB_FAMILIA INTEGER,
@@ -281,26 +283,26 @@ create table ACF_ACTIVO_FIJO (
     FACTOR_DEPRECIACION_HISTORICO NUMERIC(10, 5),
     FACTOR_DEPRECIACION_ACTUAL NUMERIC(10, 5),
     INCORPORACION_ESPECIAL BOOL,
-    CAT_FUENTE_FINANCIAMIENTO VARCHAR(20) not null,
+    CAT_FUENTE_FINANCIAMIENTO VARCHAR(20) ,
     TAB_FUENTE_FINANCIAMIENTO INTEGER DEFAULT 1007,
     FUENTE_FINANCIAMIENTO INTEGER DEFAULT 1,
     CAT_ORGANISMO_FINANCIADOR VARCHAR(20) null,
     NRO_CONVENIO VARCHAR(100) null,
     ORDEN_COMPRA VARCHAR(100) null,
     ID_USUARIO_ASIGNADO INTEGER null,
-    DESCRIPCION VARCHAR(200) not null,
+    DESCRIPCION VARCHAR(200) ,
     OBSERVACIONES VARCHAR(400) null,
     CODIGO_EXTENDIDO VARCHAR(200) null,
     CODIGO_RFID VARCHAR(200) null,
     CODIGO_EAN VARCHAR(200) null,
-    CAT_ESTADO_ACTIVO_FIJO VARCHAR(20) not null,
+    CAT_ESTADO_ACTIVO_FIJO VARCHAR(20) ,
     TAB_ESTADO_ACTIVO_FIJO INTEGER DEFAULT 1008,
     ESTADO_ACTIVO_FIJO INTEGER DEFAULT 1,
-    ESTADO VARCHAR(6) not null,
-    ID_TRANSACCION INTEGER not null,
-    TX_FCH_INI TIMESTAMP WITH TIME ZONE not null,
-    TX_USR_INI INTEGER not null,
-    TX_HOST_INI VARCHAR(30) not null,
+    ESTADO VARCHAR(6) ,
+    ID_TRANSACCION INTEGER ,
+    TX_FCH_INI TIMESTAMP WITH TIME ZONE ,
+    TX_USR_INI INTEGER ,
+    TX_HOST_INI VARCHAR(30) ,
     TX_FCH_MOD TIMESTAMP WITH TIME ZONE null,
     TX_USR_MOD INTEGER null,
     TX_HOST_MOD VARCHAR(30) null,
@@ -753,11 +755,35 @@ umedida INTEGER default 1,
 codclasif    varchar(15),
 tipo_costodi varchar(15),
 tipo_costofv varchar(15),
+id_transaccionkdx integer,
 precio_unitario NUMERIC(15,5) DEFAULT 0,
 stock integer DEFAULT 0,
 stock_min integer DEFAULT 1,
     constraint PK_AF_ITEMAF primary key (ID_ITEM)
 );
+
+CREATE TABLE category_configuration (
+    id_configcat serial NOT NULL,
+nivel        varchar(15),
+tipo         varchar(15),
+grupo        varchar(15),
+clase        varchar(15),
+familia      varchar(15),
+item         varchar(15),    
+    category_ledger_id character varying(255)  null,
+    deprecant character varying(255)  null,
+    depreciation_logic character varying(255)  null,
+    depreciation_rate double precision  null,
+    designation character varying(255)  null,
+    created_at timestamp without time zone null,
+    created_by character varying(255) null,
+    last_modified_by character varying(255) null,
+    modified_at timestamp without time zone null,
+    version integer  null,    
+        constraint PK_AF_categodeprec primary key (id_configcat)    
+);
+
+
 
 /* Table: ACF_COMISION_RECEPCION                                 */
 create table ACF_COMISION_RECEPCION (
@@ -1595,14 +1621,19 @@ create table TX_TRANSACCION (
     TIPOOPERACION INTEGER,
     TAB_TIPOOPERSUB INTEGER,
     TIPOOPERSUB INTEGER,    
+    idItemaf INTEGER,
     GLOSA VARCHAR(150),
     MONTO NUMERIC(15,2),
+    tab_monedaamt INTEGER default 105,
+    monedaamt INTEGER default 1,        
+    IMPORTE NUMERIC(15,5) DEFAULT 0,
     FECHA_OPER DATE,
     FECHA_VALOR DATE,
     ID_EMPLEADO INTEGER,
     ID_EMPLEADOAUT INTEGER,
     ID_UNIDAD INTEGER,
     ID_UNIDADDEST INTEGER,
+    nro_doc varchar(100),    
     ID_USRREG VARCHAR(50),
     ID_USRAUT VARCHAR(50),
     ID_TRXORIGEN INTEGER,
@@ -1721,10 +1752,11 @@ create table TX_TRANSDET (
     ID_ITEMAF INTEGER,
     GLOSA VARCHAR(150),
     MONTO_ORIG NUMERIC(15,5) DEFAULT 0,
-    TAB_MONEDAAMTORIG INTEGER DE,
+    TAB_MONEDAAMTORIG INTEGER DEfault 105,
     MONEDAAMTORIG INTEGER,     
-    TIPO_CAMBIO NUMERIC(15,5) DEFAULT 1,   
-    TIPO_CARGO INTEGER,
+    TIPO_CAMBIO NUMERIC(15,5) DEFAULT 1,  
+    TAB_TIPOCARGO INTEGER DEfault 105, 
+    TIPOCARGO INTEGER,
     MONTO NUMERIC(15,5) DEFAULT 0,
     MONTO_DESC NUMERIC(15,5) DEFAULT 0,
     MONTO_CONT NUMERIC(15,5) DEFAULT 0,    

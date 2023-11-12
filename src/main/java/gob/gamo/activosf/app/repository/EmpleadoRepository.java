@@ -16,7 +16,6 @@ public interface EmpleadoRepository extends JpaRepository<OrgEmpleado, Integer> 
             + " and e.id = :idEmpleado ")
     Optional<OrgEmpleado> findByIdAct(@Param(value = "idEmpleado") Integer idEmpleado);
 
-
     @Query("Select e from OrgEmpleado e, OrgPersona p where e.idPersona = p.idPersona "
             + " and p.idPersona = :idPersona ")
     List<OrgEmpleado> findAllByIdPersona(@Param(value = "idPersona") Integer idPersona);

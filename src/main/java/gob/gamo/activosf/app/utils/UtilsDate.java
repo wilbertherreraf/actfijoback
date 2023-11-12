@@ -228,7 +228,7 @@ public final class UtilsDate {
     /**
      * retorna el dia, mes año de una fecha según
      * dia=5
-     * mes=2
+     * mes=2 Calendar.MONTH
      * año=1
      *
      * @return
@@ -238,7 +238,7 @@ public final class UtilsDate {
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(fecha);
 
-            return dmy -> dmy == 2 ? calendar.get(dmy) + 1 : calendar.get(dmy);
+            return dmy -> dmy == 2 ? calendar.get(Calendar.MONTH) + 1 : calendar.get(dmy);
         };
     }
 
@@ -256,6 +256,34 @@ public final class UtilsDate {
 
     public static int gestionActual() {
         return dmyDate().apply(new Date()).apply(TYPE_DATE_YEAR);
+    }
+
+    public static short getCuatrimestre(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        int mes = calendar.get(Calendar.MONTH);
+        return (short) ((mes / 3) + 1);
+        /*
+         * if (mes >= Calendar.JANUARY && mes <= Calendar.APRIL)
+         * mes = 1;
+         * else if (mes >= Calendar.MAY && mes <= Calendar.AUGUST)
+         * mes = Calendar.MAY;
+         * else if (mes >= Calendar.SEPTEMBER && mes <= Calendar.DECEMBER)
+         * mes = Calendar.SEPTEMBER;
+         * return mes;
+         */
+    }
+
+    public static Date getInicioCuatrimestre(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        int mes = calendar.get(Calendar.MONTH);
+        if (mes >= Calendar.JANUARY && mes <= Calendar.APRIL) mes = Calendar.JANUARY;
+        else if (mes >= Calendar.MAY && mes <= Calendar.AUGUST) mes = Calendar.MAY;
+        else if (mes >= Calendar.SEPTEMBER && mes <= Calendar.DECEMBER) mes = Calendar.SEPTEMBER;
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.MONTH, mes);
+        return calendar.getTime();
     }
 
     public static void main(String[] args) {
@@ -294,5 +322,10 @@ public final class UtilsDate {
         System.out.println("año " + dmyDate().apply(d).apply(1));
         System.out.println("mes " + dmyDate().apply(d).apply(2));
         System.out.println("dia " + dmyDate().apply(d).apply(5));
+
+        System.out.println("Qtr 1 " + UtilsDate.getCuatrimestre(UtilsDate.dateFromString("27/01/2015", "dd/MM/yyyy")));
+        System.out.println("Qtr 2 " + UtilsDate.getCuatrimestre(UtilsDate.dateFromString("27/05/2015", "dd/MM/yyyy")));
+        System.out.println("Qtr 3 " + UtilsDate.getCuatrimestre(UtilsDate.dateFromString("27/07/2015", "dd/MM/yyyy")));
+        System.out.println("Qtr q " + UtilsDate.getCuatrimestre(UtilsDate.dateFromString("27/12/2015", "dd/MM/yyyy")));
     }
 }

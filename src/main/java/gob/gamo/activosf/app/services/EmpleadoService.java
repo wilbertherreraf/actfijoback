@@ -44,8 +44,7 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado crearNuevo(OrgEmpleado entity) {
-        if (entity.getId() != null)
-            new DataException("Entidad con id, debe ser nulo");
+        if (entity.getId() != null) new DataException("Entidad con id, debe ser nulo");
 
         validar(entity);
         OrgPersona persona = personaService.findById(entity.getIdPersona());
@@ -78,8 +77,7 @@ public class EmpleadoService {
 
     @Transactional
     public OrgEmpleado update(OrgEmpleado entityNew) {
-        if (entityNew.getId() == null)
-            throw new DataException("Empleado con id nulo");
+        if (entityNew.getId() == null) throw new DataException("Empleado con id nulo");
 
         validar(entityNew);
         OrgPersona p = personaService.findById(entityNew.getIdPersona());
@@ -108,10 +106,11 @@ public class EmpleadoService {
                     && empleadoOld.getUnidad().getRolempleado().compareTo(entityNew.getRolempleado()) == 0) {
                 // change of boss
                 Date fBaja = UtilsDate.compara(
-                        entityNew.getFechaIngreso(),
-                        unidBossOld.get().getFechaIngreso()) >= 0
-                                ? entityNew.getFechaIngreso()
-                                : unidBossOld.get().getFechaIngreso();
+                                        entityNew.getFechaIngreso(),
+                                        unidBossOld.get().getFechaIngreso())
+                                >= 0
+                        ? entityNew.getFechaIngreso()
+                        : unidBossOld.get().getFechaIngreso();
                 bajaEmpleado(unidBossOld.get().getId(), fBaja, false);
             }
         }
@@ -207,13 +206,15 @@ public class EmpleadoService {
     }
 
     public OrgEmpleado findByIdAct(Integer idEmpl) {
-        OrgEmpleado emp = repositoryEntity.findByIdAct(idEmpl)
+        OrgEmpleado emp = repositoryEntity
+                .findByIdAct(idEmpl)
                 .orElseThrow(() -> new DataException("Empleado inexistente : `%s`".formatted(idEmpl)));
         return emp;
     }
 
-    public OrgEmpleado empleadoIsActivo(Integer idPersona){
-        return empleadoActivo(idPersona).orElseThrow(() -> new DataException("Persona " + idPersona+ " inexistente o no se encuentra activo"));
+    public OrgEmpleado empleadoIsActivo(Integer idPersona) {
+        return empleadoActivo(idPersona)
+                .orElseThrow(() -> new DataException("Persona " + idPersona + " inexistente o no se encuentra activo"));
     }
 
     public Optional<OrgEmpleado> empleadoBoss(Integer idUnidad, boolean verifica) {
@@ -241,9 +242,11 @@ public class EmpleadoService {
         List<OrgEmpleado> l = repositoryEntity.empleadosUnidad(idUnidad);
         return l;
     }
+
     public OrgUnidad retUnidad(User me, Integer idEmpleado, Integer idUnidad) {
-        OrgEmpleado empl = empleadoActivo(me.getIdUnidEmpl()).orElseThrow(
-                () -> new DataException("ID Persona de usuario inexistente en empleados " + me.getIdUnidEmpl()));
+        OrgEmpleado empl = empleadoActivo(me.getIdUnidEmpl())
+                .orElseThrow(() ->
+                        new DataException("ID Persona de usuario inexistente en empleados " + me.getIdUnidEmpl()));
         if (empl.getIdUnidad() == null || empl.getIdUnidad() != idUnidad) {
             throw new DataException("Operacion: Empleado difiere con la Id de la operacion " + idEmpleado);
         }

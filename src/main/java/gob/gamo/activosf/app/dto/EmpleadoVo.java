@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import gob.gamo.activosf.app.domain.OrgEmpleado;
+import gob.gamo.activosf.app.domain.OrgPersona;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
 import gob.gamo.activosf.app.handlers.DateDesserializerJson;
 import gob.gamo.activosf.app.handlers.DateSerializerJson;
@@ -34,12 +35,26 @@ public record EmpleadoVo(
                 @JsonDeserialize(using = DateDesserializerJson.class)
                 Date fechaBaja,
         String estado,
+        String nombre,
+        String numeroDocumento,
+        String direccion,
+        String telefono,
+        String email,
         PersonaVO persona) {
+
     public EmpleadoVo(OrgEmpleado e) {
-        this(e, e.getPersona() != null ? new PersonaVO(e.getPersona()) : null);
+        this(e, e.getPersona() != null ? new PersonaVO(e.getPersona(), null) : null);
+    }
+
+    public EmpleadoVo(OrgEmpleado e, OrgPersona p, boolean includePer) {
+        this(e, p != null ? new PersonaVO(p, null) : null, includePer, false);
     }
 
     public EmpleadoVo(OrgEmpleado e, PersonaVO p) {
+        this(e, p, true, false);
+    }
+
+    public EmpleadoVo(OrgEmpleado e, PersonaVO p, boolean includePer, boolean includeDet) {
         this(
                 e.getId(),
                 e.getIdUnidad(),
@@ -55,7 +70,12 @@ public record EmpleadoVo(
                 e.getFechaIngreso(),
                 e.getFechaBaja(),
                 e.getEstado(),
-                p);
+                p != null ? p.nombre() : null,
+                p != null ? p.numeroDocumento() : null,
+                p != null ? p.direccion() : null,
+                p != null ? p.telefono() : null,
+                p != null ? p.email() : null,
+                includePer ? p : null);
     }
 
     public OrgEmpleado empleado() {

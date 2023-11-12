@@ -261,5 +261,4 @@ public class UnidadService {
         Page<UnidadResponse> list = repositoryEntity.findAll(pageable).map(r -> new UnidadResponse(r));
         return list;
     }
-
 }

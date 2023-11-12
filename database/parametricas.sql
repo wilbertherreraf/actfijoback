@@ -39,8 +39,13 @@ INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VAL
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (1, 5, 'ACTIVO FIJOS', 'ACF');
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (1, 8, 'ALMACENES', 'ALM');
 
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (2, 'TIPO OPERACION TRX');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (2, 1, 'KARDEX', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (2, 2, 'KARDEX - INMUEBLES', null);
+
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (5, 'MODULO - ACT FIJOS');
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (5, 1, 'REGISTRO ACTIVO', null);
+
 
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (8, 'MODULO - ALMACENES');
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (8, 1, 'CREACION KARDEX', null);
@@ -54,11 +59,35 @@ INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VAL
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (8, 9 ,'REPORTE MOVIMIENTOS' , null);
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (8, 13,'INVENTARIO CIERRE' , null);
 
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (33, 'DETALLE OPERACION');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (33, 1, 'ITEM', null);
+
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (52, 'METODO DE CALCULO');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (52, 1, 'PORCENTAJE DEL MONTO TOTAL', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (52, 2, 'MONTO FIJO', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (52, 3, 'DEPRECIACION MET 1', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (52, 5, 'DEPRECIACION MET 2', null);
+
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (58, 'OPERACION MAYOR');
 INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 1, 'SALDO INICIAL', null);
-INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 2, 'SALIDA DE STOCK', null);
-INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 3, 'INGRESO A STOCK', null);
-INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 5, 'ACTUALIZACION PRECIO STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 12, 'INGRESO STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 13, 'INGRESO A STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 15, 'ACTUALIZACION PRECIO STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 16, 'INGRESO NETO', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 17, 'INGRESO IVA', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 18, 'INGRESO DESC', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 22, 'SALIDA STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 23, 'SALIDA A STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 25, 'SALIDA PRECIO STOCK', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 26, 'SALIDA NETO', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 27, 'SALIDA IVA', null);
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (58, 28, 'SALIDA DESC', null);
+
+INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (59, 'CARGOS');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (59, 1, 'DESCUENTO', 'DESCP');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (59, 2, 'DEPRECIACION', 'DEPRE');
+INSERT INTO gen_desctabla (des_codtab, des_codigo, des_descrip, des_codeiso) VALUES (59, 3, 'TRANSPORTE', 'TRANSP');
+
 
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (85, 'OPERACION AF SUB');
 INSERT INTO gen_tablas (tab_codigo, tab_descripcion) VALUES (88, 'OPERACION MAYOR AF');

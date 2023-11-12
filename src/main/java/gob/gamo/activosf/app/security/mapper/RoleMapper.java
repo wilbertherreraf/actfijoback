@@ -14,10 +14,14 @@ public class RoleMapper {
     }
 
     public static List<String> recursosToList(Collection<Roles> all) {
-        return all.stream().flatMap(r -> r.getIncludeRecursos().stream()).map(r -> r.getRecurso().getCodrec()).distinct().toList();
+        return all.stream()
+                .flatMap(r -> r.getIncludeRecursos().stream())
+                .map(r -> r.getRecurso().getCodrec())
+                .distinct()
+                .toList();
     }
 
     public static List<String> rolesToList(Collection<Roles> all) {
         return all.stream().map(r -> r.getCodrol()).distinct().toList();
-    }    
+    }
 }

@@ -30,10 +30,10 @@ public interface Constants {
     String API_PROVEEDORES = "/proveedores";
     String API_EMPLEADOS = "/empleados";
     String API_PERSONAS = "/personas";
-    String API_ITEMS = "/items";    
-    String API_TRANSACCION = "/trx";        
-    String API_TRANSDET = "/trxdet";        
-    String API_PREPARE = "/pre";        
+    String API_ITEMS = "/items";
+    String API_TRANSACCION = "/trx";
+    String API_TRANSDET = "/trxdet";
+    String API_PREPARE = "/pre";
 
     String API_USUARIOS = "/users";
     String API_ROLES = "/roles";
@@ -58,8 +58,8 @@ public interface Constants {
     String REC_ROLES = "ROLES";
     String REC_PERMISOS = "PERMISOS";
     String REC_ITEMS = "ITEMS";
-    String REC_TRANSACCION = "TRX";    
-    String REC_TRANSDET = "TRXDET";        
+    String REC_TRANSACCION = "TRX";
+    String REC_TRANSDET = "TRXDET";
 
     public static final Integer SEC_MAX_ATTEMPT = 3;
     public static final Integer SEC_TIME_LOCKED_FOR_ATTEMPS = 5 * 60; // minutos
@@ -72,27 +72,44 @@ public interface Constants {
     static Integer TAB_TIPOPERS_NATURAL = 1;
 
     static final Integer TAB_MD = 1;
-    static final Integer TAB_MD_AD = 1; //ADMINIS
-    static final Integer TAB_MD_SG = 2; //seguridad
+    static final Integer TAB_MD_AD = 1; // ADMINIS
+    static final Integer TAB_MD_SG = 2; // seguridad
     static final Integer TAB_MD_AF = 5;
     static final Integer TAB_MD_AL = 8;
 
     static final Integer TAB_AF = TAB_MD_AF;
     static final Integer TAB_AF_CREAKARDEX = 1;
-        
-    static final Integer TAB_ALM = TAB_MD_AL;    
+
+    static final Integer TAB_ALM = TAB_MD_AL;
     static final Integer TAB_ALM_CREKARDEX = 1;
     static final Integer TAB_ALM_INGRESO = 2;
     static final Integer TAB_ALM_SALIDA = 3;
     static final Integer TAB_ALM_ACTKRD = 5;
 
-    static final Integer TAB_TOPSUB = 5;
-    static final Integer TAB_TOPSUB_IO = 2;
+    static final Integer TAB_TOP = 2;
+    static final Integer TAB_TOP_KARDEX = 1;
+    static final Integer TAB_TOP_INMUEBLES = 2;
 
-    static final Integer TAB_MY = 58;    
-    static final Integer TAB_MY_SALDOINICIAL = 1;        
-    static final Integer TAB_MY_SALIDA_STOCK = 2;            
-    static final Integer TAB_MY_INGRESO_STOCK = 3;
+    static final Integer TAB_KDX = 60;
+    static final Integer TAB_KDX_SALDOINICIAL = 1;
+    static final Integer TAB_KDX_INGRESO_STOCK = 12;
+    static final Integer TAB_KDX_INGRESO_NETO = 16;
+    static final Integer TAB_KDX_INGRESO_IVA = 17;
+    static final Integer TAB_KDX_INGRESO_DESC = 18;
+
+    static final Integer TAB_MY = 58;
+    static final Integer TAB_MY_SALDOINICIAL = 1;
+    static final Integer TAB_MY_INGRESO_STOCK = 12;
+    static final Integer TAB_MY_INGRESO_NETO = 16;
+    static final Integer TAB_MY_INGRESO_IVA = 17;
+    static final Integer TAB_MY_INGRESO_DESC = 18;
+
+    static final Integer TAB_MY_SALIDA_STOCK = 22;
+    static final Integer TAB_MY_SALDO = 5;
+    static final Integer TAB_MY_SALIDA_NETO = 26;
+    static final Integer TAB_MY_SALIDA_IVA = 27;
+    static final Integer TAB_MY_SALIDA_DESC = 28;
+    static final Integer TAB_MY_IVA = 19;
 
     static final Integer TAB_TASK = 30;
     static final Integer TAB_TASK_PRE = 1;
@@ -100,7 +117,12 @@ public interface Constants {
     static final Integer TAB_TASK_REG = 3;
     static final Integer TAB_TASK_ACT = 5;
     static final Integer TAB_TASK_DEL = 6;
+    static final Integer TAB_TASK_IMP = 8;
+    static final Integer TAB_TASK_PRO = 10;
 
-    static final Integer TAB_UND = 32;    
-    static final Integer TAB_UND_UND = 1;    
+    static final Integer TAB_DOP = 33;
+    static final Integer TAB_DOP_ITEM = 1;
+
+    static final Integer TAB_UND = 32;
+    static final Integer TAB_UND_UND = 1;
 }

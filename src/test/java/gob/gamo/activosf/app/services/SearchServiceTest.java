@@ -36,7 +36,7 @@ public class SearchServiceTest {
                         (r.getTipopersdesc() != null ? r.getTipopersdesc().getId().getDesCodigo() : ""));
             });
             log.info("====== inicio search params ======");
-            list = service.search(params);
+            //list = service.search(params);
             list.forEach(r -> {
                 log.info("reg {} - {}, {} tipoP: [{}]", r.getIdPersona(), r.getNombre(), r.getDireccion(),
                         (r.getTipopersdesc() != null ? r.getTipopersdesc().getId().getDesCodigo() : ""));
@@ -60,10 +60,10 @@ public class SearchServiceTest {
                 log.info("reg {} - {}, {}", r.getIdPersona(), r.getNombre(), r.getDireccion());
             });
 
-            Page<OrgPersona> list0 = service.search(searchTxt, pageable);
+            /* Page<OrgPersona> list0 = service.search(searchTxt, pageable);
             list0.forEach(r -> {
                 log.info("Search reg {} - {}, {}", r.getIdPersona(), r.getNombre(), r.getDireccion());
-            });
+            }); */
 
         } catch (Exception e) {
             log.error("Error:" + e.getMessage(), e);

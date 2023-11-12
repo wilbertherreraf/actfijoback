@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "UtilsDate",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.utils.UtilsDate",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
+            "name": "DepCalcs",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.depre.DepCalcs",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
+            "name": "AfSearchService",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.services.AfSearchService",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
+            "name": "TxTransdetQryService",
+            "request": "launch",
+            "mainClass": "gob.gamo.activosf.app.services.TxTransdetQryService",
+            "projectName": "appback"
+        },
+        {
+            "type": "java",
             "name": "EmpleadoServiceTest",
             "request": "launch",
             "mainClass": "gob.gamo.activosf.app.services.EmpleadoServiceTest",

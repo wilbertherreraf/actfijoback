@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import gob.gamo.activosf.app.domain.AfItemaf;
 import gob.gamo.activosf.app.domain.entities.GenDesctabla;
-import jakarta.persistence.Column;
-import jakarta.persistence.Transient;
 
 @JsonRootName(value = "itemsaf")
 public record ItemafVo(
@@ -74,5 +72,6 @@ public record ItemafVo(
                 .tabUmedida(tabUmedida)
                 .umedida(umedida)
                 .build();
-    };
+    }
+    ;
 }

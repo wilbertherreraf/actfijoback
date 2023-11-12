@@ -133,34 +133,34 @@ public class AfSolicitud {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSolicitud", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<AfSolicitudMaterial> afSolicitudMaterialList;
 
-/*     public AfSolicitud(
-            Integer idSolicitud,
-            Integer gestion,
-            String catTipoSolicitud,
-            String catEstadoSolicitud,
-            TxUsuario idUsuarioSolicitud,
-            String detalleSolicitud,
-            Date fechaSolicitud,
-            String estado,
-            Integer idTransaccion,
-            Date txFchIni,
-            Integer txUsrIni,
-            String txHostIni) {
-        this.idSolicitud = idSolicitud;
-        this.gestion = gestion;
-        this.catTipoSolicitud = catTipoSolicitud;
-        this.catEstadoSolicitud = catEstadoSolicitud;
-        this.idUsuarioSolicitud = idUsuarioSolicitud;
-        this.detalleSolicitud = detalleSolicitud;
-        this.fechaSolicitud = fechaSolicitud;
-        this.estado = estado;
-        this.idTransaccion = idTransaccion;
-        this.txFchIni = txFchIni;
-        this.txUsrIni = txUsrIni;
-        this.txHostIni = txHostIni;
-    }
- */
-/* 
+    /*     public AfSolicitud(
+               Integer idSolicitud,
+               Integer gestion,
+               String catTipoSolicitud,
+               String catEstadoSolicitud,
+               TxUsuario idUsuarioSolicitud,
+               String detalleSolicitud,
+               Date fechaSolicitud,
+               String estado,
+               Integer idTransaccion,
+               Date txFchIni,
+               Integer txUsrIni,
+               String txHostIni) {
+           this.idSolicitud = idSolicitud;
+           this.gestion = gestion;
+           this.catTipoSolicitud = catTipoSolicitud;
+           this.catEstadoSolicitud = catEstadoSolicitud;
+           this.idUsuarioSolicitud = idUsuarioSolicitud;
+           this.detalleSolicitud = detalleSolicitud;
+           this.fechaSolicitud = fechaSolicitud;
+           this.estado = estado;
+           this.idTransaccion = idTransaccion;
+           this.txFchIni = txFchIni;
+           this.txUsrIni = txUsrIni;
+           this.txHostIni = txHostIni;
+       }
+    */
+    /*
     public Integer getIdSolicitud() {
         return idSolicitud;
     }

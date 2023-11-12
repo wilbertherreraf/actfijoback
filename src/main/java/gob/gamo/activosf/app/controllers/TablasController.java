@@ -32,7 +32,6 @@ public class TablasController {
     @GetMapping(Constants.API_TABLAS)
     public ResponseEntity<List<GenDesctabla>> getAll(Pageable pageable) {
         final Page<GenDesctabla> page = repository.findAll(pageable);
-
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_UNIDS);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

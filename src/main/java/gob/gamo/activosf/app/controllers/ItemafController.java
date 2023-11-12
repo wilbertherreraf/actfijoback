@@ -17,26 +17,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import gob.gamo.activosf.app.commons.Constants;
 import gob.gamo.activosf.app.domain.AfItemaf;
-import gob.gamo.activosf.app.domain.OrgUnidad;
-import gob.gamo.activosf.app.domain.entities.User;
-import gob.gamo.activosf.app.dto.EmpleadoVo;
+import gob.gamo.activosf.app.domain.TxTransaccion;
 import gob.gamo.activosf.app.dto.ItemafVo;
-import gob.gamo.activosf.app.dto.PersonaVO;
-import gob.gamo.activosf.app.dto.sec.RolesVO;
-import gob.gamo.activosf.app.dto.sec.SingleRolResponse;
 import gob.gamo.activosf.app.repository.AfItemafRepository;
 import gob.gamo.activosf.app.search.SearchCriteria;
 import gob.gamo.activosf.app.services.AfItemafService;
 import gob.gamo.activosf.app.services.AfSearchService;
+import gob.gamo.activosf.app.services.TxAlmService;
 import gob.gamo.activosf.app.utils.HeaderUtil;
 import gob.gamo.activosf.app.utils.PaginationUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -46,6 +40,7 @@ public class ItemafController {
     private final AfSearchService searchService;
     private final AfItemafService service;
     private final AfItemafRepository repository;
+    private final TxAlmService almService;
     private static final String ENTITY_NAME = Constants.REC_ITEMS;
 
     @PostMapping(Constants.API_ITEMS + "/f")
@@ -55,18 +50,14 @@ public class ItemafController {
         Page<AfItemaf> page = searchService.searchItemsaf(sc, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 page, Constants.API_URL_ROOT + Constants.API_URL_VERSION + Constants.API_ITEMS);
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(page.getContent());
-
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @PostMapping(value = Constants.API_ITEMS)
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<AfItemaf> create(@RequestBody ItemafVo req) {
         AfItemaf result = service.crearNuevo(req.itemaf());
-        return ResponseEntity.ok()
-                .body(result);
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping(Constants.API_ITEMS + "/{slug}")
@@ -81,9 +72,8 @@ public class ItemafController {
     @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
     public ResponseEntity<AfItemaf> updateEntity(
             @PathVariable(value = "slug") String id, @RequestBody ItemafVo entityReq) {
-        AfItemaf result = service.update(entityReq.itemaf());
-        return ResponseEntity.ok()
-                .body(result);
+        AfItemaf result = service.update(entityReq);
+        return ResponseEntity.ok().body(result);
     }
 
     @DeleteMapping(Constants.API_ITEMS + "/{slug}")
@@ -93,5 +83,15 @@ public class ItemafController {
         return ResponseEntity.ok()
                 .headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
                 .build();
+    }
+
+    @GetMapping(Constants.API_ITEMS + "/{slug}" + "/kdx")
+    public ResponseEntity<AfItemaf> kardexById(@PathVariable(value = "slug") Integer id) {
+        AfItemaf result = service.findById(id);
+        TxTransaccion txkdx = almService.returnTrxKardex(result.getId());
+
+        return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
+                .body(result);
     }
 }

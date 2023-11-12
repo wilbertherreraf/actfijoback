@@ -135,17 +135,6 @@ public class PersonasController {
                 .build();
     }
 
-    @GetMapping(Constants.API_PERSONAS + "/search")
-    @PreAuthorize("hasAuthority('" + ENTITY_NAME + "')")
-    public ResponseEntity<List<OrgPersona>> search(
-            @RequestParam(value = "q", required = false) String search, Pageable pageable) {
-        Page<OrgPersona> page = service.search(search, pageable);
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-                page, WebUtil.getBaseURL() + WebUtil.getRequest().getRequestURI());
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
     @GetMapping(Constants.API_PERSONAS + "/{slug}" + "/jobs")
     public ResponseEntity<List<EmpleadoVo>> personaJobs(@PathVariable(value = "slug") Integer id, Pageable pageable) {
         OrgPersona result = service.findById(id);

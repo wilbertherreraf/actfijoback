@@ -33,7 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
 import gob.gamo.activosf.app.services.CalcContabService;
 
 /**
@@ -42,6 +42,7 @@ import gob.gamo.activosf.app.services.CalcContabService;
  */
 @Entity
 @Getter
+@Setter
 @Builder
 @Table(name = "acf_activo_fijo")
 @EntityListeners(AuditingEntityListener.class)
@@ -54,6 +55,9 @@ public class AfActivoFijo implements Serializable {
     @Column(name = "id_activo_fijo")
     private Integer idActivoFijo;
 
+    @Column(name = "id_item")
+    private Integer idItemaf;
+
     @Column(name = "correlativo")
     private Integer correlativo;
 
@@ -61,7 +65,7 @@ public class AfActivoFijo implements Serializable {
     private Integer gestion;
 
     @Column(name = "revalorizado")
-    private boolean revalorizado;
+    private Boolean revalorizado;
 
     @Column(name = "codigo_antiguo")
     private String codigoAntiguo;
@@ -134,7 +138,7 @@ public class AfActivoFijo implements Serializable {
     private BigDecimal factorDepreciacionActual;
 
     @Column(name = "incorporacion_especial")
-    private boolean incorporacionEspecial;
+    private Boolean incorporacionEspecial;
 
     @Column(name = "cat_fuente_financiamiento")
     private String catFuenteFinanciamiento;
@@ -214,6 +218,24 @@ public class AfActivoFijo implements Serializable {
     @Column(name = "tx_host_mod")
     private String txHostMod;
 
+    /* @Column(name = "id_sub_familia")
+    private Integer idSubFamilia;
+
+    @Column(name = "id_proveedor")
+    private Integer idProveedor;
+
+    @Column(name = "id_nota_recepcion")
+    private Integer idNotaRecepcion;
+
+    @Column(name = "id_garantia_activo_fijo")
+    private Integer idGarantiaActivoFijo;
+
+    @Column(name = "id_factura")
+    private Integer idFactura;
+
+    @Column(name = "id_ambiente")
+    private Integer idAmbiente; */
+        
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idActivoFijo", fetch = FetchType.LAZY)
     private List<AfBajaActivoFijo> afBajaActivoFijoList;
 
@@ -336,7 +358,7 @@ public class AfActivoFijo implements Serializable {
         this.calculoContableVo = calculoContableVo;
     }
 
-    public Integer getIdActivoFijo() {
+/*     public Integer getIdActivoFijo() {
         return idActivoFijo;
     }
 
@@ -802,5 +824,5 @@ public class AfActivoFijo implements Serializable {
                 + ", txUsrIni=" + txUsrIni + ", txHostIni=" + txHostIni
                 + ", txFchMod=" + txFchMod + ", txUsrMod=" + txUsrMod
                 + ", txHostMod=" + txHostMod + "]";
-    }
+    } */
 }
